@@ -296,7 +296,11 @@
             </h1>
 
             <p class="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light" id="hero-subtitle">
-                Access 90+ curated AI tools in one place. From coding assistants to design generators, translation services to video creators - find the perfect AI solution for your work in study, programming, design, and more.
+                Access 90+ curated AI tools in one place. From coding assistants to design generators, translation services to video creators — find the perfect AI solution for your work in study, programming, design, and more.
+            </p>
+
+            <p class="text-base md:text-lg text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed" id="hero-description">
+                Aiova helps you save time by organizing the best artificial intelligence tools into clear categories, making it easy to discover reliable solutions for productivity, learning, and creative projects.
             </p>
 
             <!-- Hero Search -->
@@ -424,7 +428,8 @@
             en: {
                 title1: "Your Complete",
                 title2: "AI Tools Directory",
-                subtitle: "Access 90+ curated AI tools in one place. From coding assistants to design generators, translation services to video creators - find the perfect AI solution for your work in study, programming, design, and more.",
+                subtitle: "Access 90+ curated AI tools in one place. From coding assistants to design generators, translation services to video creators — find the perfect AI solution for your work in study, programming, design, and more.",
+                description: "Aiova helps you save time by organizing the best artificial intelligence tools into clear categories, making it easy to discover reliable solutions for productivity, learning, and creative projects.",
                 search: "Search for tools...",
                 visit: "Visit Website",
                 footerDesc: "Your comprehensive directory of the best AI tools across all categories. Discover, compare, and access powerful artificial intelligence solutions to boost your productivity.",
@@ -504,7 +509,8 @@
             ar: {
                 title1: "دليلك الشامل لأدوات",
                 title2: "الذكاء الاصطناعي",
-                subtitle: "استكشف أكثر من 90 أداة ذكاء اصطناعي مختارة بعناية في مكان واحد. من مساعدي البرمجة إلى مولدات التصميم، خدمات الترجمة إلى صناع الفيديو - اعثر على الحل المثالي للذكاء الاصطناعي لعملك في الدراسة والبرمجة والتصميم والمزيد.",
+                subtitle: "يمكنك الوصول إلى أكثر من 90 أداة ذكاء اصطناعي مُختارة بعناية في مكان واحد. من مساعدي البرمجة إلى مُولِّدات التصميم، وخدمات الترجمة إلى مُنشئي الفيديو — اعثر على حل الذكاء الاصطناعي الأمثل لعملك في الدراسة، والبرمجة، والتصميم، وغير ذلك.",
+                description: "يُساعدك Aiova على توفير الوقت من خلال تنظيم أفضل أدوات الذكاء الاصطناعي في فئات واضحة، مما يُسهِّل عليك اكتشاف حلول موثوقة لزيادة الإنتاجية، والتعلم، والمشاريع الإبداعية.",
                 search: "ابحث عن الأدوات...",
                 visit: "زيارة الموقع",
                 footerDesc: "دليلك الشامل لأفضل أدوات الذكاء الاصطناعي في جميع الفئات. اكتشف وقارن واستخدم حلول الذكاء الاصطناعي القوية لتعزيز إنتاجيتك.",
@@ -1371,6 +1377,7 @@
             document.getElementById('hero-title-1').innerText = t.title1;
             document.getElementById('hero-title-2').innerText = t.title2;
             document.getElementById('hero-subtitle').innerText = t.subtitle;
+            document.getElementById('hero-description').innerText = t.description;
             
             searchInputHero.placeholder = t.search;
             searchInputDesktop.placeholder = t.search;
