@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIHubOne  - Your AI Tools Directory</title>
+    <title>AIHubOne - Your AI Tools Directory</title>
     
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1979566027452609"
@@ -172,6 +172,68 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card);
+            margin: auto;
+            padding: 0;
+            border: 1px solid var(--border);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--muted);
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: var(--muted-foreground);
+        }
     </style>
 </head>
 <body class="bg-background text-foreground overflow-x-hidden min-h-screen flex flex-col transition-colors duration-300">
@@ -269,12 +331,91 @@
     <!-- Footer -->
     <footer class="border-t border-border/50 mt-32 py-20 bg-card/30 backdrop-blur-lg relative overflow-hidden">
         <div class="absolute inset-0 bg-grid-pattern opacity-[0.2]"></div>
-        <div class="container mx-auto px-4 text-center relative z-10">
-            <h2 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-6 opacity-50"> aiova </h2>
-            <p class="text-muted-foreground max-w-md mx-auto mb-8">Curating the future of artificial intelligence tools for everyone.</p>
-            <p class="mt-8 text-xs text-muted-foreground/40">© 2024  aiova . All rights reserved.</p>
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Logo and Description -->
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-4">aiova</h2>
+                <p class="text-muted-foreground max-w-md mx-auto" id="footer-desc">Curating the future of artificial intelligence tools for everyone.</p>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="flex flex-wrap justify-center items-center gap-6 mb-8">
+                <button onclick="openModal('about')" class="text-foreground hover:text-primary transition-colors font-medium" id="footer-about">
+                    About Us
+                </button>
+                <button onclick="openModal('privacy')" class="text-foreground hover:text-primary transition-colors font-medium" id="footer-privacy">
+                    Privacy Policy
+                </button>
+                <button onclick="openModal('terms')" class="text-foreground hover:text-primary transition-colors font-medium" id="footer-terms">
+                    Terms & Conditions
+                </button>
+                <button onclick="openModal('contact')" class="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-2" id="footer-contact">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    Contact Us
+                </button>
+            </div>
+
+            <!-- Copyright -->
+            <p class="text-center text-xs text-muted-foreground/40">© 2024 aiova. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Modals -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
+                <h2 class="text-2xl font-bold text-foreground" id="about-modal-title">About Us</h2>
+                <button onclick="closeModal('about')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 md:p-8 space-y-4 text-foreground leading-relaxed" id="about-modal-content">
+                <!-- Content will be injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
+                <h2 class="text-2xl font-bold text-foreground" id="privacy-modal-title">Privacy Policy</h2>
+                <button onclick="closeModal('privacy')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 md:p-8 space-y-4 text-foreground leading-relaxed" id="privacy-modal-content">
+                <!-- Content will be injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
+                <h2 class="text-2xl font-bold text-foreground" id="terms-modal-title">Terms & Conditions</h2>
+                <button onclick="closeModal('terms')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 md:p-8 space-y-4 text-foreground leading-relaxed" id="terms-modal-content">
+                <!-- Content will be injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
+                <h2 class="text-2xl font-bold text-foreground" id="contact-modal-title">Contact Us</h2>
+                <button onclick="closeModal('contact')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 md:p-8 space-y-6 text-center" id="contact-modal-content">
+                <!-- Content will be injected via JS -->
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript Logic -->
     <script>
@@ -286,6 +427,17 @@
                 subtitle: "Discover the best AI tools for your needs",
                 search: "Search for tools...",
                 visit: "Visit Website",
+                footerDesc: "Curating the future of artificial intelligence tools for everyone.",
+                footerAbout: "About Us",
+                footerPrivacy: "Privacy Policy",
+                footerTerms: "Terms & Conditions",
+                footerContact: "Contact Us",
+                aboutTitle: "About Us",
+                privacyTitle: "Privacy Policy",
+                termsTitle: "Terms & Conditions",
+                contactTitle: "Contact Us",
+                contactText: "For inquiries and support, please contact us at:",
+                contactEmail: "gamesplays614@gmail.com",
                 categories: {
                     all: "All",
                     study: "Study",
@@ -297,6 +449,56 @@
                     freelance: "Freelance",
                     websites: "Websites",
                     seo: "SEO"
+                },
+                about: {
+                    intro: "Welcome to aiova - your comprehensive directory for AI-powered tools!",
+                    mission: "Our Mission",
+                    missionText: "At aiova, we believe in making artificial intelligence accessible to everyone. Our platform brings together the best AI tools from across the internet into one centralized location, making it easier for professionals, students, creators, and businesses to find the perfect AI solution for their needs.",
+                    what: "What We Offer",
+                    whatText: "We carefully curate and categorize AI tools across multiple domains including study, programming, design, image generation, translation, video editing, freelancing, website building, and SEO. Each tool is evaluated and presented with clear descriptions to help you make informed decisions.",
+                    goal: "Our Goal",
+                    goalText: "Our goal is simple: to help people work more efficiently and effectively in their chosen fields by providing easy access to cutting-edge AI technology. Whether you're a developer looking for coding assistants, a designer seeking creative tools, or a student needing research help, aiova is your gateway to the AI tools that will transform the way you work.",
+                    team: "Join thousands of users who trust aiova to discover the latest and most powerful AI tools available today."
+                },
+                privacy: {
+                    intro: "Last updated: December 29, 2024",
+                    section1: "Information We Collect",
+                    section1Text: "aiova is a directory website that primarily provides links to external AI tools. We do not collect personal information unless you voluntarily contact us. We may collect anonymous usage data through cookies to improve user experience.",
+                    section2: "How We Use Information",
+                    section2Text: "Any information collected is used solely to improve our service, respond to inquiries, and provide you with relevant AI tool recommendations. We do not sell or share your personal information with third parties.",
+                    section3: "Cookies",
+                    section3Text: "We use cookies to enhance your browsing experience, remember your preferences (such as language and theme settings), and analyze site traffic. You can control cookies through your browser settings.",
+                    section4: "External Links",
+                    section4Text: "Our website contains links to external AI tools and services. We are not responsible for the privacy practices of these third-party websites. We encourage you to read their privacy policies before providing any personal information.",
+                    section5: "Data Security",
+                    section5Text: "We implement appropriate security measures to protect any information collected through our website. However, no method of transmission over the internet is 100% secure.",
+                    section6: "Your Rights",
+                    section6Text: "You have the right to access, correct, or delete any personal information we may have collected. Contact us at gamesplays614@gmail.com for any privacy-related requests.",
+                    section7: "Changes to Policy",
+                    section7Text: "We may update this privacy policy from time to time. Any changes will be posted on this page with an updated revision date."
+                },
+                terms: {
+                    intro: "Last updated: December 29, 2024",
+                    section1: "Acceptance of Terms",
+                    section1Text: "By accessing and using aiova, you accept and agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, please do not use our website.",
+                    section2: "Use of Service",
+                    section2Text: "aiova provides a directory of AI tools for informational purposes. We grant you a limited, non-exclusive, non-transferable license to access and use our website for personal or commercial purposes.",
+                    section3: "Third-Party Tools",
+                    section3Text: "Our website provides links to third-party AI tools and services. We are not responsible for the content, functionality, accuracy, or results generated by these external tools. Use of third-party tools is at your own risk and subject to their respective terms of service.",
+                    section4: "Disclaimer of Warranties",
+                    section4Text: "aiova is provided 'as is' without any warranties, express or implied. We do not guarantee the accuracy, completeness, or reliability of any information or tool listings on our website. We are not liable for any results, outcomes, or consequences resulting from the use of AI tools accessed through our directory.",
+                    section5: "Limitation of Liability",
+                    section5Text: "To the fullest extent permitted by law, aiova and its operators shall not be liable for any direct, indirect, incidental, special, or consequential damages arising from your use of our website or any AI tools accessed through our platform. This includes but is not limited to damages from errors, viruses, data loss, or business interruption.",
+                    section6: "AI Tool Results",
+                    section6Text: "AI tools may generate unpredictable results. You are solely responsible for evaluating the output of any AI tool and determining its suitability for your purposes. We make no guarantees about the accuracy, quality, or appropriateness of AI-generated content.",
+                    section7: "User Conduct",
+                    section7Text: "You agree not to use our website for any unlawful purpose or in any way that could damage, disable, or impair our service. You must not attempt to gain unauthorized access to our systems.",
+                    section8: "Intellectual Property",
+                    section8Text: "All content on aiova, including but not limited to text, graphics, logos, and design, is the property of aiova and protected by copyright laws. Third-party tool names and logos belong to their respective owners.",
+                    section9: "Changes to Terms",
+                    section9Text: "We reserve the right to modify these Terms and Conditions at any time. Changes will be effective immediately upon posting. Your continued use of the website constitutes acceptance of the modified terms.",
+                    section10: "Contact Information",
+                    section10Text: "For any questions about these Terms and Conditions, please contact us at gamesplays614@gmail.com"
                 }
             },
             ar: {
@@ -305,6 +507,17 @@
                 subtitle: "اكتشف أفضل أدوات الذكاء الاصطناعي لاحتياجاتك",
                 search: "ابحث عن الأدوات...",
                 visit: "زيارة الموقع",
+                footerDesc: "نجمع أفضل أدوات الذكاء الاصطناعي للجميع.",
+                footerAbout: "من نحن",
+                footerPrivacy: "سياسة الخصوصية",
+                footerTerms: "الشروط والأحكام",
+                footerContact: "اتصل بنا",
+                aboutTitle: "من نحن",
+                privacyTitle: "سياسة الخصوصية",
+                termsTitle: "الشروط والأحكام",
+                contactTitle: "اتصل بنا",
+                contactText: "للاستفسارات والدعم، يرجى التواصل معنا على:",
+                contactEmail: "gamesplays614@gmail.com",
                 categories: {
                     all: "الكل",
                     study: "الدراسة",
@@ -316,6 +529,56 @@
                     freelance: "العمل الحر",
                     websites: "المواقع",
                     seo: "السيو"
+                },
+                about: {
+                    intro: "مرحباً بك في aiova - دليلك الشامل لأدوات الذكاء الاصطناعي!",
+                    mission: "مهمتنا",
+                    missionText: "في aiova، نؤمن بجعل الذكاء الاصطناعي متاحاً للجميع. منصتنا تجمع أفضل أدوات الذكاء الاصطناعي من جميع أنحاء الإنترنت في موقع واحد مركزي، مما يسهل على المحترفين والطلاب والمبدعين والشركات العثور على الحل المثالي للذكاء الاصطناعي لاحتياجاتهم.",
+                    what: "ما نقدمه",
+                    whatText: "نقوم بتنظيم وتصنيف أدوات الذكاء الاصطناعي بعناية عبر مجالات متعددة بما في ذلك الدراسة والبرمجة والتصميم وتوليد الصور والترجمة وتحرير الفيديو والعمل الحر وبناء المواقع والسيو. يتم تقييم كل أداة وعرضها بأوصاف واضحة لمساعدتك على اتخاذ قرارات مستنيرة.",
+                    goal: "هدفنا",
+                    goalText: "هدفنا بسيط: مساعدة الناس على العمل بكفاءة وفعالية أكبر في مجالاتهم المختارة من خلال توفير وصول سهل إلى تقنية الذكاء الاصطناعي المتطورة. سواء كنت مطوراً تبحث عن مساعدين في البرمجة، أو مصمماً يبحث عن أدوات إبداعية، أو طالباً يحتاج إلى مساعدة في البحث، فإن aiova هو بوابتك إلى أدوات الذكاء الاصطناعي التي ستغير طريقة عملك.",
+                    team: "انضم إلى آلاف المستخدمين الذين يثقون في aiova لاكتشاف أحدث وأقوى أدوات الذكاء الاصطناعي المتاحة اليوم."
+                },
+                privacy: {
+                    intro: "آخر تحديث: ٢٩ ديسمبر ٢٠٢٤",
+                    section1: "المعلومات التي نجمعها",
+                    section1Text: "aiova هو موقع دليل يوفر بشكل أساسي روابط لأدوات الذكاء الاصطناعي الخارجية. نحن لا نجمع معلومات شخصية إلا إذا اتصلت بنا طوعاً. قد نجمع بيانات استخدام مجهولة من خلال ملفات تعريف الارتباط لتحسين تجربة المستخدم.",
+                    section2: "كيف نستخدم المعلومات",
+                    section2Text: "يتم استخدام أي معلومات يتم جمعها فقط لتحسين خدمتنا والرد على الاستفسارات وتزويدك بتوصيات أدوات الذكاء الاصطناعي ذات الصلة. نحن لا نبيع أو نشارك معلوماتك الشخصية مع أطراف ثالثة.",
+                    section3: "ملفات تعريف الارتباط",
+                    section3Text: "نستخدم ملفات تعريف الارتباط لتحسين تجربة التصفح الخاصة بك، وتذكر تفضيلاتك (مثل إعدادات اللغة والسمة)، وتحليل حركة المرور على الموقع. يمكنك التحكم في ملفات تعريف الارتباط من خلال إعدادات المتصفح الخاص بك.",
+                    section4: "الروابط الخارجية",
+                    section4Text: "يحتوي موقعنا على روابط لأدوات وخدمات الذكاء الاصطناعي الخارجية. نحن لسنا مسؤولين عن ممارسات الخصوصية لهذه المواقع الخارجية. نشجعك على قراءة سياسات الخصوصية الخاصة بهم قبل تقديم أي معلومات شخصية.",
+                    section5: "أمن البيانات",
+                    section5Text: "نقوم بتطبيق تدابير أمنية مناسبة لحماية أي معلومات يتم جمعها من خلال موقعنا. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100٪.",
+                    section6: "حقوقك",
+                    section6Text: "لديك الحق في الوصول إلى أي معلومات شخصية قد نكون قد جمعناها أو تصحيحها أو حذفها. اتصل بنا على gamesplays614@gmail.com لأي طلبات تتعلق بالخصوصية.",
+                    section7: "التغييرات على السياسة",
+                    section7Text: "قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. سيتم نشر أي تغييرات على هذه الصفحة مع تاريخ مراجعة محدث."
+                },
+                terms: {
+                    intro: "آخر تحديث: ٢٩ ديسمبر ٢٠٢٤",
+                    section1: "قبول الشروط",
+                    section1Text: "من خلال الوصول إلى واستخدام aiova، فإنك تقبل وتوافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، يرجى عدم استخدام موقعنا.",
+                    section2: "استخدام الخدمة",
+                    section2Text: "يوفر aiova دليلاً لأدوات الذكاء الاصطناعي لأغراض إعلامية. نمنحك ترخيصاً محدوداً وغير حصري وغير قابل للتحويل للوصول إلى موقعنا واستخدامه للأغراض الشخصية أو التجارية.",
+                    section3: "أدوات الطرف الثالث",
+                    section3Text: "يوفر موقعنا روابط لأدوات وخدمات الذكاء الاصطناعي من طرف ثالث. نحن لسنا مسؤولين عن المحتوى أو الوظائف أو الدقة أو النتائج التي تم إنشاؤها بواسطة هذه الأدوات الخارجية. استخدام أدوات الطرف الثالث على مسؤوليتك الخاصة ويخضع لشروط الخدمة الخاصة بها.",
+                    section4: "إخلاء المسؤولية عن الضمانات",
+                    section4Text: "يتم توفير aiova 'كما هو' دون أي ضمانات صريحة أو ضمنية. نحن لا نضمن دقة أو اكتمال أو موثوقية أي معلومات أو قوائم أدوات على موقعنا. نحن لسنا مسؤولين عن أي نتائج أو عواقب ناتجة عن استخدام أدوات الذكاء الاصطناعي التي يتم الوصول إليها من خلال دليلنا.",
+                    section5: "تحديد المسؤولية",
+                    section5Text: "إلى أقصى حد يسمح به القانون، لن يكون aiova ومشغلوه مسؤولين عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو خاصة أو تبعية ناشئة عن استخدامك لموقعنا أو أي أدوات ذكاء اصطناعي يتم الوصول إليها من خلال منصتنا. يشمل ذلك على سبيل المثال لا الحصر الأضرار الناجمة عن الأخطاء أو الفيروسات أو فقدان البيانات أو انقطاع الأعمال.",
+                    section6: "نتائج أدوات الذكاء الاصطناعي",
+                    section6Text: "قد تولد أدوات الذكاء الاصطناعي نتائج غير متوقعة. أنت وحدك المسؤول عن تقييم مخرجات أي أداة ذكاء اصطناعي وتحديد مدى ملاءمتها لأغراضك. نحن لا نقدم أي ضمانات حول دقة أو جودة أو ملاءمة المحتوى الذي تم إنشاؤه بواسطة الذكاء الاصطناعي.",
+                    section7: "سلوك المستخدم",
+                    section7Text: "أنت توافق على عدم استخدام موقعنا لأي غرض غير قانوني أو بأي طريقة يمكن أن تضر أو تعطل أو تضعف خدمتنا. يجب ألا تحاول الحصول على وصول غير مصرح به إلى أنظمتنا.",
+                    section8: "الملكية الفكرية",
+                    section8Text: "جميع المحتويات على aiova، بما في ذلك على سبيل المثال لا الحصر النصوص والرسومات والشعارات والتصميم، هي ملك لـ aiova ومحمية بموجب قوانين حقوق النشر. أسماء وشعارات أدوات الطرف الثالث تنتمي إلى أصحابها.",
+                    section9: "التغييرات على الشروط",
+                    section9Text: "نحتفظ بالحق في تعديل هذه الشروط والأحكام في أي وقت. ستكون التغييرات سارية فور نشرها. استمرارك في استخدام الموقع يشكل قبولاً للشروط المعدلة.",
+                    section10: "معلومات الاتصال",
+                    section10Text: "لأي أسئلة حول هذه الشروط والأحكام، يرجى الاتصال بنا على gamesplays614@gmail.com"
                 }
             }
         };
@@ -889,6 +1152,13 @@
             }, { threshold: 0.1 });
 
             document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+
+            // Close modals on click outside
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.classList.remove('active');
+                }
+            });
         }
 
         // --- Logic ---
@@ -934,6 +1204,167 @@
         searchInputHero.addEventListener('input', handleSearch);
         searchInputDesktop.addEventListener('input', handleSearch);
 
+        // Modal Functions
+        function openModal(type) {
+            const modalId = type + 'Modal';
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            updateModalContent(type);
+            lucide.createIcons();
+        }
+
+        function closeModal(type) {
+            const modalId = type + 'Modal';
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+        }
+
+        function updateModalContent(type) {
+            const t = translations[currentLang];
+            const titleId = type + '-modal-title';
+            const contentId = type + '-modal-content';
+
+            document.getElementById(titleId).textContent = t[type + 'Title'];
+
+            let content = '';
+            if (type === 'about') {
+                content = `
+                    <p class="text-lg font-medium text-primary">${t.about.intro}</p>
+                    
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-foreground">${t.about.mission}</h3>
+                        <p class="text-muted-foreground">${t.about.missionText}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-foreground">${t.about.what}</h3>
+                        <p class="text-muted-foreground">${t.about.whatText}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-foreground">${t.about.goal}</h3>
+                        <p class="text-muted-foreground">${t.about.goalText}</p>
+                    </div>
+
+                    <p class="text-muted-foreground italic">${t.about.team}</p>
+                `;
+            } else if (type === 'contact') {
+                content = `
+                    <div class="max-w-md mx-auto">
+                        <div class="inline-block p-6 rounded-full bg-primary/10 mb-6">
+                            <i data-lucide="mail" class="w-12 h-12 text-primary"></i>
+                        </div>
+                        
+                        <p class="text-lg text-muted-foreground mb-6">${t.contactText}</p>
+                        
+                        <a href="mailto:${t.contactEmail}" class="inline-flex items-center gap-3 bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:scale-105">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                            ${t.contactEmail}
+                        </a>
+                        
+                        <p class="text-sm text-muted-foreground mt-6">
+                            ${currentLang === 'ar' ? 'سنرد عليك في أقرب وقت ممكن' : 'We will respond to you as soon as possible'}
+                        </p>
+                    </div>
+                `;
+            } else if (type === 'privacy') {
+                content = `
+                    <p class="text-sm text-muted-foreground italic">${t.privacy.intro}</p>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section1}</h3>
+                        <p class="text-muted-foreground">${t.privacy.section1Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section2}</h3>
+                        <p class="text-muted-foreground">${t.privacy.section2Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section3}</h3>
+                        <p class="text-muted-foreground">${t.privacy.section3Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section4}</h3>
+                        <p class="text-muted-foreground">${t.privacy.section4Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section5}</h3>
+                        <p class="text-muted-foreground">${t.privacy.section5Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section6}</h3>
+                        <p class="text-muted-foreground">${t.privacy.section6Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section7}</h3>
+                        <p class="text-muted-foreground">${t.privacy.section7Text}</p>
+                    </div>
+                `;
+            } else if (type === 'terms') {
+                content = `
+                    <p class="text-sm text-muted-foreground italic">${t.terms.intro}</p>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section1}</h3>
+                        <p class="text-muted-foreground">${t.terms.section1Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section2}</h3>
+                        <p class="text-muted-foreground">${t.terms.section2Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section3}</h3>
+                        <p class="text-muted-foreground">${t.terms.section3Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section4}</h3>
+                        <p class="text-muted-foreground">${t.terms.section4Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section5}</h3>
+                        <p class="text-muted-foreground">${t.terms.section5Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section6}</h3>
+                        <p class="text-muted-foreground">${t.terms.section6Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section7}</h3>
+                        <p class="text-muted-foreground">${t.terms.section7Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section8}</h3>
+                        <p class="text-muted-foreground">${t.terms.section8Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section9}</h3>
+                        <p class="text-muted-foreground">${t.terms.section9Text}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-foreground">${t.terms.section10}</h3>
+                        <p class="text-muted-foreground">${t.terms.section10Text}</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById(contentId).innerHTML = content;
+        }
+
         // --- Rendering ---
         function updateText() {
             const t = translations[currentLang];
@@ -943,6 +1374,20 @@
             
             searchInputHero.placeholder = t.search;
             searchInputDesktop.placeholder = t.search;
+
+            // Update footer
+            document.getElementById('footer-desc').innerText = t.footerDesc;
+            document.getElementById('footer-about').innerText = t.footerAbout;
+            document.getElementById('footer-privacy').innerText = t.footerPrivacy;
+            document.getElementById('footer-terms').innerText = t.footerTerms;
+            
+            // Update contact link
+            const contactBtn = document.getElementById('footer-contact');
+            contactBtn.innerHTML = `
+                <i data-lucide="mail" class="w-4 h-4"></i>
+                ${t.footerContact}
+            `;
+            lucide.createIcons();
         }
 
         function renderCategories() {
