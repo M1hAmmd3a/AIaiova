@@ -1,1524 +1,2153 @@
-
 <!DOCTYPE html>
-<html lang="en" dir="ltr" class="scroll-smooth">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIHubOne - Your AI Tools Directory</title>
-    
-    <!-- Schema.org markup for Google -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "aiova",
-      "url": "https://aiova.it.com",
-      "logo": "https://l.top4top.io/p_36579dk8s1.png"
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سوق | منصة عرض المنتجات</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:      #0d0f14;
+      --ink-soft: #4a5568;
+      --ink-mute: #9aa3b2;
+      --surface:  #ffffff;
+      --surface2: #f7f8fa;
+      --surface3: #eef0f4;
+      --border:   #e3e7ee;
+      --accent:   #1a56db;
+      --accent2:  #0e3fa8;
+      --accent-r: #e53e3e;
+      --accent-g: #38a169;
+      --glow:     rgba(26,86,219,.18);
+      --radius-sm: 10px;
+      --radius:    18px;
+      --radius-lg: 26px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.07);
+      --shadow:    0 4px 20px rgba(0,0,0,.08);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,.12);
+      --transition: .22s cubic-bezier(.4,0,.2,1);
     }
-    </script>
-    
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1979566027452609"
-     crossorigin="anonymous"></script>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS (CDN for standalone file) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Outfit', 'Cairo', 'sans-serif'],
-                        arabic: ['Cairo', 'sans-serif'],
-                    },
-                    colors: {
-                        border: "hsl(var(--border))",
-                        input: "hsl(var(--input))",
-                        ring: "hsl(var(--ring))",
-                        background: "hsl(var(--background))",
-                        foreground: "hsl(var(--foreground))",
-                        primary: {
-                            DEFAULT: "hsl(var(--primary))",
-                            foreground: "hsl(var(--primary-foreground))",
-                        },
-                        secondary: {
-                            DEFAULT: "hsl(var(--secondary))",
-                            foreground: "hsl(var(--secondary-foreground))",
-                        },
-                        muted: {
-                            DEFAULT: "hsl(var(--muted))",
-                            foreground: "hsl(var(--muted-foreground))",
-                        },
-                        accent: {
-                            DEFAULT: "hsl(var(--accent))",
-                            foreground: "hsl(var(--accent-foreground))",
-                        },
-                        card: {
-                            DEFAULT: "hsl(var(--card))",
-                            foreground: "hsl(var(--card-foreground))",
-                        },
-                    },
-                    borderRadius: {
-                        lg: "var(--radius)",
-                        md: "calc(var(--radius) - 2px)",
-                        sm: "calc(var(--radius) - 4px)",
-                    },
-                    animation: {
-                        'pulse-soft': 'pulse-soft 4s ease-in-out infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'gradient-x': 'gradient-x 15s ease infinite',
-                    }
-                }
-            }
-        }
-    </script>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      background: var(--surface2);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { cursor: pointer; font-family: inherit; }
+    input, textarea, select { font-family: inherit; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; }
 
-    <style>
-        :root {
-            --radius: 1rem;
-            /* Light Theme - Aurora */
-            --background: 210 40% 98%;
-            --foreground: 222 47% 11%;
-            --card: 0 0% 100%;
-            --card-foreground: 222 47% 11%;
-            --primary: 250 100% 65%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 190 100% 50%;
-            --secondary-foreground: 222 47% 11%;
-            --muted: 210 40% 96.1%;
-            --muted-foreground: 215.4 16.3% 46.9%;
-            --accent: 250 100% 97%;
-            --accent-foreground: 222.2 47.4% 11.2%;
-            --border: 214.3 31.8% 91.4%;
-            --input: 214.3 31.8% 91.4%;
-            --ring: 250 100% 65%;
-        }
+    /* ══ TOAST ══ */
+    #toastContainer {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+      pointer-events: none; width: min(360px, calc(100vw - 40px));
+    }
+    .toast {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--ink); color: #fff;
+      padding: 14px 18px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      animation: toastIn .3s ease forwards;
+      pointer-events: auto;
+    }
+    .toast.success { background: #1a4731; }
+    .toast.error   { background: #7b1d1d; }
+    .toast.info    { background: #1a2e5a; }
+    .toast-icon { font-size: 18px; flex-shrink: 0; }
+    .toast-out { animation: toastOut .3s ease forwards; }
+    @keyframes toastIn  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes toastOut { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(16px); } }
 
-        .dark {
-            /* Dark Theme - Cyber Nebula */
-            --background: 240 10% 4%;
-            --foreground: 0 0% 100%;
-            --card: 240 10% 6%;
-            --card-foreground: 0 0% 100%;
-            --primary: 250 100% 70%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 190 100% 60%;
-            --secondary-foreground: 0 0% 0%;
-            --muted: 240 6% 10%;
-            --muted-foreground: 240 5% 65%;
-            --accent: 240 6% 10%;
-            --accent-foreground: 0 0% 100%;
-            --border: 240 6% 10%;
-            --input: 240 6% 10%;
-            --ring: 250 100% 70%;
-        }
+    /* ══ LOADER ══ */
+    #globalLoader {
+      position: fixed; inset: 0; background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 8888; transition: opacity .3s;
+    }
+    #globalLoader.hide { opacity: 0; pointer-events: none; }
+    .loader-logo { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .loader-icon {
+      width: 56px; height: 56px; border-radius: 18px;
+      background: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 26px; font-weight: 700;
+      animation: pulse 1.5s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+    .loader-dots { display: flex; gap: 6px; }
+    .loader-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+      animation: dotPulse 1.2s ease infinite;
+    }
+    .loader-dot:nth-child(2) { animation-delay: .2s; }
+    .loader-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes dotPulse { 0%,100%{background:var(--border)} 50%{background:var(--accent)} }
 
-        body {
-            font-family: 'Outfit', 'Cairo', sans-serif;
-        }
+    /* ══ MODAL CONFIRM ══ */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 7777; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: var(--surface); border-radius: var(--radius-lg);
+      padding: 36px 32px; max-width: 380px; width: 100%;
+      box-shadow: var(--shadow-lg);
+      transform: scale(.94) translateY(12px);
+      transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+    }
+    .modal-overlay.open .modal-box { transform: scale(1) translateY(0); }
+    .modal-icon { font-size: 40px; margin-bottom: 16px; }
+    .modal-title { font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .modal-desc  { font-size: 14px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 28px; }
+    .modal-btns  { display: flex; gap: 10px; }
+    .modal-btn-cancel {
+      flex: 1; padding: 12px; border-radius: var(--radius-sm);
+      background: var(--surface3); color: var(--ink-soft);
+      border: none; font-size: 14px; font-weight: 600;
+      transition: background var(--transition);
+    }
+    .modal-btn-cancel:hover { background: var(--border); }
+    .modal-btn-confirm {
+      flex: 1; padding: 12px; border-radius: var(--radius-sm);
+      background: var(--accent-r); color: #fff;
+      border: none; font-size: 14px; font-weight: 700;
+      transition: opacity var(--transition);
+    }
+    .modal-btn-confirm:hover { opacity: .88; }
 
-        [lang="ar"] body {
-            font-family: 'Cairo', sans-serif;
-        }
+    /* ══ NAV ══ */
+    nav {
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 200;
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 24px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; user-select: none;
+    }
+    .nav-logo-mark {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 17px; font-weight: 700;
+      letter-spacing: -.5px; flex-shrink: 0;
+    }
+    .nav-logo-name { font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -.3px; }
+    .nav-logo-dot  { color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      padding: 8px 18px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 600; border: none;
+      transition: all var(--transition);
+    }
+    .nav-btn-ghost { background: transparent; color: var(--ink-soft); }
+    .nav-btn-ghost:hover { background: var(--surface3); color: var(--ink); }
+    .nav-btn-outline {
+      background: transparent; color: var(--ink);
+      border: 1.5px solid var(--border);
+    }
+    .nav-btn-outline:hover { border-color: var(--ink); }
+    .nav-btn-filled { background: var(--ink); color: #fff; }
+    .nav-btn-filled:hover { background: #2d3748; }
+    .nav-user {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface2); border-radius: var(--radius-sm);
+      padding: 5px 12px 5px 5px; border: 1px solid var(--border);
+    }
+    .nav-user-avatar { width: 30px; height: 30px; border-radius: 8px; object-fit: cover; }
+    .nav-user-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .nav-separator { width: 1px; height: 20px; background: var(--border); }
+    .nav-logout {
+      background: none; border: none; color: var(--ink-mute);
+      font-size: 13px; padding: 4px 8px; border-radius: 6px;
+      transition: color var(--transition), background var(--transition);
+    }
+    .nav-logout:hover { color: var(--accent-r); background: #fff5f5; }
 
-        /* Animations */
-        @keyframes gradient-x {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        @keyframes pulse-soft {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
-        }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-        }
+    /* ══ PAGES ══ */
+    .page { display: none; animation: fadeUp .35s ease; }
+    .page.active { display: block; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
 
-        .dark .glass-panel {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+    /* ══ HOME ══ */
+    .home-hero {
+      max-width: 680px; margin: 0 auto;
+      padding: 90px 24px 70px; text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--ink); color: #fff;
+      padding: 6px 16px; border-radius: 100px;
+      font-size: 12px; font-weight: 600; letter-spacing: .04em;
+      text-transform: uppercase; margin-bottom: 28px;
+    }
+    .hero-title {
+      font-size: clamp(38px, 7vw, 64px);
+      font-weight: 700; line-height: 1.15;
+      color: var(--ink); margin-bottom: 22px;
+      letter-spacing: -.02em;
+    }
+    .hero-title em { color: var(--accent); font-style: normal; }
+    .hero-desc {
+      font-size: 17px; color: var(--ink-soft);
+      line-height: 1.75; margin-bottom: 10px;
+      max-width: 520px; margin-left: auto; margin-right: auto;
+    }
+    .hero-note { font-size: 14px; color: var(--ink-mute); margin-bottom: 44px; }
+    .hero-note strong { color: var(--accent); font-weight: 600; }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 72px; }
+    .btn-cta-primary {
+      padding: 15px 36px; border-radius: var(--radius-sm);
+      background: var(--ink); color: #fff; border: none;
+      font-size: 15px; font-weight: 700; letter-spacing: -.01em;
+      transition: all var(--transition);
+      box-shadow: 0 2px 0 rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.15);
+    }
+    .btn-cta-primary:hover { background: #1a202c; transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.18); }
+    .btn-cta-secondary {
+      padding: 15px 36px; border-radius: var(--radius-sm);
+      background: var(--surface); color: var(--ink);
+      border: 1.5px solid var(--border);
+      font-size: 15px; font-weight: 600;
+      transition: all var(--transition);
+    }
+    .btn-cta-secondary:hover { border-color: var(--ink); background: var(--surface2); }
+    .features-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+      text-align: right;
+    }
+    .feat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px 20px;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .feat:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .feat-icon { font-size: 26px; margin-bottom: 12px; }
+    .feat-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+    .feat-desc { font-size: 13px; color: var(--ink-mute); line-height: 1.65; }
 
-        .bg-grid-pattern {
-            background-size: 50px 50px;
-            background-image: linear-gradient(to right, rgba(128, 128, 128, 0.05) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
-            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-        }
+    /* ══ AUTH ══ */
+    .auth-wrap {
+      min-height: calc(100vh - 64px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px;
+    }
+    .auth-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 44px 40px;
+      width: 100%; max-width: 430px;
+      box-shadow: var(--shadow-lg);
+    }
+    .auth-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none; border: none;
+      color: var(--ink-mute); font-size: 13px;
+      margin-bottom: 28px; padding: 0;
+      transition: color var(--transition);
+    }
+    .auth-back:hover { color: var(--ink); }
+    .auth-head { margin-bottom: 32px; }
+    .auth-head h2 { font-size: 26px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; margin-bottom: 4px; }
+    .auth-head p  { font-size: 14px; color: var(--ink-mute); }
 
-        /* Scrollbar Hide */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+    .field { margin-bottom: 22px; }
+    .field-label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--ink-soft); margin-bottom: 8px; letter-spacing: .01em;
+    }
+    .field-input {
+      width: 100%; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 16px;
+      font-size: 15px; color: var(--ink);
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    .field-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,86,219,.1);
+    }
+    .field-input.error { border-color: var(--accent-r); }
 
-        /* Custom Transition Classes */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .photo-zone { display: flex; align-items: center; gap: 16px; }
+    .photo-ring {
+      width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      border: 2px dashed var(--border); background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color var(--transition);
+      position: relative;
+    }
+    .photo-ring:hover { border-color: var(--accent); }
+    .photo-ring.has-img { border-style: solid; border-color: var(--accent); }
+    .photo-ring img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-ring-placeholder { color: var(--ink-mute); font-size: 26px; }
+    .photo-ring input { display: none; }
+    .photo-info { flex: 1; }
+    .photo-info p { font-size: 13px; color: var(--ink-soft); margin-bottom: 8px; }
+    .photo-info span { font-size: 12px; color: var(--ink-mute); }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-        }
+    .btn-submit {
+      width: 100%; background: var(--ink); color: #fff; border: none;
+      padding: 15px; border-radius: var(--radius-sm);
+      font-size: 16px; font-weight: 700; letter-spacing: -.01em;
+      box-shadow: 0 2px 0 rgba(0,0,0,.3);
+      transition: all var(--transition);
+    }
+    .btn-submit:hover { background: #1a202c; transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: .5; cursor: default; transform: none; }
 
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    /* ══ DASHBOARD ══ */
+    .dash-layout { max-width: 920px; margin: 0 auto; padding: 32px 20px; }
+    .dash-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+    }
+    .dash-greeting { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
+    .dash-greeting span { color: var(--accent); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 28px;
+      margin-bottom: 18px;
+    }
+    .card-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 15px; font-weight: 700; color: var(--ink);
+      margin-bottom: 22px;
+    }
+    .card-title-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: var(--surface2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .profile-strip {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px;
+    }
+    .profile-strip-img {
+      width: 52px; height: 52px; border-radius: 14px; object-fit: cover;
+      border: 2px solid var(--border);
+    }
+    .profile-strip-name { font-weight: 700; font-size: 16px; color: var(--ink); }
+    .profile-strip-role { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
 
-        .modal-content {
-            background: var(--card);
-            margin: auto;
-            padding: 0;
-            border: 1px solid var(--border);
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: slideIn 0.3s ease-out;
-        }
+    textarea.field-input { resize: vertical; min-height: 80px; }
+    .field-hint { font-size: 12px; color: var(--ink-mute); margin-top: 5px; }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .prod-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .prod-count-badge {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 4px 12px;
+      font-size: 13px; font-weight: 600; color: var(--ink-soft);
+    }
+    .btn-add-product {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--ink); color: #fff; border: none;
+      padding: 9px 18px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 700;
+      transition: all var(--transition);
+    }
+    .btn-add-product:hover { background: #2d3748; }
+    .btn-add-product:disabled { opacity: .4; cursor: default; }
 
-        .modal-content::-webkit-scrollbar {
-            width: 8px;
-        }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px;
+    }
+    .prod-card {
+      background: var(--surface2); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 14px;
+      position: relative; transition: border-color var(--transition);
+    }
+    .prod-num { font-size: 11px; font-weight: 700; color: var(--ink-mute); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 10px; }
+    .btn-prod-remove {
+      position: absolute; top: 10px; left: 10px;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--ink-mute); font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+    .btn-prod-remove:hover { background: #fff0f0; border-color: var(--accent-r); color: var(--accent-r); }
 
-        .modal-content::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    .img-drop-area {
+      width: 100%; height: 130px;
+      background: var(--surface); border: 1.5px dashed var(--border);
+      border-radius: var(--radius-sm); cursor: pointer;
+      overflow: hidden; position: relative; margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color var(--transition);
+    }
+    .img-drop-area:hover { border-color: var(--accent); }
+    .img-drop-area img { width: 100%; height: 100%; object-fit: cover; }
+    .img-drop-area input { display: none; }
+    .img-drop-placeholder { text-align: center; color: var(--ink-mute); }
+    .img-drop-placeholder span:first-child { font-size: 24px; display: block; margin-bottom: 5px; }
+    .img-drop-placeholder span:last-child  { font-size: 12px; }
 
-        .modal-content::-webkit-scrollbar-thumb {
-            background: var(--muted);
-            border-radius: 4px;
-        }
+    .prod-input, .prod-textarea {
+      width: 100%; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 8px 11px;
+      font-size: 13px; color: var(--ink);
+      background: var(--surface); outline: none;
+      transition: border-color var(--transition);
+      font-family: inherit; margin-bottom: 8px;
+    }
+    .prod-input:focus, .prod-textarea:focus { border-color: var(--accent); }
+    .prod-textarea { resize: none; margin-bottom: 0; }
 
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: var(--muted-foreground);
-        }
-    </style>
+    .empty-products-msg { text-align: center; padding: 48px 20px; color: var(--ink-mute); }
+    .empty-products-msg .empty-icon { font-size: 44px; margin-bottom: 10px; }
+    .empty-products-msg p { font-size: 14px; }
+
+    .dash-footer { display: flex; gap: 12px; margin-top: 6px; }
+    .btn-save-page {
+      flex: 1; background: var(--ink); color: #fff; border: none;
+      padding: 16px; border-radius: var(--radius);
+      font-size: 16px; font-weight: 700; letter-spacing: -.01em;
+      box-shadow: 0 2px 0 rgba(0,0,0,.25);
+      transition: all var(--transition);
+    }
+    .btn-save-page:hover { background: #1a202c; transform: translateY(-2px); }
+    .btn-save-page:disabled { opacity: .5; cursor: default; transform: none; }
+    .btn-delete-page {
+      background: #fff5f5; color: var(--accent-r); border: 1px solid #fecaca;
+      padding: 16px 22px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 700;
+      transition: all var(--transition);
+    }
+    .btn-delete-page:hover { background: #fee2e2; }
+
+    /* ══ BROWSE ══ */
+    .browse-layout { max-width: 1120px; margin: 0 auto; padding: 48px 20px; }
+    .browse-head { margin-bottom: 36px; }
+    .browse-head h2 { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; margin-bottom: 6px; }
+    .browse-head p  { font-size: 15px; color: var(--ink-mute); }
+    .browse-loading { text-align: center; padding: 80px 20px; color: var(--ink-mute); }
+    .loading-spinner {
+      width: 36px; height: 36px; border: 3px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin .7s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .sellers-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px;
+    }
+    .seller-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px 16px 20px;
+      text-align: center; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .seller-card:hover { border-color: var(--ink); box-shadow: var(--shadow); transform: translateY(-3px); }
+    .seller-avatar {
+      width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+      margin: 0 auto 12px; border: 2px solid var(--border);
+    }
+    .seller-name {
+      font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 5px;
+      word-break: break-word; overflow-wrap: break-word;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .seller-meta { font-size: 12px; color: var(--ink-mute); }
+    .seller-meta strong { color: var(--accent); }
+    .browse-empty { text-align: center; padding: 80px 20px; }
+    .browse-empty .empty-big { font-size: 60px; margin-bottom: 14px; }
+    .browse-empty p { font-size: 18px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+    .browse-empty small { font-size: 14px; color: var(--ink-mute); }
+
+    /* ══ STORE ══ */
+    .store-layout { max-width: 920px; margin: 0 auto; padding: 32px 20px; }
+    .btn-back-store {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--ink); padding: 9px 18px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 600;
+      transition: all var(--transition);
+    }
+    .btn-back-store:hover { border-color: var(--ink); }
+    .store-hero {
+      background: var(--ink); border-radius: var(--radius-lg);
+      padding: 48px 32px; text-align: center; margin-bottom: 32px;
+      position: relative; overflow: hidden;
+    }
+    .store-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% -20%, rgba(26,86,219,.35), transparent);
+      pointer-events: none;
+    }
+    .store-hero-img {
+      width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+      margin: 0 auto 18px; border: 3px solid rgba(255,255,255,.2);
+      position: relative; z-index: 1;
+    }
+    .store-hero-name {
+      font-size: 26px; font-weight: 700; color: #fff;
+      letter-spacing: -.02em; margin-bottom: 14px; position: relative; z-index: 1;
+    }
+    .store-phone-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      color: #fff; padding: 10px 24px; border-radius: 100px;
+      font-size: 15px; font-weight: 600;
+      transition: background var(--transition); position: relative; z-index: 1;
+    }
+    .store-phone-btn:hover { background: rgba(255,255,255,.2); }
+    .store-bio {
+      font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.75;
+      margin-top: 16px; max-width: 500px; margin-left: auto; margin-right: auto;
+      position: relative; z-index: 1;
+    }
+    .store-section-title {
+      font-size: 18px; font-weight: 700; color: var(--ink);
+      letter-spacing: -.01em; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .store-section-title span { font-size: 13px; font-weight: 500; color: var(--ink-mute); }
+    .store-products-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px;
+    }
+    .store-prod-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      transition: all var(--transition);
+    }
+    .store-prod-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .store-prod-img  { width: 100%; height: 165px; object-fit: cover; }
+    .store-prod-placeholder {
+      width: 100%; height: 165px; background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 38px; color: var(--border);
+    }
+    .store-prod-body { padding: 12px 14px; }
+    .store-prod-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .store-prod-desc { font-size: 12px; color: var(--ink-mute); line-height: 1.55; }
+    .store-empty { text-align: center; padding: 60px 20px; color: var(--ink-mute); font-size: 15px; }
+
+    /* ══ ADMIN ══ */
+    .btn-admin {
+      position: fixed; top: 18px; left: 16px; z-index: 300;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--ink-mute); padding: 6px 12px; border-radius: 8px;
+      font-size: 11px; font-weight: 600; letter-spacing: .02em;
+      transition: all var(--transition); white-space: nowrap;
+    }
+    .btn-admin:hover { background: var(--surface3); color: var(--ink); border-color: var(--ink-mute); }
+    @media (max-width: 480px) {
+      .btn-admin { font-size: 10px; padding: 5px 9px; top: 20px; left: 8px; }
+    }
+    .admin-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9000; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .admin-modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .admin-modal-box {
+      background: var(--surface); border-radius: var(--radius-lg);
+      padding: 36px 32px; max-width: 400px; width: 100%;
+      box-shadow: var(--shadow-lg); position: relative;
+      transform: scale(.94) translateY(12px);
+      transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+    }
+    .admin-modal-overlay.open .admin-modal-box { transform: scale(1) translateY(0); }
+    .admin-modal-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .admin-modal-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--ink); color: #fff; font-size: 20px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .admin-modal-title { font-size: 18px; font-weight: 700; color: var(--ink); }
+    .admin-modal-sub   { font-size: 13px; color: var(--ink-mute); margin-top: 2px; }
+    .admin-close {
+      position: absolute; top: 14px; left: 14px;
+      background: none; border: none; color: var(--ink-mute); font-size: 20px; padding: 4px;
+      cursor: pointer;
+    }
+    .admin-pages-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; max-height: 60vh; overflow-y: auto; }
+    .admin-page-row {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 14px;
+    }
+    .admin-page-avatar { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+    .admin-page-info { flex: 1; min-width: 0; }
+    .admin-page-name  { font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .admin-page-count { font-size: 12px; color: var(--ink-mute); }
+    .btn-admin-delete {
+      background: #fff0f0; border: 1px solid #fecaca; color: var(--accent-r);
+      padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700;
+      flex-shrink: 0; transition: all var(--transition); cursor: pointer;
+    }
+    .btn-admin-delete:hover { background: #fee2e2; }
+    .admin-empty { text-align: center; padding: 32px 20px; color: var(--ink-mute); font-size: 14px; }
+    .admin-loading { text-align: center; padding: 24px; color: var(--ink-mute); font-size: 14px; }
+    .admin-pass-error { font-size: 13px; color: var(--accent-r); margin-top: 8px; display: none; }
+
+    /* ══ RESPONSIVE ══ */
+    #changePassCard > div { grid-template-columns: 1fr !important; }
+    @media (max-width: 700px) {
+      .auth-card { padding: 32px 22px; }
+      .features-row { grid-template-columns: 1fr; }
+      .sellers-grid { grid-template-columns: repeat(2, 1fr); }
+      .store-products-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: 1fr; }
+      .dash-footer { flex-direction: column; }
+      .btn-delete-page { order: 2; }
+      .nav-user-name { display: none; }
+      .nav-browse-btn { font-size: 12px; padding: 7px 12px; }
+      .store-hero { padding: 36px 20px; }
+      .hero-title { font-size: 34px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .hero-actions button { text-align: center; }
+    }
+    @media (max-width: 400px) {
+      .sellers-grid { grid-template-columns: 1fr; }
+      .store-products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="bg-background text-foreground overflow-x-hidden min-h-screen flex flex-col transition-colors duration-300">
+<body>
 
-    <!-- Background Elements -->
-    <div class="fixed inset-0 z-0 pointer-events-none">
-        <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse-soft"></div>
-        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px] animate-pulse-soft" style="animation-delay: 2s;"></div>
-        <div class="absolute inset-0 bg-grid-pattern opacity-[0.4]"></div>
+<!-- LOADER -->
+<div id="globalLoader">
+  <div class="loader-logo">
+    <div class="loader-icon">س</div>
+    <div class="loader-dots">
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
+    <div id="loaderMsg" style="font-size:13px;color:var(--ink-mute);margin-top:4px;opacity:0;transition:opacity .4s">جارٍ التحميل...</div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer"></div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-icon" id="confirmIcon">⚠️</div>
+    <div class="modal-title" id="confirmTitle">هل أنت متأكد؟</div>
+    <div class="modal-desc"  id="confirmDesc">هذا الإجراء لا يمكن التراجع عنه.</div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" id="confirmCancelBtn">إلغاء</button>
+      <button class="modal-btn-confirm" id="confirmBtn">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN BUTTON -->
+<button class="btn-admin" id="btnAdmin">⚙ الإدارة</button>
+
+<!-- ADMIN PASSWORD MODAL -->
+<div class="admin-modal-overlay" id="adminPassModal">
+  <div class="admin-modal-box">
+    <button class="admin-close" id="btnCloseAdminPass">✕</button>
+    <div class="admin-modal-head">
+      <div class="admin-modal-icon">🔒</div>
+      <div>
+        <div class="admin-modal-title">لوحة الإدارة</div>
+        <div class="admin-modal-sub">أدخل كلمة السر للمتابعة</div>
+      </div>
+    </div>
+    <input type="password" class="field-input" id="adminPassInput" placeholder="كلمة السر...">
+    <div class="admin-pass-error" id="adminPassError">كلمة السر غير صحيحة</div>
+    <button class="btn-submit" id="btnAdminLogin" style="margin-top:16px">دخول</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL MODAL -->
+<div class="admin-modal-overlay" id="adminPanelModal">
+  <div class="admin-modal-box" style="max-width:480px">
+    <button class="admin-close" id="btnCloseAdminPanel">✕</button>
+    <div class="admin-modal-head">
+      <div class="admin-modal-icon">🛡️</div>
+      <div>
+        <div class="admin-modal-title">لوحة الإدارة</div>
+        <div class="admin-modal-sub">إدارة صفحات المستخدمين | انسخ قواعد Firebase بالأسفل</div>
+      </div>
+    </div>
+    <div id="adminPagesList" class="admin-pages-list">
+      <div class="admin-loading">جارٍ التحميل...</div>
+    </div>
+    <div style="margin-top:14px;text-align:center">
+      <button id="btnShowRules" style="background:none;border:none;color:var(--ink-mute);font-size:12px;cursor:pointer;text-decoration:underline">
+        عرض قواعد Firebase المقترحة
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo" id="navLogo">
+      <div class="nav-logo-mark">س</div>
+      <div class="nav-logo-name">سوق<span class="nav-logo-dot">.</span></div>
+    </div>
+    <div class="nav-right" id="navRight"></div>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="home-hero">
+    <div class="hero-badge">🛍️ منصة عرض المنتجات المحلية</div>
+    <h1 class="hero-title">اعرض منتجاتك<br><em>وتواصل مع العملاء</em></h1>
+    <p class="hero-desc">منصة بسيطة تتيح لك إنشاء صفحة خاصة بك لعرض منتجاتك والتواصل مع عملائك بشكل مباشر.</p>
+    <p class="hero-note">أنشئ صفحتك الخاصة وأضف حتى <strong>10 منتجات</strong> مع صور وأوصاف — مجاناً تماماً.</p>
+    <div class="hero-actions" id="heroActions"></div>
+    <div class="features-row">
+      <div class="feat">
+        <div class="feat-icon">👤</div>
+        <div class="feat-name">سجّل بسهولة</div>
+        <div class="feat-desc">ادخل اسمك وصورتك وابدأ فوراً</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🛒</div>
+        <div class="feat-name">أضف منتجاتك</div>
+        <div class="feat-desc">صور وأوصاف كاملة لكل منتج</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📱</div>
+        <div class="feat-name">تواصل مباشر</div>
+        <div class="feat-desc">العملاء يتواصلون معك مباشرة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <button class="auth-back" id="loginBackBtn">← رجوع</button>
+      <div class="auth-head">
+        <h2>أهلاً بك 👋</h2>
+        <p>أنشئ حسابك أو سجّل دخولك بكلمة السر</p>
+      </div>
+      <div class="field">
+        <label class="field-label">الصورة الشخصية *</label>
+        <div class="photo-zone">
+          <label class="photo-ring" id="photoRing" for="loginPhotoInput">
+            <div class="photo-ring-placeholder" id="photoPlaceholder">📷</div>
+            <input type="file" accept="image/*" id="loginPhotoInput">
+          </label>
+          <div class="photo-info">
+            <p>صورة واضحة لك أو لعلامتك التجارية</p>
+            <span>JPG, PNG — بحد أقصى 5MB</span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="loginName">اسمك (للعرض فقط) *</label>
+        <input type="text" class="field-input" id="loginName"
+          placeholder="اكتب اسمك هنا..." maxlength="60">
+      </div>
+      <div class="field">
+        <label class="field-label" for="loginPassword">كلمة السر *</label>
+        <div style="position:relative">
+          <input type="password" class="field-input" id="loginPassword"
+            placeholder="اختر كلمة سر قوية..." maxlength="64"
+            style="padding-left:44px">
+          <button type="button" id="togglePassBtn"
+            style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink-mute);font-size:18px;cursor:pointer;padding:0;line-height:1">👁</button>
+        </div>
+        <div class="field-hint" id="passHint">كلمة السر تُستخدم لحماية حسابك — لن تظهر لأحد</div>
+      </div>
+      <button class="btn-submit" id="loginBtn">دخول / إنشاء حساب ←</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <div class="dash-layout">
+    <div class="dash-top">
+      <div class="dash-greeting" id="dashGreeting">لوحة التحكم</div>
+      <button class="nav-btn nav-btn-outline" id="dashBrowseBtn">تصفح المنتجات</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">👤</div> معلومات صفحتك</div>
+      <div class="profile-strip" id="profileStrip"></div>
+      <div class="field">
+        <label class="field-label" for="dashPhone">رقم الهاتف للتواصل *</label>
+        <input type="tel" class="field-input" id="dashPhone" placeholder="05xxxxxxxx" maxlength="20">
+        <div class="field-hint" id="phoneHint"></div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="dashBio">
+          نبذة عنك
+          <span id="bioCounter" style="font-weight:400; color: var(--ink-mute);"> — 0/500</span>
+        </label>
+        <textarea class="field-input" id="dashBio" rows="3"
+          placeholder="اكتب وصفاً مختصراً عنك أو عن ما تبيعه..." maxlength="500"></textarea>
+      </div>
+    </div>
+    <div class="card">
+      <div class="prod-bar">
+        <div class="card-title" style="margin-bottom:0">
+          <div class="card-title-icon">🛒</div>
+          منتجاتي
+          <div class="prod-count-badge" id="prodCountBadge">0 / 10</div>
+        </div>
+        <button class="btn-add-product" id="btnAddProd">
+          <span>+</span> إضافة منتج
+        </button>
+      </div>
+      <div id="productsGrid"></div>
+    </div>
+    <!-- Change Password Card -->
+    <div class="card" id="changePassCard">
+      <div class="card-title"><div class="card-title-icon">🔑</div> تغيير كلمة السر</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label" for="newPass1">كلمة السر الجديدة</label>
+          <input type="password" class="field-input" id="newPass1" placeholder="4 أحرف على الأقل" maxlength="64">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label" for="newPass2">تأكيد كلمة السر</label>
+          <input type="password" class="field-input" id="newPass2" placeholder="أعد الكتابة" maxlength="64">
+        </div>
+      </div>
+      <button class="nav-btn nav-btn-outline" id="btnChangePass" style="margin-top:14px;width:100%">تحديث كلمة السر 🔒</button>
     </div>
 
-    <!-- Navbar -->
-    <header id="navbar" class="fixed top-0 z-50 w-full transition-all duration-300 py-4">
-        <div class="container mx-auto px-4 flex items-center justify-between gap-4">
-            <!-- Logo -->
-            <div class="flex items-center gap-3 font-bold text-2xl tracking-tighter cursor-pointer group">
-                <div class="relative w-10 h-10">
-                    <div class="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-xl rotate-0 group-hover:rotate-12 transition-transform duration-300 opacity-80 blur-sm"></div>
-                    <div class="absolute inset-0 bg-background rounded-xl flex items-center justify-center border border-border/50 z-10">
-                        <span class="bg-clip-text text-transparent bg-gradient-to-br from-primary to-secondary font-black text-lg">AI</span>
-                    </div>
-                </div>
-                <span class="hidden sm:inline-block font-black tracking-tight text-xl">
-                    aiova<span class="text-primary">.</span>
-                </span>
-            </div>
-
-            <!-- Search (Desktop) -->
-            <div class="hidden md:flex relative max-w-sm w-full mx-4 transition-all duration-300 opacity-0 -translate-y-4 pointer-events-none" id="nav-search">
-                <i data-lucide="search" class="absolute top-2.5 h-4 w-4 text-muted-foreground ltr:left-3 rtl:right-3"></i>
-                <input type="text" id="desktop-search-input" placeholder="Search..." class="w-full bg-muted/50 border-transparent focus:bg-background/80 transition-all rounded-full h-9 text-sm px-9 outline-none focus:ring-1 focus:ring-primary">
-            </div>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-2">
-                <button onclick="toggleLanguage()" class="rounded-full w-10 h-10 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors font-bold text-xs" id="lang-btn">
-                    AR
-                </button>
-                <button onclick="toggleTheme()" class="rounded-full w-10 h-10 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors">
-                    <i data-lucide="moon" id="theme-icon" class="h-5 w-5"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 container mx-auto px-4 py-8 relative z-10 pt-32">
-        
-        <!-- Header Ad -->
-        <div class="mb-8 flex justify-center">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-1979566027452609"
-                 data-ad-slot="9438293663"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
-
-        <!-- Hero Section -->
-        <section class="relative py-10 md:py-20 max-w-5xl mx-auto text-center space-y-8 fade-in-up">
-            <div class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full glass-panel text-primary font-medium text-sm shadow-xl shadow-primary/10 border-primary/20">
-                <i data-lucide="sparkles" class="w-4 h-4"></i>
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary font-bold tracking-wide">aiova PRO 2.0</span>
-            </div>
-
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.1]">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground/50" id="hero-title-1">Your Complete</span>
-                <br class="hidden md:block">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-secondary animate-gradient-x" id="hero-title-2">AI Tools Directory</span>
-            </h1>
-
-            <p class="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light" id="hero-subtitle">
-                Access 90+ curated AI tools in one place. From coding assistants to design generators, translation services to video creators — find the perfect AI solution for your work in study, programming, design, and more.
-            </p>
-
-            <p class="text-base md:text-lg text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed" id="hero-description">
-                Aiova helps you save time by organizing the best artificial intelligence tools into clear categories, making it easy to discover reliable solutions for productivity, learning, and creative projects.
-            </p>
-
-            <!-- Hero Search -->
-            <div class="max-w-xl mx-auto mt-8 relative group fade-in-up" style="transition-delay: 200ms;">
-                <div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                <div class="relative flex items-center bg-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl">
-                    <i data-lucide="search" class="w-6 h-6 text-muted-foreground mx-3"></i>
-                    <input type="text" id="hero-search-input" class="w-full border-none bg-transparent shadow-none text-lg h-12 outline-none placeholder:text-muted-foreground/50" placeholder="Search for tools...">
-                    <button class="h-10 w-10 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center transition-colors">
-                        <i data-lucide="arrow-right" class="w-5 h-5 rtl:rotate-180"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Categories -->
-        <section class="mb-16 sticky top-24 z-40 py-4 -mx-4 px-4 md:p-0 md:static fade-in-up" style="transition-delay: 400ms;">
-            <div class="flex justify-center">
-                <div class="glass-panel p-2 rounded-full inline-flex overflow-x-auto max-w-[100vw] md:max-w-full gap-2 no-scrollbar shadow-2xl shadow-black/5" id="categories-container">
-                    <!-- Categories injected via JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Tools Grid -->
-        <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 min-h-[400px]">
-            <!-- Tools injected via JS -->
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-border/50 mt-32 py-20 bg-card/30 backdrop-blur-lg relative overflow-hidden">
-        <div class="absolute inset-0 bg-grid-pattern opacity-[0.2]"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <!-- Logo and Description -->
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-4">aiova</h2>
-                <p class="text-muted-foreground max-w-md mx-auto" id="footer-desc">Curating the future of artificial intelligence tools for everyone.</p>
-            </div>
-
-            <!-- Footer Links -->
-            <div class="flex flex-wrap justify-center items-center gap-6 mb-8">
-                <button onclick="openModal('about')" class="text-foreground hover:text-primary transition-colors font-medium" id="footer-about">
-                    About Us
-                </button>
-                <button onclick="openModal('privacy')" class="text-foreground hover:text-primary transition-colors font-medium" id="footer-privacy">
-                    Privacy Policy
-                </button>
-                <button onclick="openModal('terms')" class="text-foreground hover:text-primary transition-colors font-medium" id="footer-terms">
-                    Terms & Conditions
-                </button>
-                <button onclick="openModal('contact')" class="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-2" id="footer-contact">
-                    <i data-lucide="mail" class="w-4 h-4"></i>
-                    Contact Us
-                </button>
-            </div>
-
-            <!-- Copyright -->
-            <p class="text-center text-xs text-muted-foreground/40">© 2024 aiova. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Modals -->
-    <div id="aboutModal" class="modal">
-        <div class="modal-content">
-            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
-                <h2 class="text-2xl font-bold text-foreground" id="about-modal-title">About Us</h2>
-                <button onclick="closeModal('about')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="p-6 md:p-8 space-y-4 text-foreground leading-relaxed" id="about-modal-content">
-                <!-- Content will be injected via JS -->
-            </div>
-        </div>
+    <div class="dash-footer">
+      <button class="btn-save-page" id="saveBtn">حفظ الصفحة</button>
+      <button class="btn-delete-page" id="deleteBtn" style="display:none">حذف الصفحة</button>
     </div>
+  </div>
+</div>
 
-    <div id="privacyModal" class="modal">
-        <div class="modal-content">
-            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
-                <h2 class="text-2xl font-bold text-foreground" id="privacy-modal-title">Privacy Policy</h2>
-                <button onclick="closeModal('privacy')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="p-6 md:p-8 space-y-4 text-foreground leading-relaxed" id="privacy-modal-content">
-                <!-- Content will be injected via JS -->
-            </div>
-        </div>
+<!-- BROWSE -->
+<div id="page-browse" class="page">
+  <div class="browse-layout">
+    <div class="browse-head">
+      <h2>البائعون المسجلون</h2>
+      <p>اضغط على أي بائع لعرض متجره ومنتجاته</p>
+      <input type="search" id="browseSearch" class="field-input"
+        placeholder="ابحث عن بائع..." style="margin-top:16px;max-width:320px">
     </div>
-
-    <div id="termsModal" class="modal">
-        <div class="modal-content">
-            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
-                <h2 class="text-2xl font-bold text-foreground" id="terms-modal-title">Terms & Conditions</h2>
-                <button onclick="closeModal('terms')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="p-6 md:p-8 space-y-4 text-foreground leading-relaxed" id="terms-modal-content">
-                <!-- Content will be injected via JS -->
-            </div>
-        </div>
+    <div id="sellersGrid"></div>
+    <div id="browseLoadMore" style="display:none;text-align:center;margin-top:28px">
+      <button class="btn-cta-secondary" id="btnLoadMore">تحميل المزيد ↓</button>
+      <div style="font-size:12px;color:var(--ink-mute);margin-top:8px" id="browsePageInfo"></div>
     </div>
+  </div>
+</div>
 
-    <div id="contactModal" class="modal">
-        <div class="modal-content">
-            <div class="sticky top-0 bg-card/95 backdrop-blur-lg border-b border-border p-6 flex justify-between items-center z-10">
-                <h2 class="text-2xl font-bold text-foreground" id="contact-modal-title">Contact Us</h2>
-                <button onclick="closeModal('contact')" class="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="p-6 md:p-8 space-y-6 text-center" id="contact-modal-content">
-                <!-- Content will be injected via JS -->
-            </div>
-        </div>
+<!-- STORE -->
+<div id="page-store" class="page">
+  <div class="store-layout">
+    <div id="storeContent"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   FIREBASE CONFIG
+═══════════════════════════════════════════════════ */
+firebase.initializeApp({
+  databaseURL: "https://namenam-1a7ab-default-rtdb.firebaseio.com/"
+});
+const db = firebase.database();
+
+/* ═══════════════════════════════════════════════════
+   CONSTANTS & STATE
+═══════════════════════════════════════════════════ */
+const MAX_PRODUCTS = 10;
+const MAX_BIO      = 500;
+const PAGE_SIZE    = 20;
+
+// كلمة سر الأدمن كـ SHA-256 مقسّمة لصعوبة الكشف — الأصل: 12345321
+const _AH = ['b32f4fbf','c653cd8c','adb24cc7','1234ad3c',
+             '0528329a','cb794593','ba1739d3','8319e3d8'].join('');
+
+let currentUser     = null;
+let userPage        = null;
+let products        = [];
+let loginPhotoData  = '';
+let allPages        = [];
+let browseScrollY   = 0;
+let currentStoreUid = null;
+let modalResolver   = null;
+let browsePage      = 0;
+let browseFiltered  = [];
+let storeCache      = {};
+
+/* ═══════════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════════ */
+// ✅ FIX: HTML-escapes all output to prevent XSS
+function esc(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function genUID() {
+  return Math.random().toString(36).slice(2, 11) + Date.now().toString(36);
+}
+
+async function hashString(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+function toast(msg, type = 'info', duration = 3500) {
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ'}</span><span>${esc(msg)}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => {
+    el.classList.add('toast-out');
+    setTimeout(() => el.remove(), 320);
+  }, duration);
+}
+
+/* ═══════════════════════════════════════════════════
+   MODAL CONFIRM
+   ✅ FIX: event listeners attached in JS, not inline onclick
+═══════════════════════════════════════════════════ */
+function openConfirm({ icon = '⚠️', title = 'هل أنت متأكد؟', desc = 'هذا الإجراء لا يمكن التراجع عنه.' }) {
+  return new Promise(resolve => {
+    modalResolver = resolve;
+    document.getElementById('confirmIcon').textContent  = icon;
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmDesc').textContent  = desc;
+    document.getElementById('confirmModal').classList.add('open');
+  });
+}
+
+function closeModal(result = false) {
+  document.getElementById('confirmModal').classList.remove('open');
+  if (modalResolver) {
+    const r = modalResolver;
+    modalResolver = null;
+    r(result);
+  }
+}
+
+document.getElementById('confirmBtn').addEventListener('click', () => closeModal(true));
+document.getElementById('confirmCancelBtn').addEventListener('click', () => closeModal(false));
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal(false);
+});
+
+/* ═══════════════════════════════════════════════════
+   IMAGE COMPRESSION
+═══════════════════════════════════════════════════ */
+function compressImage(file, maxW, maxH, quality) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.width, h = img.height;
+      if (w > maxW || h > maxH) {
+        const r = Math.min(maxW / w, maxH / h);
+        w = Math.round(w * r);
+        h = Math.round(h * r);
+      }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(c.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('فشل قراءة الصورة')); };
+    img.src = url;
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   HASH / PAGE ROUTING
+   ✅ FIX: single _activatePage + clean showPage — no duplication
+═══════════════════════════════════════════════════ */
+function _activatePage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + name);
+  if (el) el.classList.add('active');
+}
+
+function showPage(name) {
+  if (name === 'dashboard' && !currentUser) { showPage('login'); return; }
+
+  // Save browse scroll position before leaving
+  if (document.querySelector('.page.active')?.id === 'page-browse') {
+    browseScrollY = window.scrollY;
+  }
+
+  if (name === 'store' && currentStoreUid) {
+    history.pushState(null, '', '#store/' + encodeURIComponent(currentStoreUid));
+    _activatePage('store');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    return;
+  }
+
+  if (name === 'browse') {
+    history.pushState(null, '', '#browse');
+    _activatePage('browse');
+    loadBrowse();
+    setTimeout(() => window.scrollTo({ top: browseScrollY, behavior: 'instant' }), 60);
+    return;
+  }
+
+  if (name === 'dashboard') {
+    history.pushState(null, '', '#dashboard');
+    _activatePage('dashboard');
+    loadDashboard();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    return;
+  }
+
+  if (name === 'login') {
+    history.pushState(null, '', '#login');
+    _activatePage('login');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    // إذا كان للمستخدم حساب محفوظ، أعد ملء الاسم والصورة
+    prefillLoginIfSaved();
+    return;
+  }
+
+  // home (default)
+  history.pushState(null, '', '#home');
+  _activatePage('home');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+// نسخة sync تُستخدم في init (تعرض الصفحة فوراً بدون انتظار Firebase)
+function handleHashRouteSync() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#store/')) {
+    // أظهر صفحة المتجر فوراً، البيانات تُحمّل بعدها
+    _activatePage('store');
+    const uid = decodeURIComponent(hash.slice(7));
+    if (uid) {
+      currentStoreUid = uid;
+      document.getElementById('storeContent').innerHTML =
+        `<div class="browse-loading"><div class="loading-spinner"></div><p>جارٍ تحميل المتجر...</p></div>`;
+      withTimeout(loadStoreByUid(uid), 10000).catch(() => {
+        toast('فشل تحميل المتجر — تحقق من اتصالك', 'error');
+        showPage('browse');
+      });
+    }
+  } else if (hash === '#browse') {
+    _activatePage('browse');
+    loadBrowse();
+  } else if (hash === '#dashboard') {
+    if (currentUser) { _activatePage('dashboard'); }
+    else { _activatePage('login'); prefillLoginIfSaved(); }
+  } else if (hash === '#login') {
+    _activatePage('login');
+    prefillLoginIfSaved();
+  } else {
+    _activatePage('home');
+  }
+}
+
+// ✅ FIX: single handleHashRoute, handles all cases correctly
+async function handleHashRoute() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#store/')) {
+    const uid = decodeURIComponent(hash.slice(7));
+    if (uid) await loadStoreByUid(uid);
+  } else if (hash === '#browse') {
+    _activatePage('browse');
+    loadBrowse();
+  } else if (hash === '#dashboard') {
+    if (currentUser) { _activatePage('dashboard'); loadDashboard(); }
+    else { showPage('login'); }
+  } else if (hash === '#login') {
+    _activatePage('login');
+    prefillLoginIfSaved();
+  } else {
+    _activatePage('home');
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   UNSAVED CHANGES
+═══════════════════════════════════════════════════ */
+function hasUnsavedChanges() {
+  if (!currentUser) return false;
+  const phoneEl = document.getElementById('dashPhone');
+  const bioEl   = document.getElementById('dashBio');
+  if (!phoneEl || !bioEl) return false;
+  if (phoneEl.value.trim() !== (userPage?.phone || '')) return true;
+  if (bioEl.value         !== (userPage?.bio   || '')) return true;
+  const validNow   = products.filter(p => (p.name || '').trim() || p.imageURL);
+  const savedProds = userPage?.products || [];
+  if (validNow.length !== savedProds.length) return true;
+  return false;
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+   ✅ FIX: single init call, no duplication
+═══════════════════════════════════════════════════ */
+// مساعد: ينفّذ Promise مع حد أقصى للانتظار (ms)
+function withTimeout(promise, ms) {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), ms)
+  );
+  return Promise.race([promise, timeout]);
+}
+
+// إخفاء الـ loader بأمان
+let _loaderMsgTimer = null;
+function hideLoader() {
+  if (_loaderMsgTimer) { clearTimeout(_loaderMsgTimer); _loaderMsgTimer = null; }
+  const loader = document.getElementById('globalLoader');
+  if (!loader) return;
+  loader.classList.add('hide');
+  setTimeout(() => { if (loader.parentNode) loader.remove(); }, 400);
+}
+
+// تشغيل رسالة "جارٍ التحميل" بعد ثانية واحدة فقط إذا ما اختفى الـ loader
+function startLoaderFeedback() {
+  _loaderMsgTimer = setTimeout(() => {
+    const msg = document.getElementById('loaderMsg');
+    if (msg) { msg.style.opacity = '1'; msg.textContent = 'جارٍ الاتصال...'; }
+  }, 1000);
+}
+
+// ضمان إخفاء الـ loader حتى لو حدث خطأ — يُنفَّذ بعد 500ms كحد أقصى
+setTimeout(hideLoader, 500);
+
+(function init() {
+  // ─── 1. استعادة الجلسة من localStorage (فورية - لا شبكة) ───
+  try {
+    const saved = localStorage.getItem('mkt_user');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      if (!currentUser.passHash) currentUser.passHash = null;
+    }
+  } catch(e) {
+    localStorage.removeItem('mkt_user');
+  }
+
+  // ─── 2. رسم الواجهة ───
+  try { renderNav(); } catch(e) { console.error('renderNav:', e); }
+  try { renderHeroActions(); } catch(e) { console.error('renderHeroActions:', e); }
+  try { attachEventListeners(); } catch(e) { console.error('attachEventListeners:', e); }
+  try { handleHashRouteSync(); } catch(e) { console.error('handleHashRouteSync:', e); }
+
+  // ─── 3. إخفاء الـ loader فوراً ───
+  hideLoader();
+
+  // ─── 4. Firebase في الخلفية ───
+  if (currentUser) {
+    withTimeout(loadUserPage(currentUser.uid), 8000)
+      .then(() => {
+        const active = document.querySelector('.page.active')?.id;
+        if (active === 'page-dashboard') loadDashboard();
+      })
+      .catch(() => {
+        const active = document.querySelector('.page.active')?.id;
+        if (active === 'page-dashboard') loadDashboard();
+      });
+  }
+
+  // ─── 5. أحداث التنقل ───
+  window.addEventListener('hashchange', handleHashRoute);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || !currentUser) return;
+    loadUserPage(currentUser.uid)
+      .then(() => {
+        if (document.querySelector('.page.active')?.id === 'page-dashboard') loadDashboard();
+      })
+      .catch(() => {});
+  });
+
+  window.addEventListener('beforeunload', e => {
+    if (hasUnsavedChanges()) {
+      e.preventDefault();
+      e.returnValue = 'لديك تغييرات غير محفوظة، هل تريد المغادرة؟';
+    }
+  });
+})();
+
+/* ═══════════════════════════════════════════════════
+   EVENT LISTENERS
+   ✅ FIX: all event wiring in one place, no inline onclick
+═══════════════════════════════════════════════════ */
+function attachEventListeners() {
+  // Nav & logo
+  document.getElementById('navLogo').addEventListener('click', () => showPage('home'));
+  document.getElementById('dashBrowseBtn').addEventListener('click', () => showPage('browse'));
+
+  // Login page
+  document.getElementById('loginBackBtn').addEventListener('click', () => showPage('home'));
+  document.getElementById('loginPhotoInput').addEventListener('change', function() { handleLoginPhoto(this); });
+  document.getElementById('loginBtn').addEventListener('click', doLogin);
+  document.getElementById('loginName').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('togglePassBtn').addEventListener('click', () => {
+    const inp = document.getElementById('loginPassword');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  });
+
+  // Dashboard
+  document.getElementById('dashPhone').addEventListener('input', function() { validatePhone(this); });
+  document.getElementById('dashBio').addEventListener('input', updateBioCount);
+  document.getElementById('btnAddProd').addEventListener('click', addProduct);
+  document.getElementById('saveBtn').addEventListener('click', savePage);
+  document.getElementById('deleteBtn').addEventListener('click', confirmDeletePage);
+  document.getElementById('btnChangePass').addEventListener('click', changePassword);
+
+  // Browse search + load more
+  document.getElementById('browseSearch').addEventListener('input', function() { filterSellers(this.value); });
+  document.getElementById('btnLoadMore').addEventListener('click', loadMoreSellers);
+
+  // Admin
+  document.getElementById('btnAdmin').addEventListener('click', openAdminModal);
+  document.getElementById('btnCloseAdminPass').addEventListener('click', closeAdminModal);
+  document.getElementById('btnCloseAdminPanel').addEventListener('click', closeAdminPanel);
+  document.getElementById('btnAdminLogin').addEventListener('click', checkAdminPass);
+  document.getElementById('adminPassInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkAdminPass(); });
+
+  // Rules modal
+  document.getElementById('btnShowRules').addEventListener('click', openRulesModal);
+  document.getElementById('btnCloseRules').addEventListener('click', closeRulesModal);
+  document.getElementById('rulesModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRulesModal();
+  });
+  document.getElementById('btnCopyRules').addEventListener('click', () => {
+    navigator.clipboard?.writeText(FIREBASE_RULES)
+      .then(() => toast('تم نسخ القواعد ✓', 'success'))
+      .catch(() => fallbackCopy(FIREBASE_RULES));
+  });
+
+  // Close admin modals when clicking backdrop
+  document.getElementById('adminPassModal').addEventListener('click', function(e) {
+    if (e.target === this) closeAdminModal();
+  });
+  document.getElementById('adminPanelModal').addEventListener('click', function(e) {
+    if (e.target === this) closeAdminPanel();
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════ */
+function renderNav() {
+  const el = document.getElementById('navRight');
+  if (currentUser) {
+    el.innerHTML = `
+      <button class="nav-btn nav-btn-outline nav-browse-btn" id="navBrowseBtn">تصفح المنتجات</button>
+      <div class="nav-user">
+        <img class="nav-user-avatar" src="${esc(currentUser.photoURL)}" alt="${esc(currentUser.name)}">
+        <span class="nav-user-name">${esc(currentUser.name)}</span>
+      </div>
+      <div class="nav-separator"></div>
+      <button class="nav-logout" id="navLogoutBtn">خروج</button>`;
+    document.getElementById('navBrowseBtn').addEventListener('click', () => showPage('browse'));
+    document.getElementById('navLogoutBtn').addEventListener('click', doLogout);
+  } else {
+    el.innerHTML = `
+      <button class="nav-btn nav-btn-outline nav-browse-btn" id="navBrowseBtn">تصفح المنتجات</button>
+      <button class="nav-btn nav-btn-filled" id="navLoginBtn">تسجيل الدخول</button>`;
+    document.getElementById('navBrowseBtn').addEventListener('click', () => showPage('browse'));
+    document.getElementById('navLoginBtn').addEventListener('click', () => showPage('login'));
+  }
+}
+
+function renderHeroActions() {
+  const el = document.getElementById('heroActions');
+  if (currentUser) {
+    el.innerHTML = `
+      <button class="btn-cta-primary" id="heroPrimaryBtn">إدارة صفحتي ←</button>
+      <button class="btn-cta-secondary" id="heroSecondaryBtn">تصفح المنتجات</button>`;
+    document.getElementById('heroPrimaryBtn').addEventListener('click', () => showPage('dashboard'));
+  } else {
+    el.innerHTML = `
+      <button class="btn-cta-primary" id="heroPrimaryBtn">ابدأ الآن — مجاناً ←</button>
+      <button class="btn-cta-secondary" id="heroSecondaryBtn">تصفح المنتجات</button>`;
+    document.getElementById('heroPrimaryBtn').addEventListener('click', () => showPage('login'));
+  }
+  document.getElementById('heroSecondaryBtn').addEventListener('click', () => showPage('browse'));
+}
+
+/* ═══════════════════════════════════════════════════
+   FIREBASE: LOAD USER PAGE
+═══════════════════════════════════════════════════ */
+function loadUserPage(uid) {
+  return db.ref('pages/' + uid).get().then(snap => {
+    if (snap.exists()) {
+      userPage = snap.val();
+      products = Array.isArray(userPage.products)
+        ? userPage.products.map(p => ({ ...p }))
+        : [];
+    } else {
+      userPage = null;
+      products = [];
+    }
+  }).catch(err => {
+    // عند فشل الاتصال — لا نكسر الواجهة
+    console.warn('loadUserPage failed:', err?.message);
+    userPage = null;
+    products = [];
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════════════════ */
+function prefillLoginIfSaved() {
+  // إذا كان يوجد حساب محفوظ، أعد ملء بيانات النموذج تلقائياً
+  try {
+    const saved = localStorage.getItem('mkt_user');
+    if (!saved) return;
+    const u = JSON.parse(saved);
+    if (u.name) document.getElementById('loginName').value = u.name;
+    if (u.photoURL) {
+      loginPhotoData = u.photoURL;
+      const ring = document.getElementById('photoRing');
+      if (ring) {
+        ring.classList.add('has-img');
+        ring.innerHTML = `<img src="${u.photoURL}" alt="صورتك" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+          <input type="file" accept="image/*" style="display:none">`;
+        ring.querySelector('input').addEventListener('change', function() { handleLoginPhoto(this); });
+      }
+    }
+    if (u.passHash) {
+      const hint = document.getElementById('passHint');
+      if (hint) hint.textContent = '🔑 لديك حساب محفوظ — أدخل كلمة سرك للدخول';
+    }
+  } catch(e) { /* ignore */ }
+}
+
+function handleLoginPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { toast('حجم الصورة يجب أن يكون أقل من 10MB', 'error'); return; }
+  compressImage(file, 400, 400, 0.82).then(data => {
+    loginPhotoData = data;
+    const ring = document.getElementById('photoRing');
+    ring.classList.add('has-img');
+    // ✅ FIX: rebuild ring HTML safely, re-attach listener
+    ring.innerHTML = `
+      <img src="${data}" alt="صورتك" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+      <input type="file" accept="image/*" style="display:none">`;
+    ring.querySelector('input').addEventListener('change', function() { handleLoginPhoto(this); });
+  }).catch(() => toast('فشل تحميل الصورة', 'error'));
+}
+
+async function doLogin() {
+  const nameInput = document.getElementById('loginName');
+  const passInput = document.getElementById('loginPassword');
+  const name = nameInput.value.trim();
+  const pass = passInput.value;
+
+  if (!name) {
+    nameInput.classList.add('error');
+    toast('الرجاء إدخال اسمك', 'error');
+    nameInput.focus(); return;
+  }
+  nameInput.classList.remove('error');
+
+  if (!pass || pass.length < 4) {
+    passInput.classList.add('error');
+    toast('كلمة السر يجب أن تكون 4 أحرف على الأقل', 'error');
+    passInput.focus(); return;
+  }
+  if (pass.length > 64) {
+    passInput.classList.add('error');
+    toast('كلمة السر طويلة جداً (64 حرف كحد أقصى)', 'error');
+    passInput.focus(); return;
+  }
+  passInput.classList.remove('error');
+
+  if (!loginPhotoData) { toast('الرجاء اختيار صورة شخصية', 'error'); return; }
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'جارٍ الدخول...';
+
+  // hash كلمة السر قبل تخزينها
+  const passHash = await hashString(pass);
+
+  // تحقق هل يوجد حساب محفوظ لنفس الـ UID
+  let uid;
+  let savedUser = null;
+  try {
+    const saved = localStorage.getItem('mkt_user');
+    if (saved) savedUser = JSON.parse(saved);
+  } catch(e) { /* ignore */ }
+
+  if (savedUser && savedUser.uid) {
+    // حساب موجود — تحقق من كلمة السر فقط إذا كانت محفوظة
+    if (savedUser.passHash) {
+      if (savedUser.passHash !== passHash) {
+        btn.disabled = false; btn.textContent = 'دخول / إنشاء حساب ←';
+        passInput.classList.add('error');
+        toast('كلمة السر غير صحيحة ❌', 'error'); return;
+      }
+    }
+    // إذا لم تكن محفوظة من قبل (حساب قديم) → احفظها الآن
+    uid = savedUser.uid;
+  } else {
+    // حساب جديد
+    uid = genUID();
+  }
+
+  currentUser = { uid, name, photoURL: loginPhotoData, passHash };
+  localStorage.setItem('mkt_user', JSON.stringify(currentUser));
+
+  loadUserPage(uid)
+    .catch(() => {})
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'دخول / إنشاء حساب ←';
+      renderNav();
+      renderHeroActions();
+      toast(`أهلاً ${name}! 👋`, 'success');
+      showPage('dashboard');
+    });
+}
+
+async function changePassword() {
+  const p1 = document.getElementById('newPass1').value;
+  const p2 = document.getElementById('newPass2').value;
+  if (!p1 || p1.length < 4) {
+    document.getElementById('newPass1').classList.add('error');
+    toast('كلمة السر يجب أن تكون 4 أحرف على الأقل', 'error'); return;
+  }
+  if (p1 !== p2) {
+    document.getElementById('newPass2').classList.add('error');
+    toast('كلمتا السر غير متطابقتين', 'error'); return;
+  }
+  document.getElementById('newPass1').classList.remove('error');
+  document.getElementById('newPass2').classList.remove('error');
+  const newHash = await hashString(p1);
+  currentUser.passHash = newHash;
+  localStorage.setItem('mkt_user', JSON.stringify(currentUser));
+  document.getElementById('newPass1').value = '';
+  document.getElementById('newPass2').value = '';
+  toast('تم تغيير كلمة السر بنجاح 🔒', 'success');
+}
+
+function doLogout() {
+  localStorage.removeItem('mkt_user');
+  // تحرير الذاكرة
+  products.forEach(p => { if (p.imageURL?.startsWith('data:')) p.imageURL = ''; });
+  currentUser = null; userPage = null; products = []; loginPhotoData = '';
+  storeCache = {};
+  renderNav();
+  renderHeroActions();
+  showPage('home');
+  toast('تم تسجيل الخروج', 'info');
+}
+
+/* ═══════════════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════════════ */
+function loadDashboard() {
+  if (!currentUser) return;
+
+  // ضمان التزامن: إذا userPage = null فـ products يجب أن تكون فارغة أيضاً
+  if (!userPage) products = [];
+
+  document.getElementById('dashGreeting').innerHTML =
+    `مرحباً، <span>${esc(currentUser.name)}</span> 👋`;
+  document.getElementById('profileStrip').innerHTML = `
+    <img class="profile-strip-img" src="${esc(currentUser.photoURL)}" alt="${esc(currentUser.name)}">
+    <div style="flex:1">
+      <div class="profile-strip-name">${esc(currentUser.name)}</div>
+      <div class="profile-strip-role">صاحب الصفحة</div>
     </div>
+    ${userPage ? `<button id="viewMyStoreBtn" class="nav-btn nav-btn-outline" style="font-size:12px;padding:7px 12px">👁 عرض متجري</button>` : ''}`;
+  if (userPage) {
+    const btn = document.getElementById('viewMyStoreBtn');
+    if (btn) btn.addEventListener('click', () => viewStoreByUid(currentUser.uid));
+  }
+  document.getElementById('dashPhone').value = userPage?.phone || '';
+  document.getElementById('dashBio').value   = userPage?.bio   || '';
+  updateBioCount();
+  document.getElementById('deleteBtn').style.display = userPage ? 'block' : 'none';
+  renderProductsEditor();
+}
+
+function updateBioCount() {
+  const bio = document.getElementById('dashBio');
+  const len = bio.value.length;
+  const remaining = MAX_BIO - len;
+  const counter = document.getElementById('bioCounter');
+  counter.textContent = ` — ${len}/500 (${remaining} متبقي)`;
+  counter.style.color = remaining < 50 ? 'var(--accent-r)' : 'var(--ink-mute)';
+}
+
+// ✅ FIX: validate based on digit count only, not total length
+function validatePhone(input) {
+  const hint = document.getElementById('phoneHint');
+  // Allow digits, +, spaces, hyphens, parentheses
+  const val = input.value.replace(/[^\d+\s\-()]/g, '');
+  input.value = val;
+  const digitCount = val.replace(/\D/g, '').length;
+  if (val.length > 0 && digitCount < 7) {
+    hint.style.color = 'var(--accent-r)';
+    hint.textContent = 'رقم الهاتف قصير جداً';
+  } else {
+    hint.textContent = '';
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   PRODUCTS EDITOR
+   ✅ FIX: no JSON in onclick, all listeners attached programmatically
+═══════════════════════════════════════════════════ */
+function renderProductsEditor() {
+  document.getElementById('prodCountBadge').textContent = `${products.length} / ${MAX_PRODUCTS}`;
+  const addBtn = document.getElementById('btnAddProd');
+  if (addBtn) addBtn.disabled = products.length >= MAX_PRODUCTS;
+
+  const grid = document.getElementById('productsGrid');
+  if (products.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-products-msg">
+        <div class="empty-icon">📦</div>
+        <p>لا توجد منتجات بعد — أضف منتجك الأول!</p>
+      </div>`;
+    return;
+  }
+
+  // Build HTML without any JS in attributes
+  const html = products.map((p, i) => `
+    <div class="prod-card" id="prodCard${i}">
+      <button class="btn-prod-remove" data-index="${i}" title="حذف المنتج">✕</button>
+      <div class="prod-num">منتج ${i + 1}</div>
+      <label class="img-drop-area" for="prodImg${i}">
+        ${p.imageURL
+          ? `<img src="${esc(p.imageURL)}" alt="صورة المنتج">`
+          : `<div class="img-drop-placeholder"><span>🖼️</span><span>انقر لإضافة صورة</span></div>`}
+        <input type="file" accept="image/*" id="prodImg${i}" data-index="${i}">
+      </label>
+      <input class="prod-input" type="text" value="${esc(p.name)}"
+        placeholder="اسم المنتج" maxlength="80" data-index="${i}" data-field="name">
+      <textarea class="prod-textarea" rows="2" placeholder="وصف المنتج..."
+        data-index="${i}" data-field="description">${esc(p.description)}</textarea>
+    </div>`).join('');
+
+  grid.innerHTML = `<div class="products-grid">${html}</div>`;
+
+  // Attach listeners using event delegation on the grid
+  grid.querySelectorAll('.btn-prod-remove').forEach(btn => {
+    btn.addEventListener('click', () => removeProduct(Number(btn.dataset.index)));
+  });
+  grid.querySelectorAll('input[type="file"]').forEach(input => {
+    input.addEventListener('change', function() { handleProductImg(Number(this.dataset.index), this); });
+  });
+  grid.querySelectorAll('.prod-input, .prod-textarea').forEach(el => {
+    el.addEventListener('input', function() {
+      const i = Number(this.dataset.index);
+      const field = this.dataset.field;
+      if (products[i]) products[i][field] = this.value;
+    });
+  });
+}
+
+function addProduct() {
+  if (products.length >= MAX_PRODUCTS) {
+    toast('لا يمكن إضافة أكثر من 10 منتجات', 'error'); return;
+  }
+  products.push({ id: genUID(), name: '', description: '', imageURL: '' });
+  renderProductsEditor();
+  setTimeout(() => {
+    const last = document.getElementById(`prodCard${products.length - 1}`);
+    if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 80);
+}
+
+async function removeProduct(i) {
+  const confirmed = await openConfirm({
+    icon: '🗑️',
+    title: 'حذف المنتج؟',
+    desc: 'سيتم حذف هذا المنتج من قائمتك. يمكنك إعادة إضافته لاحقاً.'
+  });
+  if (!confirmed) return;
+  // Free image memory
+  if (products[i]?.imageURL?.startsWith('data:')) products[i].imageURL = '';
+  products.splice(i, 1);
+  renderProductsEditor();
+  toast('تم حذف المنتج', 'info');
+}
+
+function handleProductImg(i, input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 15 * 1024 * 1024) { toast('حجم الصورة يجب أن يكون أقل من 15MB', 'error'); return; }
+  const label = input.closest('.img-drop-area');
+  if (label) label.style.opacity = '0.5';
+  compressImage(file, 800, 800, 0.80).then(data => {
+    // Free old image memory before replacing
+    if (products[i]?.imageURL?.startsWith('data:')) products[i].imageURL = '';
+    products[i].imageURL = data;
+    if (label) {
+      label.style.opacity = '1';
+      label.innerHTML = `
+        <img src="${data}" alt="صورة المنتج">
+        <input type="file" accept="image/*" id="prodImg${i}" data-index="${i}" style="display:none">`;
+      label.querySelector('input').addEventListener('change', function() {
+        handleProductImg(Number(this.dataset.index), this);
+      });
+    }
+  }).catch(() => {
+    if (label) label.style.opacity = '1';
+    toast('فشل تحميل الصورة', 'error');
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   SAVE PAGE
+═══════════════════════════════════════════════════ */
+function savePage() {
+  if (!currentUser) return;
+  const phone = document.getElementById('dashPhone').value.trim();
+  if (!phone) {
+    document.getElementById('dashPhone').classList.add('error');
+    document.getElementById('dashPhone').focus();
+    toast('الرجاء إدخال رقم هاتفك', 'error'); return;
+  }
+  if (phone.replace(/\D/g, '').length < 7) {
+    toast('رقم الهاتف يبدو غير صحيح', 'error'); return;
+  }
+  document.getElementById('dashPhone').classList.remove('error');
+
+  const validProducts = products.filter(p => (p.name || '').trim() || p.imageURL);
+  if (validProducts.length === 0) {
+    toast('أضف منتجاً واحداً على الأقل قبل الحفظ', 'error'); return;
+  }
+
+  const bio = document.getElementById('dashBio').value.slice(0, MAX_BIO);
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = 'جارٍ الحفظ...';
+
+  const page = {
+    uid: currentUser.uid,
+    ownerName:  currentUser.name,
+    ownerPhoto: currentUser.photoURL,
+    phone, bio,
+    products: validProducts,
+    updatedAt: Date.now()
+  };
+
+  db.ref('pages/' + currentUser.uid).set(page)
+    .then(() => {
+      userPage = page;
+      // deep-copy + تحديث الكاش
+      products = validProducts.map(p => ({ ...p }));
+      storeCache[currentUser.uid] = { data: page, ts: Date.now() };
+      // تحديث كاش browse
+      const browseIdx = allPages.findIndex(p => p.uid === currentUser.uid);
+      if (browseIdx >= 0) allPages[browseIdx] = page;
+      else allPages.push(page);
+      try {
+        localStorage.setItem('mkt_browse_cache', JSON.stringify(allPages));
+        localStorage.setItem('mkt_browse_ts', String(Date.now()));
+      } catch(e) {}
+      btn.disabled = false; btn.textContent = 'حفظ الصفحة';
+      document.getElementById('deleteBtn').style.display = 'block';
+      toast('تم حفظ صفحتك بنجاح! ✓', 'success');
+      renderProductsEditor();
+    })
+    .catch(err => {
+      btn.disabled = false; btn.textContent = 'حفظ الصفحة';
+      toast('حدث خطأ: ' + err.message, 'error');
+    });
+}
+
+/* ═══════════════════════════════════════════════════
+   DELETE PAGE
+═══════════════════════════════════════════════════ */
+async function confirmDeletePage() {
+  const confirmed = await openConfirm({
+    icon: '🗑️',
+    title: 'حذف الصفحة؟',
+    desc: 'سيتم حذف صفحتك وجميع منتجاتها بشكل نهائي ولا يمكن التراجع عن هذا الإجراء.'
+  });
+  if (!confirmed) return;
+  const btn = document.getElementById('deleteBtn');
+  btn.disabled = true; btn.textContent = 'جارٍ الحذف...';
+  db.ref('pages/' + currentUser.uid).remove()
+    .then(() => {
+      // تحرير الذاكرة من الصور
+      products.forEach(p => { if (p.imageURL?.startsWith('data:')) p.imageURL = ''; });
+
+      // ─── إعادة ضبط الحالة بالكامل ───
+      userPage   = null;
+      products   = [];
+
+      // حذف من الكاشات
+      storeCache[currentUser.uid] = null;
+      allPages       = allPages.filter(p => p.uid !== currentUser.uid);
+      browseFiltered = browseFiltered.filter(p => p.uid !== currentUser.uid);
+      try {
+        localStorage.setItem('mkt_browse_cache', JSON.stringify(allPages));
+        localStorage.setItem('mkt_browse_ts', String(Date.now()));
+      } catch(e) {}
+
+      btn.disabled = false;
+      btn.textContent = 'حذف الصفحة';
+      btn.style.display = 'none';
+
+      // إعادة رسم الداشبورد بالحالة الفارغة الجديدة
+      loadDashboard();
+      toast('تم حذف الصفحة بنجاح ✓', 'success');
+    })
+    .catch(err => {
+      btn.disabled = false; btn.textContent = 'حذف الصفحة';
+      toast('فشل الحذف: ' + err.message, 'error');
+    });
+}
+
+/* ═══════════════════════════════════════════════════
+   BROWSE — مع Pagination وكاش
+═══════════════════════════════════════════════════ */
+function loadBrowse() {
+  const grid = document.getElementById('sellersGrid');
+  const searchInput = document.getElementById('browseSearch');
+  if (searchInput) searchInput.value = '';
+  browsePage = 0;
+  browseFiltered = [];
+
+  // استخدم الكاش إن وجد وحديث (5 دقائق)
+  const cacheKey = 'mkt_browse_cache';
+  const cacheTs  = 'mkt_browse_ts';
+  const cached   = localStorage.getItem(cacheKey);
+  const ts       = parseInt(localStorage.getItem(cacheTs) || '0');
+  if (cached && (Date.now() - ts) < 5 * 60 * 1000) {
+    try {
+      allPages = JSON.parse(cached);
+      browseFiltered = allPages;
+      renderSellerPage(0, true);
+      return;
+    } catch(e) { /* ignore bad cache */ }
+  }
+
+  grid.innerHTML = `<div class="browse-loading"><div class="loading-spinner"></div><p>جارٍ تحميل البائعين...</p></div>`;
+
+  const browsePromise = db.ref('pages').once('value').then(snap => {
+    if (!snap.exists()) {
+      allPages = [];
+      document.getElementById('browseLoadMore').style.display = 'none';
+      grid.innerHTML = `
+        <div class="browse-empty" style="grid-column:1/-1">
+          <div class="empty-big">🏪</div>
+          <p>لا توجد صفحات بعد</p>
+          <small>كن أول من يعرض منتجاته!</small>
+        </div>`;
+      return;
+    }
+    allPages = Object.values(snap.val());
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(allPages));
+      localStorage.setItem(cacheTs, String(Date.now()));
+    } catch(e) {}
+    browseFiltered = allPages;
+    renderSellerPage(0, true);
+  });
+
+  withTimeout(browsePromise, 10000).catch(() => {
+    // إذا انتهت المهلة أو فشل الاتصال
+    grid.innerHTML = `
+      <div class="browse-empty" style="grid-column:1/-1">
+        <div class="empty-big">⚠️</div>
+        <p>تعذّر التحميل</p>
+        <small>تحقق من اتصالك بالإنترنت ثم أعد المحاولة</small>
+        <br><button class="btn-cta-secondary" style="margin-top:16px" onclick="loadBrowse()">↺ إعادة المحاولة</button>
+      </div>`;
+  });
+}
+
+// يعرض دفعة من البائعين (Pagination)
+function renderSellerPage(page, reset = false) {
+  const grid = document.getElementById('sellersGrid');
+  const start = page * PAGE_SIZE;
+  const slice = browseFiltered.slice(start, start + PAGE_SIZE);
+  const total = browseFiltered.length;
+
+  if (!total) {
+    grid.innerHTML = `<div class="browse-empty" style="grid-column:1/-1"><div class="empty-big">🔍</div><p>لا توجد نتائج</p></div>`;
+    document.getElementById('browseLoadMore').style.display = 'none';
+    return;
+  }
+
+  const cardsHtml = slice.map(p => {
+    const pCount = (p.products || []).length;
+    return `
+      <div class="seller-card" data-uid="${esc(p.uid)}">
+        <img class="seller-avatar" src="${esc(p.ownerPhoto)}" alt="${esc(p.ownerName)}" loading="lazy">
+        <div class="seller-name">${esc(p.ownerName)}</div>
+        <div class="seller-meta"><strong>${pCount}</strong> منتج</div>
+      </div>`;
+  }).join('');
+
+  if (reset) {
+    grid.innerHTML = `<div class="sellers-grid">${cardsHtml}</div>`;
+  } else {
+    // أضف الكروت الجديدة لنفس الـ grid
+    const existing = grid.querySelector('.sellers-grid');
+    if (existing) existing.insertAdjacentHTML('beforeend', cardsHtml);
+  }
+
+  // ربط الأحداث للكروت الجديدة فقط
+  const allCards = grid.querySelectorAll('.seller-card');
+  allCards.forEach(card => {
+    if (!card._hasListener) {
+      card._hasListener = true;
+      card.addEventListener('click', () => viewStoreByUid(card.dataset.uid));
+    }
+  });
+
+  // زر "تحميل المزيد"
+  const loadMoreEl = document.getElementById('browseLoadMore');
+  const loaded = Math.min((page + 1) * PAGE_SIZE, total);
+  if (loaded < total) {
+    loadMoreEl.style.display = 'block';
+    document.getElementById('browsePageInfo').textContent =
+      `يظهر ${loaded} من أصل ${total} بائع`;
+  } else {
+    loadMoreEl.style.display = 'none';
+  }
+}
+
+function loadMoreSellers() {
+  browsePage++;
+  renderSellerPage(browsePage, false);
+}
+
+function filterSellers(q) {
+  browsePage = 0;
+  const term = q.trim().toLowerCase();
+  browseFiltered = term ? allPages.filter(p => p.ownerName.toLowerCase().includes(term)) : allPages;
+  renderSellerPage(0, true);
+}
+
+/* ═══════════════════════════════════════════════════
+   STORE VIEW
+   ✅ FIX: always fetches data by UID from Firebase — no XSS from encoded data
+═══════════════════════════════════════════════════ */
+function viewStoreByUid(uid) {
+  currentStoreUid = uid;
+  history.pushState(null, '', '#store/' + encodeURIComponent(uid));
+  loadStoreByUid(uid);
+}
+
+async function loadStoreByUid(uid) {
+  currentStoreUid = uid;
+
+  // 1) كاش في الذاكرة أولاً
+  let page = allPages.find(p => p.uid === uid);
+
+  // 2) كاش localStorage (صالح 3 دقائق)
+  if (!page && storeCache[uid] && (Date.now() - storeCache[uid].ts) < 3 * 60 * 1000) {
+    page = storeCache[uid].data;
+  }
+
+  if (!page) {
+    // أظهر spinner أثناء التحميل
+    document.getElementById('storeContent').innerHTML =
+      `<div class="browse-loading"><div class="loading-spinner"></div><p>جارٍ تحميل المتجر...</p></div>`;
+    _activatePage('store');
+    try {
+      const snap = await db.ref('pages/' + uid).get();
+      if (!snap.exists()) { toast('المتجر غير موجود', 'error'); showPage('browse'); return; }
+      page = snap.val();
+      storeCache[uid] = { data: page, ts: Date.now() };
+    } catch(e) {
+      toast('فشل تحميل المتجر', 'error'); return;
+    }
+  }
+
+  renderStore(page);
+  _activatePage('store');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function renderStore(page) {
+  const ps = Array.isArray(page.products) ? page.products : [];
+  const shareUrl = location.origin + location.pathname + '#store/' + encodeURIComponent(page.uid);
+
+  document.getElementById('storeContent').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:24px">
+      <button class="btn-back-store" id="storeBackBtn">← العودة للتصفح</button>
+      <button class="btn-back-store" id="storeShareBtn">🔗 مشاركة</button>
+    </div>
+    <div class="store-hero">
+      <img class="store-hero-img" src="${esc(page.ownerPhoto)}" alt="${esc(page.ownerName)}">
+      <div class="store-hero-name">${esc(page.ownerName)}</div>
+      ${page.phone ? `<a href="tel:${esc(page.phone)}" class="store-phone-btn">📞 ${esc(page.phone)}</a>` : ''}
+      ${page.bio   ? `<p class="store-bio">${esc(page.bio)}</p>` : ''}
+    </div>
+    <div class="store-section-title">🛒 المنتجات <span>(${ps.length})</span></div>
+    ${ps.length === 0
+      ? `<div class="store-empty">📦 لا توجد منتجات بعد</div>`
+      : `<div class="store-products-grid">${
+          ps.map(p => `
+            <div class="store-prod-card">
+              ${p.imageURL
+                ? `<img class="store-prod-img" src="${esc(p.imageURL)}" alt="${esc(p.name || 'منتج')}" loading="lazy">`
+                : `<div class="store-prod-placeholder">📦</div>`}
+              <div class="store-prod-body">
+                ${p.name        ? `<div class="store-prod-name">${esc(p.name)}</div>`        : ''}
+                ${p.description ? `<div class="store-prod-desc">${esc(p.description)}</div>` : ''}
+              </div>
+            </div>`).join('')}
+        </div>`}`;
+
+  // Attach store action listeners
+  document.getElementById('storeBackBtn').addEventListener('click', () => showPage('browse'));
+  document.getElementById('storeShareBtn').addEventListener('click', () => copyStoreLink(shareUrl));
+}
+
+function copyStoreLink(url) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url)
+      .then(() => toast('تم نسخ رابط المتجر ✓', 'success'))
+      .catch(() => fallbackCopy(url));
+  } else {
+    fallbackCopy(url);
+  }
+}
+
+function fallbackCopy(url) {
+  const ta = document.createElement('textarea');
+  ta.value = url;
+  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); toast('تم نسخ رابط المتجر ✓', 'success'); }
+  catch(e) { toast('فشل نسخ الرابط', 'error'); }
+  document.body.removeChild(ta);
+}
+
+/* ═══════════════════════════════════════════════════
+   ADMIN
+═══════════════════════════════════════════════════ */
+/* ─── نص قواعد Firebase الكامل ─── */
+const FIREBASE_RULES = `{
+  "rules": {
+    "pages": {
+      ".read": true,
+      "$uid": {
+        ".read": true,
+        ".write": "newData.exists() ? newData.child('uid').val() == $uid : data.child('uid').val() == $uid",
+        ".validate": "newData.hasChildren(['uid','ownerName','ownerPhoto','phone','products','updatedAt']) && newData.child('uid').isString() && newData.child('uid').val() == $uid && newData.child('ownerName').isString() && newData.child('ownerName').val().length >= 1 && newData.child('ownerName').val().length <= 60 && newData.child('ownerPhoto').isString() && newData.child('ownerPhoto').val().length <= 300000 && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 20 && newData.child('bio').isString() && newData.child('bio').val().length <= 500 && newData.child('updatedAt').isNumber()",
+        "products": { ".validate": "newData.val() == null || true" }
+      }
+    },
+    "_write_test_": { ".read": false, ".write": false },
+    "$other": { ".read": false, ".write": false }
+  }
+}`;
+
+function openRulesModal() {
+  document.getElementById('adminRulesText').textContent = FIREBASE_RULES;
+  document.getElementById('rulesModal').classList.add('open');
+}
+
+function closeRulesModal() {
+  document.getElementById('rulesModal').classList.remove('open');
+}
+
+function openAdminModal() {
+  document.getElementById('adminPassInput').value = '';
+  document.getElementById('adminPassError').style.display = 'none';
+  document.getElementById('adminPassInput').classList.remove('error');
+  document.getElementById('adminPassModal').classList.add('open');
+  setTimeout(() => document.getElementById('adminPassInput').focus(), 200);
+}
+
+function closeAdminModal() {
+  document.getElementById('adminPassModal').classList.remove('open');
+}
+
+function closeAdminPanel() {
+  document.getElementById('adminPanelModal').classList.remove('open');
+}
+
+async function checkAdminPass() {
+  const input  = document.getElementById('adminPassInput').value;
+  const hashed = await hashString(input);
+  if (hashed === _AH) {
+    closeAdminModal();
+    openAdminPanel();
+  } else {
+    const errEl = document.getElementById('adminPassError');
+    errEl.style.display = 'block';
+    document.getElementById('adminPassInput').classList.add('error');
+    setTimeout(() => {
+      errEl.style.display = 'none';
+      document.getElementById('adminPassInput').classList.remove('error');
+    }, 3000);
+  }
+}
+
+function openAdminPanel() {
+  document.getElementById('adminPanelModal').classList.add('open');
+  loadAdminPages();
+  testWritePermission();
+}
+
+function testWritePermission() {
+  if (!currentUser) return;
+  // اختبر الكتابة بـ uid حقيقي (uid المستخدم الحالي)
+  const testPayload = {
+    uid: currentUser.uid,
+    ownerName: currentUser.name || 'test',
+    ownerPhoto: '',
+    phone: '0500000000',
+    bio: '',
+    products: [],
+    updatedAt: Date.now()
+  };
+  const ref = db.ref('pages/' + currentUser.uid);
+  // قراءة أولاً لمعرفة إذا كان يوجد بيانات حقيقية
+  ref.get().then(snap => {
+    if (snap.exists()) {
+      // الموقع يشتغل والبيانات موجودة — كل شيء تمام
+      return;
+    }
+    // لا توجد بيانات — اختبر الكتابة بـ dummy ثم احذفه
+    ref.set(testPayload)
+      .then(() => ref.remove().catch(() => {}))
+      .catch(err => {
+        const msg = err?.code === 'PERMISSION_DENIED'
+          ? '⚠️ Firebase Rules تمنع الكتابة — انسخ القواعد المقترحة وطبّقها في Firebase Console'
+          : '⚠️ خطأ في الاتصال بـ Firebase: ' + (err?.message || '');
+        toast(msg, 'error', 8000);
+      });
+  }).catch(() => {});
+}
+
+// ✅ FIX: use data-uid attribute — no UID or name embedded in onclick strings
+function loadAdminPages() {
+  const list = document.getElementById('adminPagesList');
+  list.innerHTML = `<div class="admin-loading">
+    <div class="loading-spinner" style="width:28px;height:28px;margin:0 auto 10px"></div>
+    جارٍ التحميل...
+  </div>`;
+
+  db.ref('pages').once('value', snap => {
+    if (!snap.exists()) {
+      list.innerHTML = '<div class="admin-empty">📭 لا توجد صفحات مسجلة</div>';
+      return;
+    }
+    const pages = Object.values(snap.val());
+    list.innerHTML = pages.map(page => {
+      const pCount = (page.products || []).length;
+      return `
+        <div class="admin-page-row" id="adminRow_${esc(page.uid)}">
+          <img class="admin-page-avatar" src="${esc(page.ownerPhoto)}" alt="${esc(page.ownerName)}">
+          <div class="admin-page-info">
+            <div class="admin-page-name">${esc(page.ownerName)}</div>
+            <div class="admin-page-count">${pCount} منتج</div>
+          </div>
+          <button class="btn-admin-delete"
+            data-uid="${esc(page.uid)}"
+            data-name="${esc(page.ownerName)}">🗑 حذف</button>
+        </div>`;
+    }).join('');
+
+    // Attach delete listeners
+    list.querySelectorAll('.btn-admin-delete').forEach(btn => {
+      btn.addEventListener('click', () => adminDeletePage(btn.dataset.uid, btn.dataset.name));
+    });
+  }).catch(() => {
+    list.innerHTML = '<div class="admin-empty">حدث خطأ في التحميل</div>';
+  });
+}
+
+async function adminDeletePage(uid, name) {
+  const confirmed = await openConfirm({
+    icon: '🗑️',
+    title: `حذف صفحة ${name}؟`,
+    desc: 'سيتم حذف هذه الصفحة وجميع منتجاتها نهائياً.'
+  });
+  if (!confirmed) return;
+
+  db.ref('pages/' + uid).remove()
+    .then(() => {
+      const row = document.getElementById('adminRow_' + uid);
+      if (row) row.remove();
+      const list = document.getElementById('adminPagesList');
+      if (!list.querySelector('.admin-page-row')) {
+        list.innerHTML = '<div class="admin-empty">📭 لا توجد صفحات مسجلة</div>';
+      }
+      allPages = allPages.filter(p => p.uid !== uid);
+      browseFiltered = browseFiltered.filter(p => p.uid !== uid);
+      storeCache[uid] = null;
+      try {
+        localStorage.setItem('mkt_browse_cache', JSON.stringify(allPages));
+        localStorage.setItem('mkt_browse_ts', String(Date.now()));
+      } catch(e) {}
+      toast(`تم حذف صفحة ${name} ✓`, 'success');
+
+      // إذا كان صاحب الصفحة المحذوفة هو المستخدم الحالي → أعد ضبطه فوراً
+      if (currentUser?.uid === uid) {
+        products   = [];
+        userPage   = null;
+        // إذا كان في لوحة التحكم، أعد رسمها لتعكس الحالة الفارغة
+        const activePage = document.querySelector('.page.active')?.id;
+        if (activePage === 'page-dashboard') loadDashboard();
+      }
+    })
+    .catch(err => {
+      toast('فشل الحذف — تأكد من Firebase Rules', 'error');
+      console.error(err);
+    });
+}
+</script>
+<!-- FIREBASE RULES MODAL -->
+<div class="admin-modal-overlay" id="rulesModal">
+  <div class="admin-modal-box" style="max-width:560px">
+    <button class="admin-close" id="btnCloseRules">✕</button>
+    <div class="admin-modal-head">
+      <div class="admin-modal-icon" style="background:#0369a1">📋</div>
+      <div>
+        <div class="admin-modal-title">قواعد Firebase</div>
+        <div class="admin-modal-sub">انسخها وضعها في Firebase Console ← Rules</div>
+      </div>
+    </div>
+    <pre id="adminRulesText" style="background:#1e1e1e;color:#d4d4d4;padding:14px;border-radius:10px;font-size:11px;overflow-x:auto;direction:ltr;max-height:55vh;overflow-y:auto;white-space:pre;line-height:1.6"></pre>
+    <button id="btnCopyRules" class="btn-submit" style="margin-top:14px;background:#0369a1">📋 نسخ القواعد</button>
+  </div>
+</div>
 
-    <!-- Initialize AdSense -->
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // --- Data ---
-        const translations = {
-            en: {
-                title1: "Your Complete",
-                title2: "AI Tools Directory",
-                subtitle: "Access 90+ curated AI tools in one place. From coding assistants to design generators, translation services to video creators — find the perfect AI solution for your work in study, programming, design, and more.",
-                description: "Aiova helps you save time by organizing the best artificial intelligence tools into clear categories, making it easy to discover reliable solutions for productivity, learning, and creative projects.",
-                search: "Search for tools...",
-                visit: "Visit Website",
-                footerDesc: "Your comprehensive directory of the best AI tools across all categories. Discover, compare, and access powerful artificial intelligence solutions to boost your productivity.",
-                footerAbout: "About Us",
-                footerPrivacy: "Privacy Policy",
-                footerTerms: "Terms & Conditions",
-                footerContact: "Contact Us",
-                aboutTitle: "About Us",
-                privacyTitle: "Privacy Policy",
-                termsTitle: "Terms & Conditions",
-                contactTitle: "Contact Us",
-                contactText: "For inquiries and support, please contact us at:",
-                contactEmail: "gamesplays614@gmail.com",
-                categories: {
-                    all: "All",
-                    study: "Study",
-                    programming: "Programming",
-                    design: "Design",
-                    images: "Images",
-                    translation: "Translation",
-                    video: "Video",
-                    freelance: "Freelance",
-                    websites: "Websites",
-                    seo: "SEO"
-                },
-                about: {
-                    intro: "Welcome to aiova - your comprehensive directory for AI-powered tools!",
-                    mission: "Our Mission",
-                    missionText: "At aiova, we believe in making artificial intelligence accessible to everyone. Our platform brings together the best AI tools from across the internet into one centralized location, making it easier for professionals, students, creators, and businesses to find the perfect AI solution for their needs.",
-                    what: "What We Offer",
-                    whatText: "We carefully curate and categorize AI tools across multiple domains including study, programming, design, image generation, translation, video editing, freelancing, website building, and SEO. Each tool is evaluated and presented with clear descriptions to help you make informed decisions.",
-                    goal: "Our Goal",
-                    goalText: "Our goal is simple: to help people work more efficiently and effectively in their chosen fields by providing easy access to cutting-edge AI technology. Whether you're a developer looking for coding assistants, a designer seeking creative tools, or a student needing research help, aiova is your gateway to the AI tools that will transform the way you work.",
-                    team: "Join thousands of users who trust aiova to discover the latest and most powerful AI tools available today."
-                },
-                privacy: {
-                    intro: "Last updated: December 29, 2024",
-                    section1: "Information We Collect",
-                    section1Text: "aiova is a directory website that primarily provides links to external AI tools. We do not collect personal information unless you voluntarily contact us. We may collect anonymous usage data through cookies to improve user experience.",
-                    section2: "How We Use Information",
-                    section2Text: "Any information collected is used solely to improve our service, respond to inquiries, and provide you with relevant AI tool recommendations. We do not sell or share your personal information with third parties.",
-                    section3: "Cookies",
-                    section3Text: "We use cookies to enhance your browsing experience, remember your preferences (such as language and theme settings), and analyze site traffic. You can control cookies through your browser settings.",
-                    section4: "External Links",
-                    section4Text: "Our website contains links to external AI tools and services. We are not responsible for the privacy practices of these third-party websites. We encourage you to read their privacy policies before providing any personal information.",
-                    section5: "Data Security",
-                    section5Text: "We implement appropriate security measures to protect any information collected through our website. However, no method of transmission over the internet is 100% secure.",
-                    section6: "Your Rights",
-                    section6Text: "You have the right to access, correct, or delete any personal information we may have collected. Contact us at gamesplays614@gmail.com for any privacy-related requests.",
-                    section7: "Changes to Policy",
-                    section7Text: "We may update this privacy policy from time to time. Any changes will be posted on this page with an updated revision date."
-                },
-                terms: {
-                    intro: "Last updated: December 29, 2024",
-                    section1: "Acceptance of Terms",
-                    section1Text: "By accessing and using aiova, you accept and agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, please do not use our website.",
-                    section2: "Use of Service",
-                    section2Text: "aiova provides a directory of AI tools for informational purposes. We grant you a limited, non-exclusive, non-transferable license to access and use our website for personal or commercial purposes.",
-                    section3: "Third-Party Tools",
-                    section3Text: "Our website provides links to third-party AI tools and services. We are not responsible for the content, functionality, accuracy, or results generated by these external tools. Use of third-party tools is at your own risk and subject to their respective terms of service.",
-                    section4: "Disclaimer of Warranties",
-                    section4Text: "aiova is provided 'as is' without any warranties, express or implied. We do not guarantee the accuracy, completeness, or reliability of any information or tool listings on our website. We are not liable for any results, outcomes, or consequences resulting from the use of AI tools accessed through our directory.",
-                    section5: "Limitation of Liability",
-                    section5Text: "To the fullest extent permitted by law, aiova and its operators shall not be liable for any direct, indirect, incidental, special, or consequential damages arising from your use of our website or any AI tools accessed through our platform. This includes but is not limited to damages from errors, viruses, data loss, or business interruption.",
-                    section6: "AI Tool Results",
-                    section6Text: "AI tools may generate unpredictable results. You are solely responsible for evaluating the output of any AI tool and determining its suitability for your purposes. We make no guarantees about the accuracy, quality, or appropriateness of AI-generated content.",
-                    section7: "User Conduct",
-                    section7Text: "You agree not to use our website for any unlawful purpose or in any way that could damage, disable, or impair our service. You must not attempt to gain unauthorized access to our systems.",
-                    section8: "Intellectual Property",
-                    section8Text: "All content on aiova, including but not limited to text, graphics, logos, and design, is the property of aiova and protected by copyright laws. Third-party tool names and logos belong to their respective owners.",
-                    section9: "Changes to Terms",
-                    section9Text: "We reserve the right to modify these Terms and Conditions at any time. Changes will be effective immediately upon posting. Your continued use of the website constitutes acceptance of the modified terms.",
-                    section10: "Contact Information",
-                    section10Text: "For any questions about these Terms and Conditions, please contact us at gamesplays614@gmail.com"
-                }
-            },
-            ar: {
-                title1: "دليلك الشامل لأدوات",
-                title2: "الذكاء الاصطناعي",
-                subtitle: "يمكنك الوصول إلى أكثر من 90 أداة ذكاء اصطناعي مُختارة بعناية في مكان واحد. من مساعدي البرمجة إلى مُولِّدات التصميم، وخدمات الترجمة إلى مُنشئي الفيديو — اعثر على حل الذكاء الاصطناعي الأمثل لعملك في الدراسة، والبرمجة، والتصميم، وغير ذلك.",
-                description: "يُساعدك Aiova على توفير الوقت من خلال تنظيم أفضل أدوات الذكاء الاصطناعي في فئات واضحة، مما يُسهِّل عليك اكتشاف حلول موثوقة لزيادة الإنتاجية، والتعلم، والمشاريع الإبداعية.",
-                search: "ابحث عن الأدوات...",
-                visit: "زيارة الموقع",
-                footerDesc: "دليلك الشامل لأفضل أدوات الذكاء الاصطناعي في جميع الفئات. اكتشف وقارن واستخدم حلول الذكاء الاصطناعي القوية لتعزيز إنتاجيتك.",
-                footerAbout: "من نحن",
-                footerPrivacy: "سياسة الخصوصية",
-                footerTerms: "الشروط والأحكام",
-                footerContact: "اتصل بنا",
-                aboutTitle: "من نحن",
-                privacyTitle: "سياسة الخصوصية",
-                termsTitle: "الشروط والأحكام",
-                contactTitle: "اتصل بنا",
-                contactText: "للاستفسارات والدعم، يرجى التواصل معنا على:",
-                contactEmail: "gamesplays614@gmail.com",
-                categories: {
-                    all: "الكل",
-                    study: "الدراسة",
-                    programming: "البرمجة",
-                    design: "التصميم",
-                    images: "الصور",
-                    translation: "الترجمة",
-                    video: "الفيديو",
-                    freelance: "العمل الحر",
-                    websites: "المواقع",
-                    seo: "السيو"
-                },
-                about: {
-                    intro: "مرحباً بك في aiova - دليلك الشامل لأدوات الذكاء الاصطناعي!",
-                    mission: "مهمتنا",
-                    missionText: "في aiova، نؤمن بجعل الذكاء الاصطناعي متاحاً للجميع. منصتنا تجمع أفضل أدوات الذكاء الاصطناعي من جميع أنحاء الإنترنت في موقع واحد مركزي، مما يسهل على المحترفين والطلاب والمبدعين والشركات العثور على الحل المثالي للذكاء الاصطناعي لاحتياجاتهم.",
-                    what: "ما نقدمه",
-                    whatText: "نقوم بتنظيم وتصنيف أدوات الذكاء الاصطناعي بعناية عبر مجالات متعددة بما في ذلك الدراسة والبرمجة والتصميم وتوليد الصور والترجمة وتحرير الفيديو والعمل الحر وبناء المواقع والسيو. يتم تقييم كل أداة وعرضها بأوصاف واضحة لمساعدتك على اتخاذ قرارات مستنيرة.",
-                    goal: "هدفنا",
-                    goalText: "هدفنا بسيط: مساعدة الناس على العمل بكفاءة وفعالية أكبر في مجالاتهم المختارة من خلال توفير وصول سهل إلى تقنية الذكاء الاصطناعي المتطورة. سواء كنت مطوراً تبحث عن مساعدين في البرمجة، أو مصمماً يبحث عن أدوات إبداعية، أو طالباً يحتاج إلى مساعدة في البحث، فإن aiova هو بوابتك إلى أدوات الذكاء الاصطناعي التي ستغير طريقة عملك.",
-                    team: "انضم إلى آلاف المستخدمين الذين يثقون في aiova لاكتشاف أحدث وأقوى أدوات الذكاء الاصطناعي المتاحة اليوم."
-                },
-                privacy: {
-                    intro: "آخر تحديث: ٢٩ ديسمبر ٢٠٢٤",
-                    section1: "المعلومات التي نجمعها",
-                    section1Text: "aiova هو موقع دليل يوفر بشكل أساسي روابط لأدوات الذكاء الاصطناعي الخارجية. نحن لا نجمع معلومات شخصية إلا إذا اتصلت بنا طوعاً. قد نجمع بيانات استخدام مجهولة من خلال ملفات تعريف الارتباط لتحسين تجربة المستخدم.",
-                    section2: "كيف نستخدم المعلومات",
-                    section2Text: "يتم استخدام أي معلومات يتم جمعها فقط لتحسين خدمتنا والرد على الاستفسارات وتزويدك بتوصيات أدوات الذكاء الاصطناعي ذات الصلة. نحن لا نبيع أو نشارك معلوماتك الشخصية مع أطراف ثالثة.",
-                    section3: "ملفات تعريف الارتباط",
-                    section3Text: "نستخدم ملفات تعريف الارتباط لتحسين تجربة التصفح الخاصة بك، وتذكر تفضيلاتك (مثل إعدادات اللغة والسمة)، وتحليل حركة المرور على الموقع. يمكنك التحكم في ملفات تعريف الارتباط من خلال إعدادات المتصفح الخاص بك.",
-                    section4: "الروابط الخارجية",
-                    section4Text: "يحتوي موقعنا على روابط لأدوات وخدمات الذكاء الاصطناعي الخارجية. نحن لسنا مسؤولين عن ممارسات الخصوصية لهذه المواقع الخارجية. نشجعك على قراءة سياسات الخصوصية الخاصة بهم قبل تقديم أي معلومات شخصية.",
-                    section5: "أمن البيانات",
-                    section5Text: "نقوم بتطبيق تدابير أمنية مناسبة لحماية أي معلومات يتم جمعها من خلال موقعنا. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100٪.",
-                    section6: "حقوقك",
-                    section6Text: "لديك الحق في الوصول إلى أي معلومات شخصية قد نكون قد جمعناها أو تصحيحها أو حذفها. اتصل بنا على gamesplays614@gmail.com لأي طلبات تتعلق بالخصوصية.",
-                    section7: "التغييرات على السياسة",
-                    section7Text: "قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. سيتم نشر أي تغييرات على هذه الصفحة مع تاريخ مراجعة محدث."
-                },
-                terms: {
-                    intro: "آخر تحديث: ٢٩ ديسمبر ٢٠٢٤",
-                    section1: "قبول الشروط",
-                    section1Text: "من خلال الوصول إلى واستخدام aiova، فإنك تقبل وتوافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، يرجى عدم استخدام موقعنا.",
-                    section2: "استخدام الخدمة",
-                    section2Text: "يوفر aiova دليلاً لأدوات الذكاء الاصطناعي لأغراض إعلامية. نمنحك ترخيصاً محدوداً وغير حصري وغير قابل للتحويل للوصول إلى موقعنا واستخدامه للأغراض الشخصية أو التجارية.",
-                    section3: "أدوات الطرف الثالث",
-                    section3Text: "يوفر موقعنا روابط لأدوات وخدمات الذكاء الاصطناعي من طرف ثالث. نحن لسنا مسؤولين عن المحتوى أو الوظائف أو الدقة أو النتائج التي تم إنشاؤها بواسطة هذه الأدوات الخارجية. استخدام أدوات الطرف الثالث على مسؤوليتك الخاصة ويخضع لشروط الخدمة الخاصة بها.",
-                    section4: "إخلاء المسؤولية عن الضمانات",
-                    section4Text: "يتم توفير aiova 'كما هو' دون أي ضمانات صريحة أو ضمنية. نحن لا نضمن دقة أو اكتمال أو موثوقية أي معلومات أو قوائم أدوات على موقعنا. نحن لسنا مسؤولين عن أي نتائج أو عواقب ناتجة عن استخدام أدوات الذكاء الاصطناعي التي يتم الوصول إليها من خلال دليلنا.",
-                    section5: "تحديد المسؤولية",
-                    section5Text: "إلى أقصى حد يسمح به القانون، لن يكون aiova ومشغلوه مسؤولين عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو خاصة أو تبعية ناشئة عن استخدامك لموقعنا أو أي أدوات ذكاء اصطناعي يتم الوصول إليها من خلال منصتنا. يشمل ذلك على سبيل المثال لا الحصر الأضرار الناجمة عن الأخطاء أو الفيروسات أو فقدان البيانات أو انقطاع الأعمال.",
-                    section6: "نتائج أدوات الذكاء الاصطناعي",
-                    section6Text: "قد تولد أدوات الذكاء الاصطناعي نتائج غير متوقعة. أنت وحدك المسؤول عن تقييم مخرجات أي أداة ذكاء اصطناعي وتحديد مدى ملاءمتها لأغراضك. نحن لا نقدم أي ضمانات حول دقة أو جودة أو ملاءمة المحتوى الذي تم إنشاؤه بواسطة الذكاء الاصطناعي.",
-                    section7: "سلوك المستخدم",
-                    section7Text: "أنت توافق على عدم استخدام موقعنا لأي غرض غير قانوني أو بأي طريقة يمكن أن تضر أو تعطل أو تضعف خدمتنا. يجب ألا تحاول الحصول على وصول غير مصرح به إلى أنظمتنا.",
-                    section8: "الملكية الفكرية",
-                    section8Text: "جميع المحتويات على aiova، بما في ذلك على سبيل المثال لا الحصر النصوص والرسومات والشعارات والتصميم، هي ملك لـ aiova ومحمية بموجب قوانين حقوق النشر. أسماء وشعارات أدوات الطرف الثالث تنتمي إلى أصحابها.",
-                    section9: "التغييرات على الشروط",
-                    section9Text: "نحتفظ بالحق في تعديل هذه الشروط والأحكام في أي وقت. ستكون التغييرات سارية فور نشرها. استمرارك في استخدام الموقع يشكل قبولاً للشروط المعدلة.",
-                    section10: "معلومات الاتصال",
-                    section10Text: "لأي أسئلة حول هذه الشروط والأحكام، يرجى الاتصال بنا على gamesplays614@gmail.com"
-                }
-            }
-        };
-
-        const toolDescriptions = {
-            // Study
-            'ScholarAI': {
-                en: 'AI-powered research assistant that helps find and analyze academic papers with natural language queries.',
-                ar: 'مساعد بحث مدعوم بالذكاء الاصطناعي يساعد في العثور على الأوراق الأكاديمية وتحليلها باستخدام الاستعلامات اللغوية الطبيعية.'
-            },
-            'Consensus': {
-                en: 'Search engine for scientific research papers using AI to extract key insights and findings from peer-reviewed studies.',
-                ar: 'محرك بحث للأوراق البحثية العلمية يستخدم الذكاء الاصطناعي لاستخراج الرؤى والنتائج الرئيسية من الدراسات المراجعة.'
-            },
-            'Elicit': {
-                en: 'AI research assistant that automates literature reviews and answers research questions using academic papers.',
-                ar: 'مساعد بحث بالذكاء الاصطناعي يقوم بأتمتة مراجعات الأدبيات ويجيب على الأسئلة البحثية باستخدام الأوراق الأكاديمية.'
-            },
-            'Perplexity': {
-                en: 'AI-powered answer engine that provides accurate, cited responses to questions with real-time web search.',
-                ar: 'محرك إجابات مدعوم بالذكاء الاصطناعي يوفر إجابات دقيقة ومُوثقة للأسئلة مع بحث الويب في الوقت الفعلي.'
-            },
-            'Socratic': {
-                en: 'Google\'s learning app that uses AI to help students understand homework by taking photos of questions.',
-                ar: 'تطبيق تعليمي من جوجل يستخدم الذكاء الاصطناعي لمساعدة الطلاب على فهم الواجبات المنزلية من خلال التقاط صور للأسئلة.'
-            },
-            'Quizlet AI': {
-                en: 'Smart study tools with AI-powered flashcards, practice tests, and personalized learning recommendations.',
-                ar: 'أدوات دراسة ذكية مع بطاقات تعليمية مدعومة بالذكاء الاصطناعي واختبارات تدريبية وتوصيات تعليمية شخصية.'
-            },
-            'Gradescope': {
-                en: 'AI-assisted grading platform that helps educators efficiently grade and provide feedback on assignments.',
-                ar: 'منصة تقييم بمساعدة الذكاء الاصطناعي تساعد المعلمين على تقييم الواجبات وتقديم الملاحظات بكفاءة.'
-            },
-            'Otter.ai': {
-                en: 'AI meeting assistant that records audio, writes notes, captures action items, and generates summaries automatically.',
-                ar: 'مساعد اجتماعات بالذكاء الاصطناعي يسجل الصوت ويكتب الملاحظات ويلتقط عناصر العمل ويُنشئ الملخصات تلقائيًا.'
-            },
-            'Humata': {
-                en: 'AI that instantly answers questions about your files, summarizes documents, and extracts key information.',
-                ar: 'ذكاء اصطناعي يجيب فورًا على أسئلة حول ملفاتك ويلخص المستندات ويستخرج المعلومات الرئيسية.'
-            },
-            'ChatPDF': {
-                en: 'AI chatbot for PDF documents that allows you to ask questions and get instant answers from any PDF.',
-                ar: 'روبوت محادثة بالذكاء الاصطناعي لمستندات PDF يتيح لك طرح الأسئلة والحصول على إجابات فورية من أي ملف PDF.'
-            },
-
-            // Programming
-            'GitHub Copilot': {
-                en: 'AI pair programmer that suggests code and entire functions in real-time as you type in your editor.',
-                ar: 'مبرمج مساعد بالذكاء الاصطناعي يقترح الأكواد والوظائف الكاملة في الوقت الفعلي أثناء الكتابة في المحرر.'
-            },
-            'Tabnine': {
-                en: 'AI code completion tool that predicts and suggests your next lines of code based on context and patterns.',
-                ar: 'أداة إكمال الأكواد بالذكاء الاصطناعي تتنبأ وتقترح الأسطر التالية من الكود بناءً على السياق والأنماط.'
-            },
-            'Replit Ghostwriter': {
-                en: 'AI coding assistant built into Replit that helps write, debug, and explain code directly in the browser.',
-                ar: 'مساعد برمجة بالذكاء الاصطناعي مدمج في Replit يساعد في كتابة وتصحيح وشرح الكود مباشرة في المتصفح.'
-            },
-            'Cursor': {
-                en: 'AI-first code editor that understands your codebase and helps you write, edit, and debug code faster.',
-                ar: 'محرر أكواد يعتمد على الذكاء الاصطناعي يفهم قاعدة الأكواد الخاصة بك ويساعدك في الكتابة والتحرير وتصحيح الأخطاء بشكل أسرع.'
-            },
-            'Amazon CodeWhisperer': {
-                en: 'AI coding companion from AWS that generates code suggestions based on comments and existing code.',
-                ar: 'رفيق برمجة بالذكاء الاصطناعي من AWS يُنشئ اقتراحات الأكواد بناءً على التعليقات والكود الموجود.'
-            },
-            'Codeium': {
-                en: 'Free AI-powered code acceleration toolkit offering autocomplete and natural language search for code.',
-                ar: 'مجموعة أدوات تسريع الأكواد المجانية المدعومة بالذكاء الاصطناعي توفر الإكمال التلقائي والبحث باللغة الطبيعية للأكواد.'
-            },
-            'Blackbox': {
-                en: 'AI coding assistant that turns questions into code and helps developers code 10x faster with autocomplete.',
-                ar: 'مساعد برمجة بالذكاء الاصطناعي يحول الأسئلة إلى أكواد ويساعد المطورين على البرمجة بسرعة أكبر 10 مرات مع الإكمال التلقائي.'
-            },
-            'AskCodi': {
-                en: 'AI development assistant providing code generation, documentation, test creation, and code explanations.',
-                ar: 'مساعد تطوير بالذكاء الاصطناعي يوفر إنشاء الأكواد والتوثيق وإنشاء الاختبارات وشرح الأكواد.'
-            },
-            'Sourcegraph': {
-                en: 'AI coding assistant (Cody) that helps you understand, write, and fix code across your entire codebase.',
-                ar: 'مساعد برمجة بالذكاء الاصطناعي (Cody) يساعدك على فهم وكتابة وإصلاح الأكواد عبر قاعدة الأكواد الكاملة الخاصة بك.'
-            },
-            'DeepCode': {
-                en: 'AI-powered code review tool by Snyk that finds bugs, security vulnerabilities, and code quality issues.',
-                ar: 'أداة مراجعة الأكواد المدعومة بالذكاء الاصطناعي من Snyk تعثر على الأخطاء والثغرات الأمنية ومشاكل جودة الكود.'
-            },
-
-            // Design
-            'Canva Magic': {
-                en: 'AI-powered design features in Canva including Magic Write, Magic Edit, and instant design generation.',
-                ar: 'ميزات التصميم المدعومة بالذكاء الاصطناعي في Canva بما في ذلك الكتابة السحرية والتحرير السحري وإنشاء التصميم الفوري.'
-            },
-            'Adobe Firefly': {
-                en: 'Adobe\'s generative AI for creating images, text effects, and design elements from text descriptions.',
-                ar: 'الذكاء الاصطناعي التوليدي من Adobe لإنشاء الصور وتأثيرات النصوص وعناصر التصميم من الأوصاف النصية.'
-            },
-            'Midjourney': {
-                en: 'Leading AI art generator that creates stunning, highly detailed images from text prompts via Discord.',
-                ar: 'مولد فنون بالذكاء الاصطناعي رائد يُنشئ صورًا مذهلة ومفصلة للغاية من مطالبات نصية عبر Discord.'
-            },
-            'Khroma': {
-                en: 'AI color tool that learns your preferences and generates unlimited color palettes and combinations.',
-                ar: 'أداة ألوان بالذكاء الاصطناعي تتعلم تفضيلاتك وتُنشئ لوحات ألوان وتركيبات غير محدودة.'
-            },
-            'Uizard': {
-                en: 'AI design tool that transforms hand-drawn sketches and screenshots into editable digital designs.',
-                ar: 'أداة تصميم بالذكاء الاصطناعي تحول الرسومات اليدوية ولقطات الشاشة إلى تصميمات رقمية قابلة للتحرير.'
-            },
-            'Looka': {
-                en: 'AI logo maker and brand identity platform that creates professional logos and branding materials.',
-                ar: 'صانع شعارات بالذكاء الاصطناعي ومنصة هوية العلامة التجارية تُنشئ شعارات احترافية ومواد العلامة التجارية.'
-            },
-            'Autodraw': {
-                en: 'Google\'s AI drawing tool that recognizes your rough sketches and suggests professional drawings.',
-                ar: 'أداة رسم بالذكاء الاصطناعي من جوجل تتعرف على رسوماتك الأولية وتقترح رسومات احترافية.'
-            },
-            'Fontjoy': {
-                en: 'AI font pairing tool that uses deep learning to generate beautiful font combinations for designs.',
-                ar: 'أداة مطابقة الخطوط بالذكاء الاصطناعي تستخدم التعلم العميق لإنشاء تركيبات خطوط جميلة للتصميمات.'
-            },
-            'Colormind': {
-                en: 'AI color scheme generator that creates cohesive color palettes for websites, graphics, and designs.',
-                ar: 'مولد مخططات الألوان بالذكاء الاصطناعي ينشئ لوحات ألوان متماسكة للمواقع والرسومات والتصميمات.'
-            },
-            'Let\'s Enhance': {
-                en: 'AI image upscaler that increases image resolution and quality without losing detail or clarity.',
-                ar: 'محسّن الصور بالذكاء الاصطناعي يزيد من دقة وجودة الصورة دون فقدان التفاصيل أو الوضوح.'
-            },
-
-            // Images
-            'DALL-E 3': {
-                en: 'OpenAI\'s latest image generation model that creates highly accurate images from detailed text descriptions.',
-                ar: 'أحدث نموذج لتوليد الصور من OpenAI ينشئ صورًا عالية الدقة من الأوصاف النصية التفصيلية.'
-            },
-            'Midjourney v6': {
-                en: 'Latest version of Midjourney with improved photorealism, better text rendering, and enhanced detail.',
-                ar: 'أحدث إصدار من Midjourney مع واقعية محسّنة وعرض أفضل للنصوص وتفاصيل معززة.'
-            },
-            'Stable Diffusion': {
-                en: 'Open-source AI image generator that creates detailed images from text with full customization control.',
-                ar: 'مولد صور بالذكاء الاصطناعي مفتوح المصدر ينشئ صورًا مفصلة من النص مع تحكم كامل في التخصيص.'
-            },
-            'Leonardo.ai': {
-                en: 'AI art generator focused on game assets, with tools for creating characters, items, and environments.',
-                ar: 'مولد فنون بالذكاء الاصطناعي يركز على أصول الألعاب، مع أدوات لإنشاء الشخصيات والعناصر والبيئات.'
-            },
-            'Clipdrop': {
-                en: 'AI-powered visual toolkit for removing backgrounds, enhancing images, and creating professional visuals.',
-                ar: 'مجموعة أدوات مرئية مدعومة بالذكاء الاصطناعي لإزالة الخلفيات وتحسين الصور وإنشاء مرئيات احترافية.'
-            },
-            'Runway Gen-2': {
-                en: 'AI model that generates videos from text, images, or video clips with cinematic quality.',
-                ar: 'نموذج ذكاء اصطناعي يُنشئ مقاطع فيديو من النصوص أو الصور أو مقاطع الفيديو بجودة سينمائية.'
-            },
-            'Playground AI': {
-                en: 'Free AI image creator with advanced editing tools, multiple models, and commercial use rights.',
-                ar: 'منشئ صور بالذكاء الاصطناعي مجاني مع أدوات تحرير متقدمة ونماذج متعددة وحقوق الاستخدام التجاري.'
-            },
-            'Bing Image Creator': {
-                en: 'Microsoft\'s AI image generator powered by DALL-E, integrated with Bing for free image creation.',
-                ar: 'مولد الصور بالذكاء الاصطناعي من مايكروسوفت مدعوم بـ DALL-E، مدمج مع Bing لإنشاء الصور مجانًا.'
-            },
-            'Imagine': {
-                en: 'AI art generator that creates unique images from text with various artistic styles and effects.',
-                ar: 'مولد فنون بالذكاء الاصطناعي ينشئ صورًا فريدة من النص مع أنماط وتأثيرات فنية متنوعة.'
-            },
-
-            // Translation
-            'DeepL': {
-                en: 'AI-powered translator known for highly accurate, natural-sounding translations in 31 languages.',
-                ar: 'مترجم مدعوم بالذكاء الاصطناعي معروف بالترجمات الدقيقة والطبيعية للغاية في 31 لغة.'
-            },
-            'Google Translate': {
-                en: 'Free multilingual translation service supporting 133 languages with text, speech, and image translation.',
-                ar: 'خدمة ترجمة متعددة اللغات مجانية تدعم 133 لغة مع ترجمة النصوص والكلام والصور.'
-            },
-            'Quillbot': {
-                en: 'AI writing and paraphrasing tool that rewrites text while maintaining meaning and improving clarity.',
-                ar: 'أداة كتابة وإعادة صياغة بالذكاء الاصطناعي تعيد كتابة النص مع الحفاظ على المعنى وتحسين الوضوح.'
-            },
-            'Reverso': {
-                en: 'Translation platform with context examples, grammar checker, and conjugation tools for language learning.',
-                ar: 'منصة ترجمة مع أمثلة سياقية ومدقق نحوي وأدوات تصريف للتعلم اللغوي.'
-            },
-            'MateCat': {
-                en: 'Free professional translation tool with AI assistance, translation memory, and quality estimation.',
-                ar: 'أداة ترجمة احترافية مجانية بمساعدة الذكاء الاصطناعي وذاكرة الترجمة وتقدير الجودة.'
-            },
-            'Smartcat': {
-                en: 'AI-powered translation platform for businesses with collaborative tools and automated workflows.',
-                ar: 'منصة ترجمة مدعومة بالذكاء الاصطناعي للشركات مع أدوات تعاونية وسير عمل آلي.'
-            },
-            'Wordtune': {
-                en: 'AI writing companion that suggests better ways to phrase sentences for clearer communication.',
-                ar: 'رفيق كتابة بالذكاء الاصطناعي يقترح طرقًا أفضل لصياغة الجمل لتواصل أوضح.'
-            },
-            'Systran': {
-                en: 'Enterprise AI translation solution offering real-time translation and industry-specific terminology.',
-                ar: 'حل ترجمة بالذكاء الاصطناعي للمؤسسات يقدم ترجمة في الوقت الفعلي ومصطلحات خاصة بالصناعة.'
-            },
-            'Bing Translator': {
-                en: 'Microsoft\'s translation service with text, voice, and image translation in over 100 languages.',
-                ar: 'خدمة الترجمة من مايكروسوفت مع ترجمة النصوص والصوت والصور في أكثر من 100 لغة.'
-            },
-            'Yandex Translate': {
-                en: 'Free translation service supporting 100+ languages with offline mode and text recognition from images.',
-                ar: 'خدمة ترجمة مجانية تدعم أكثر من 100 لغة مع وضع عدم الاتصال والتعرف على النصوص من الصور.'
-            },
-
-            // Video
-            'Runway': {
-                en: 'AI video editing platform with generative tools for creating, editing, and enhancing video content.',
-                ar: 'منصة تحرير فيديو بالذكاء الاصطناعي مع أدوات توليدية لإنشاء محتوى الفيديو وتحريره وتحسينه.'
-            },
-            'Synthesia': {
-                en: 'AI video generation platform that creates videos with AI avatars speaking in 120+ languages.',
-                ar: 'منصة إنشاء فيديو بالذكاء الاصطناعي تنشئ مقاطع فيديو مع صور رمزية بالذكاء الاصطناعي تتحدث بأكثر من 120 لغة.'
-            },
-            'HeyGen': {
-                en: 'AI video platform for creating spokesperson videos with customizable avatars and voice cloning.',
-                ar: 'منصة فيديو بالذكاء الاصطناعي لإنشاء فيديوهات المتحدث مع صور رمزية قابلة للتخصيص واستنساخ الصوت.'
-            },
-            'Descript': {
-                en: 'All-in-one video and audio editor that uses AI for transcription, overdub, and studio-quality sound.',
-                ar: 'محرر فيديو وصوت شامل يستخدم الذكاء الاصطناعي للنسخ والدبلجة والصوت بجودة الاستوديو.'
-            },
-            'InVideo': {
-                en: 'AI video creation platform with templates, text-to-video, and automated editing for marketing content.',
-                ar: 'منصة إنشاء فيديو بالذكاء الاصطناعي مع قوالب ونص إلى فيديو وتحرير آلي لمحتوى التسويق.'
-            },
-            'Pictory': {
-                en: 'AI video maker that converts long-form content into short, shareable videos automatically.',
-                ar: 'صانع فيديو بالذكاء الاصطناعي يحول المحتوى الطويل إلى مقاطع فيديو قصيرة قابلة للمشاركة تلقائيًا.'
-            },
-            'Fliki': {
-                en: 'Text-to-video platform using AI voices and media library to create videos in minutes.',
-                ar: 'منصة نص إلى فيديو تستخدم أصوات الذكاء الاصطناعي ومكتبة الوسائط لإنشاء مقاطع فيديو في دقائق.'
-            },
-            'D-ID': {
-                en: 'AI platform that creates talking avatars from photos using generative AI and natural text-to-speech.',
-                ar: 'منصة ذكاء اصطناعي تنشئ صورًا رمزية ناطقة من الصور باستخدام الذكاء الاصطناعي التوليدي والنص إلى كلام الطبيعي.'
-            },
-            'Kaiber': {
-                en: 'AI video generation tool that transforms images, music, and text into stunning animated videos.',
-                ar: 'أداة إنشاء فيديو بالذكاء الاصطناعي تحول الصور والموسيقى والنص إلى مقاطع فيديو متحركة مذهلة.'
-            },
-            'Wonder Dynamics': {
-                en: 'AI tool that automatically animates, lights, and composes CG characters into live-action scenes.',
-                ar: 'أداة ذكاء اصطناعي تحرك وتضيء وتركب شخصيات CG تلقائيًا في مشاهد الحركة الحية.'
-            },
-
-            // Freelance
-            'Upwork AI': {
-                en: 'Leading freelance marketplace now with AI tools to match freelancers with perfect job opportunities.',
-                ar: 'سوق العمل الحر الرائد الآن مع أدوات الذكاء الاصطناعي لمطابقة المستقلين مع فرص العمل المثالية.'
-            },
-            'Fiverr Neo': {
-                en: 'AI-powered features on Fiverr helping sellers optimize gigs and buyers find the right services.',
-                ar: 'ميزات مدعومة بالذكاء الاصطناعي على Fiverr تساعد البائعين على تحسين الخدمات والمشترين على إيجاد الخدمات المناسبة.'
-            },
-            'Contra': {
-                en: 'Commission-free freelance platform with portfolio tools and direct client-freelancer connections.',
-                ar: 'منصة عمل حر بدون عمولة مع أدوات المحفظة والاتصالات المباشرة بين العميل والمستقل.'
-            },
-            'Braintrust': {
-                en: 'Decentralized talent network connecting skilled freelancers with enterprises using blockchain and AI.',
-                ar: 'شبكة مواهب لامركزية تربط المستقلين المهرة بالمؤسسات باستخدام تقنية البلوكشين والذكاء الاصطناعي.'
-            },
-            'Toptal': {
-                en: 'Exclusive network of top 3% freelance developers, designers, and finance experts with rigorous screening.',
-                ar: 'شبكة حصرية من أفضل 3٪ من المطورين والمصممين وخبراء المالية المستقلين مع فحص صارم.'
-            },
-            'Freelancer': {
-                en: 'Global freelancing platform with contests, fixed-price projects, and hourly work opportunities.',
-                ar: 'منصة عمل حر عالمية مع مسابقات ومشاريع بسعر ثابت وفرص عمل بالساعة.'
-            },
-            'Guru': {
-                en: 'Freelance marketplace with WorkRooms for collaboration and flexible payment terms.',
-                ar: 'سوق عمل حر مع غرف العمل للتعاون وشروط دفع مرنة.'
-            },
-            'PeoplePerHour': {
-                en: 'UK-based freelance platform connecting businesses with freelancers for project-based work.',
-                ar: 'منصة عمل حر مقرها المملكة المتحدة تربط الشركات بالمستقلين للعمل القائم على المشاريع.'
-            },
-            '99designs': {
-                en: 'Design contest platform where businesses get multiple design options from global designers.',
-                ar: 'منصة مسابقات التصميم حيث تحصل الشركات على خيارات تصميم متعددة من مصممين عالميين.'
-            },
-            'Dribbble': {
-                en: 'Design community and job board where creatives showcase work and connect with opportunities.',
-                ar: 'مجتمع التصميم ولوحة الوظائف حيث يعرض المبدعون أعمالهم ويتواصلون مع الفرص.'
-            },
-
-            // Websites
-            'Wix ADI': {
-                en: 'AI website builder that creates custom websites in minutes based on your answers to simple questions.',
-                ar: 'منشئ مواقع بالذكاء الاصطناعي ينشئ مواقع ويب مخصصة في دقائق بناءً على إجاباتك على أسئلة بسيطة.'
-            },
-            'Framer AI': {
-                en: 'Design tool with AI features that generates layouts, writes copy, and creates responsive websites.',
-                ar: 'أداة تصميم مع ميزات الذكاء الاصطناعي تُنشئ التخطيطات وتكتب النسخ وتُنشئ مواقع ويب متجاوبة.'
-            },
-            '10Web': {
-                en: 'AI-powered WordPress platform that builds, hosts, and optimizes websites automatically.',
-                ar: 'منصة WordPress مدعومة بالذكاء الاصطناعي تبني وتستضيف وتحسن المواقع تلقائيًا.'
-            },
-            'Durable': {
-                en: 'AI website builder that creates complete business websites with content and images in 30 seconds.',
-                ar: 'منشئ مواقع بالذكاء الاصطناعي ينشئ مواقع ويب تجارية كاملة مع المحتوى والصور في 30 ثانية.'
-            },
-            'Hocoos': {
-                en: 'AI website builder answering 8 questions to generate professional websites with logo and content.',
-                ar: 'منشئ مواقع بالذكاء الاصطناعي يجيب على 8 أسئلة لإنشاء مواقع ويب احترافية مع الشعار والمحتوى.'
-            },
-            'Mixo': {
-                en: 'AI-powered website launcher that creates landing pages for startups in seconds from brief descriptions.',
-                ar: 'مُطلق مواقع مدعوم بالذكاء الاصطناعي ينشئ صفحات هبوط للشركات الناشئة في ثوانٍ من أوصاف موجزة.'
-            },
-            'Relume': {
-                en: 'AI sitemap and wireframe generator that speeds up website design process for Figma and Webflow.',
-                ar: 'مولد خرائط المواقع والإطارات السلكية بالذكاء الاصطناعي يسرع عملية تصميم المواقع لـ Figma و Webflow.'
-            },
-            'Webflow AI': {
-                en: 'Professional website builder now with AI features for generating layouts, content, and designs.',
-                ar: 'منشئ مواقع احترافي الآن مع ميزات الذكاء الاصطناعي لإنشاء التخطيطات والمحتوى والتصميمات.'
-            },
-            'Hostinger AI': {
-                en: 'Web hosting with AI website builder creating custom sites from descriptions in minutes.',
-                ar: 'استضافة ويب مع منشئ مواقع بالذكاء الاصطناعي ينشئ مواقع مخصصة من الأوصاف في دقائق.'
-            },
-            'Divi AI': {
-                en: 'AI-powered features in Divi theme generating text, images, and code directly in the page builder.',
-                ar: 'ميزات مدعومة بالذكاء الاصطناعي في سمة Divi تُنشئ النصوص والصور والأكواد مباشرة في منشئ الصفحات.'
-            },
-
-            // SEO
-            'Surfer SEO': {
-                en: 'AI-powered SEO tool that analyzes top-ranking pages and optimizes content for better search rankings.',
-                ar: 'أداة SEO مدعومة بالذكاء الاصطناعي تحلل الصفحات الأعلى تصنيفًا وتحسن المحتوى لتصنيفات بحث أفضل.'
-            },
-            'Jasper': {
-                en: 'AI content platform creating SEO-optimized blog posts, marketing copy, and social media content.',
-                ar: 'منصة محتوى بالذكاء الاصطناعي تنشئ منشورات مدونة محسّنة لـ SEO ونسخ تسويقية ومحتوى وسائل التواصل الاجتماعي.'
-            },
-            'Semrush': {
-                en: 'Comprehensive SEO and marketing platform with keyword research, competitor analysis, and site audits.',
-                ar: 'منصة SEO والتسويق الشاملة مع البحث عن الكلمات الرئيسية وتحليل المنافسين وعمليات تدقيق الموقع.'
-            },
-            'Ahrefs': {
-                en: 'Powerful SEO toolset for backlink analysis, keyword research, content exploration, and rank tracking.',
-                ar: 'مجموعة أدوات SEO قوية لتحليل الروابط الخلفية والبحث عن الكلمات الرئيسية واستكشاف المحتوى وتتبع الترتيب.'
-            },
-            'MarketMuse': {
-                en: 'AI content intelligence platform analyzing content gaps and providing data-driven optimization strategies.',
-                ar: 'منصة ذكاء المحتوى بالذكاء الاصطناعي تحلل فجوات المحتوى وتوفر استراتيجيات تحسين قائمة على البيانات.'
-            },
-            'Frase': {
-                en: 'AI writing tool for SEO content that researches, outlines, writes, and optimizes articles.',
-                ar: 'أداة كتابة بالذكاء الاصطناعي لمحتوى SEO تبحث وتُحدد وتكتب وتحسن المقالات.'
-            },
-            'Clearscope': {
-                en: 'Content optimization platform using AI to improve content relevance and search performance.',
-                ar: 'منصة تحسين المحتوى باستخدام الذكاء الاصطناعي لتحسين صلة المحتوى وأداء البحث.'
-            },
-            'RankMath': {
-                en: 'WordPress SEO plugin with AI features for content optimization and automated technical SEO.',
-                ar: 'مكون WordPress SEO مع ميزات الذكاء الاصطناعي لتحسين المحتوى وSEO التقني الآلي.'
-            },
-            'Yoast AI': {
-                en: 'Popular WordPress SEO plugin now with AI-powered features for title and meta description generation.',
-                ar: 'مكون WordPress SEO الشهير الآن مع ميزات مدعومة بالذكاء الاصطناعي لإنشاء العناوين والأوصاف التعريفية.'
-            },
-            'GrowthBar': {
-                en: 'AI writing and SEO tool for creating optimized blog content with keyword research and tracking.',
-                ar: 'أداة كتابة وSEO بالذكاء الاصطناعي لإنشاء محتوى مدونة محسّن مع البحث عن الكلمات الرئيسية والتتبع.'
-            }
-        };
-
-        const toolUrls = {
-          // Study
-          'ScholarAI': 'https://scholarai.io',
-          'Consensus': 'https://consensus.app',
-          'Elicit': 'https://elicit.com',
-          'Perplexity': 'https://perplexity.ai',
-          'Socratic': 'https://socratic.org',
-          'Quizlet AI': 'https://quizlet.com',
-          'Gradescope': 'https://gradescope.com',
-          'Otter.ai': 'https://otter.ai',
-          'Humata': 'https://humata.ai',
-          'ChatPDF': 'https://chatpdf.com',
-
-          // Programming
-          'GitHub Copilot': 'https://github.com/features/copilot',
-          'Tabnine': 'https://tabnine.com',
-          'Replit Ghostwriter': 'https://replit.com/ai',
-          'Cursor': 'https://cursor.sh',
-          'Amazon CodeWhisperer': 'https://aws.amazon.com/codewhisperer',
-          'Codeium': 'https://codeium.com',
-          'Blackbox': 'https://www.useblackbox.io',
-          'AskCodi': 'https://askcodi.com',
-          'Sourcegraph': 'https://sourcegraph.com/cody',
-          'DeepCode': 'https://snyk.io/platform/deepcode-ai',
-
-          // Design
-          'Canva Magic': 'https://canva.com/magic',
-          'Adobe Firefly': 'https://firefly.adobe.com',
-          'Midjourney': 'https://midjourney.com',
-          'Khroma': 'https://khroma.co',
-          'Uizard': 'https://uizard.io',
-          'Looka': 'https://looka.com',
-          'Autodraw': 'https://autodraw.com',
-          'Fontjoy': 'https://fontjoy.com',
-          'Colormind': 'http://colormind.io',
-          'Let\'s Enhance': 'https://letsenhance.io',
-
-          // Images
-          'DALL-E 3': 'https://openai.com/dall-e-3',
-          'Midjourney v6': 'https://midjourney.com',
-          'Stable Diffusion': 'https://stability.ai',
-          'Leonardo.ai': 'https://leonardo.ai',
-          'Clipdrop': 'https://clipdrop.co',
-          'Runway Gen-2': 'https://runwayml.com',
-          'Playground AI': 'https://playgroundai.com',
-          'Bing Image Creator': 'https://bing.com/create',
-          'Imagine': 'https://imagine.art',
-
-          // Translation
-          'DeepL': 'https://deepl.com',
-          'Google Translate': 'https://translate.google.com',
-          'Quillbot': 'https://quillbot.com',
-          'Reverso': 'https://reverso.net',
-          'MateCat': 'https://matecat.com',
-          'Smartcat': 'https://smartcat.com',
-          'Wordtune': 'https://wordtune.com',
-          'Systran': 'https://systransoft.com',
-          'Bing Translator': 'https://bing.com/translator',
-          'Yandex Translate': 'https://translate.yandex.com',
-
-          // Video
-          'Runway': 'https://runwayml.com',
-          'Synthesia': 'https://synthesia.io',
-          'HeyGen': 'https://heygen.com',
-          'Descript': 'https://descript.com',
-          'InVideo': 'https://invideo.io',
-          'Pictory': 'https://pictory.ai',
-          'Fliki': 'https://fliki.ai',
-          'D-ID': 'https://d-id.com',
-          'Kaiber': 'https://kaiber.ai',
-          'Wonder Dynamics': 'https://wonderdynamics.com',
-
-          // Freelance
-          'Upwork AI': 'https://upwork.com',
-          'Fiverr Neo': 'https://fiverr.com',
-          'Contra': 'https://contra.com',
-          'Braintrust': 'https://usebraintrust.com',
-          'Toptal': 'https://toptal.com',
-          'Freelancer': 'https://freelancer.com',
-          'Guru': 'https://guru.com',
-          'PeoplePerHour': 'https://peopleperhour.com',
-          '99designs': 'https://99designs.com',
-          'Dribbble': 'https://dribbble.com',
-
-          // Websites
-          'Wix ADI': 'https://wix.com',
-          'Framer AI': 'https://framer.com',
-          '10Web': 'https://10web.io',
-          'Durable': 'https://durable.co',
-          'Hocoos': 'https://hocoos.com',
-          'Mixo': 'https://mixo.io',
-          'Relume': 'https://relume.io',
-          'Webflow AI': 'https://webflow.com',
-          'Hostinger AI': 'https://hostinger.com',
-          'Divi AI': 'https://elegantthemes.com/divi-ai',
-
-          // SEO
-          'Surfer SEO': 'https://surferseo.com',
-          'Jasper': 'https://jasper.ai',
-          'Semrush': 'https://semrush.com',
-          'Ahrefs': 'https://ahrefs.com',
-          'MarketMuse': 'https://marketmuse.com',
-          'Frase': 'https://frase.io',
-          'Clearscope': 'https://clearscope.io',
-          'RankMath': 'https://rankmath.com',
-          'Yoast AI': 'https://yoast.com',
-          'GrowthBar': 'https://growthbarseo.com'
-        };
-
-        const toolNames = {
-            study: ['ScholarAI', 'Consensus', 'Elicit', 'Perplexity', 'Socratic', 'Quizlet AI', 'Gradescope', 'Otter.ai', 'Humata', 'ChatPDF'],
-            programming: ['GitHub Copilot', 'Tabnine', 'Replit Ghostwriter', 'Cursor', 'Amazon CodeWhisperer', 'Codeium', 'Blackbox', 'AskCodi', 'Sourcegraph', 'DeepCode'],
-            design: ['Canva Magic', 'Adobe Firefly', 'Midjourney', 'Khroma', 'Uizard', 'Looka', 'Autodraw', 'Fontjoy', 'Colormind', 'Let\'s Enhance'],
-            images: ['DALL-E 3', 'Midjourney v6', 'Stable Diffusion', 'Leonardo.ai', 'Clipdrop', 'Runway Gen-2', 'Playground AI', 'Bing Image Creator', 'Imagine'],
-            translation: ['DeepL', 'Google Translate', 'Quillbot', 'Reverso', 'MateCat', 'Smartcat', 'Wordtune', 'Systran', 'Bing Translator', 'Yandex Translate'],
-            video: ['Runway', 'Synthesia', 'HeyGen', 'Descript', 'InVideo', 'Pictory', 'Fliki', 'D-ID', 'Kaiber', 'Wonder Dynamics'],
-            freelance: ['Upwork AI', 'Fiverr Neo', 'Contra', 'Braintrust', 'Toptal', 'Freelancer', 'Guru', 'PeoplePerHour', '99designs', 'Dribbble'],
-            websites: ['Wix ADI', 'Framer AI', '10Web', 'Durable', 'Hocoos', 'Mixo', 'Relume', 'Webflow AI', 'Hostinger AI', 'Divi AI'],
-            seo: ['Surfer SEO', 'Jasper', 'Semrush', 'Ahrefs', 'MarketMuse', 'Frase', 'Clearscope', 'RankMath', 'Yoast AI', 'GrowthBar']
-        };
-
-        const categoriesList = ['study', 'programming', 'design', 'images', 'translation', 'video', 'freelance', 'websites', 'seo'];
-
-        const tools = [];
-        categoriesList.forEach(cat => {
-            toolNames[cat].forEach((name, idx) => {
-                tools.push({
-                    id: `${cat}-${idx}`,
-                    name: name,
-                    category: cat,
-                    description: toolDescriptions[name] || {
-                        en: `Powerful AI tool for ${cat} tasks.`,
-                        ar: `أداة ذكاء اصطناعي قوية لمهام ${cat}.`
-                    },
-                    image: `https://placehold.co/600x400/2563eb/white?text=${encodeURIComponent(name)}`,
-                    url: toolUrls[name] || '#'
-                });
-            });
-        });
-
-        // --- State ---
-        let currentLang = 'en';
-        let activeCategory = 'all';
-        let searchQuery = '';
-        let isDark = false;
-
-        // --- DOM Elements ---
-        const toolsGrid = document.getElementById('tools-grid');
-        const categoriesContainer = document.getElementById('categories-container');
-        const searchInputHero = document.getElementById('hero-search-input');
-        const searchInputDesktop = document.getElementById('desktop-search-input');
-        const navSearch = document.getElementById('nav-search');
-        const navbar = document.getElementById('navbar');
-
-        // --- Initialization ---
-        function init() {
-            // Theme check
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                isDark = true;
-                document.documentElement.classList.add('dark');
-            }
-            updateThemeIcon();
-
-            renderCategories();
-            renderTools();
-            updateText();
-            lucide.createIcons();
-
-            // Scroll Listener
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 20) {
-                    navbar.classList.add('bg-background/70', 'backdrop-blur-xl', 'border-b', 'border-border/30', 'shadow-lg');
-                    navbar.classList.remove('py-4');
-                    navbar.classList.add('py-2');
-                    navSearch.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
-                } else {
-                    navbar.classList.remove('bg-background/70', 'backdrop-blur-xl', 'border-b', 'border-border/30', 'shadow-lg');
-                    navbar.classList.add('py-4');
-                    navbar.classList.remove('py-2');
-                    navSearch.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
-                }
-            });
-
-            // Intersection Observer for Animations
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
-
-            // Close modals on click outside
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) {
-                    e.target.classList.remove('active');
-                }
-            });
-        }
-
-        // --- Logic ---
-        function toggleLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            document.documentElement.lang = currentLang;
-            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            
-            document.getElementById('lang-btn').innerText = currentLang === 'ar' ? 'EN' : 'AR';
-            
-            updateText();
-            renderCategories();
-            renderTools();
-        }
-
-        function toggleTheme() {
-            isDark = !isDark;
-            document.documentElement.classList.toggle('dark');
-            updateThemeIcon();
-        }
-
-        function updateThemeIcon() {
-            const icon = document.getElementById('theme-icon');
-            if (isDark) {
-                icon.setAttribute('data-lucide', 'sun');
-            } else {
-                icon.setAttribute('data-lucide', 'moon');
-            }
-            lucide.createIcons();
-        }
-
-        function setCategory(cat) {
-            activeCategory = cat;
-            renderCategories();
-            renderTools();
-        }
-
-        function handleSearch(e) {
-            searchQuery = e.target.value.toLowerCase();
-            renderTools();
-        }
-
-        searchInputHero.addEventListener('input', handleSearch);
-        searchInputDesktop.addEventListener('input', handleSearch);
-
-        // Modal Functions
-        function openModal(type) {
-            const modalId = type + 'Modal';
-            const modal = document.getElementById(modalId);
-            modal.classList.add('active');
-            updateModalContent(type);
-            lucide.createIcons();
-        }
-
-        function closeModal(type) {
-            const modalId = type + 'Modal';
-            const modal = document.getElementById(modalId);
-            modal.classList.remove('active');
-        }
-
-        function updateModalContent(type) {
-            const t = translations[currentLang];
-            const titleId = type + '-modal-title';
-            const contentId = type + '-modal-content';
-
-            document.getElementById(titleId).textContent = t[type + 'Title'];
-
-            let content = '';
-            if (type === 'about') {
-                content = `
-                    <p class="text-lg font-medium text-primary">${t.about.intro}</p>
-                    
-                    <div class="space-y-3">
-                        <h3 class="text-xl font-bold text-foreground">${t.about.mission}</h3>
-                        <p class="text-muted-foreground">${t.about.missionText}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-xl font-bold text-foreground">${t.about.what}</h3>
-                        <p class="text-muted-foreground">${t.about.whatText}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-xl font-bold text-foreground">${t.about.goal}</h3>
-                        <p class="text-muted-foreground">${t.about.goalText}</p>
-                    </div>
-
-                    <p class="text-muted-foreground italic">${t.about.team}</p>
-                `;
-            } else if (type === 'contact') {
-                content = `
-                    <div class="max-w-md mx-auto">
-                        <div class="inline-block p-6 rounded-full bg-primary/10 mb-6">
-                            <i data-lucide="mail" class="w-12 h-12 text-primary"></i>
-                        </div>
-                        
-                        <p class="text-lg text-muted-foreground mb-6">${t.contactText}</p>
-                        
-                        <a href="mailto:${t.contactEmail}" class="inline-flex items-center gap-3 bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:scale-105">
-                            <i data-lucide="mail" class="w-5 h-5"></i>
-                            ${t.contactEmail}
-                        </a>
-                        
-                        <p class="text-sm text-muted-foreground mt-6">
-                            ${currentLang === 'ar' ? 'سنرد عليك في أقرب وقت ممكن' : 'We will respond to you as soon as possible'}
-                        </p>
-                    </div>
-                `;
-            } else if (type === 'privacy') {
-                content = `
-                    <p class="text-sm text-muted-foreground italic">${t.privacy.intro}</p>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section1}</h3>
-                        <p class="text-muted-foreground">${t.privacy.section1Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section2}</h3>
-                        <p class="text-muted-foreground">${t.privacy.section2Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section3}</h3>
-                        <p class="text-muted-foreground">${t.privacy.section3Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section4}</h3>
-                        <p class="text-muted-foreground">${t.privacy.section4Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section5}</h3>
-                        <p class="text-muted-foreground">${t.privacy.section5Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section6}</h3>
-                        <p class="text-muted-foreground">${t.privacy.section6Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.privacy.section7}</h3>
-                        <p class="text-muted-foreground">${t.privacy.section7Text}</p>
-                    </div>
-                `;
-            } else if (type === 'terms') {
-                content = `
-                    <p class="text-sm text-muted-foreground italic">${t.terms.intro}</p>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section1}</h3>
-                        <p class="text-muted-foreground">${t.terms.section1Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section2}</h3>
-                        <p class="text-muted-foreground">${t.terms.section2Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section3}</h3>
-                        <p class="text-muted-foreground">${t.terms.section3Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section4}</h3>
-                        <p class="text-muted-foreground">${t.terms.section4Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section5}</h3>
-                        <p class="text-muted-foreground">${t.terms.section5Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section6}</h3>
-                        <p class="text-muted-foreground">${t.terms.section6Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section7}</h3>
-                        <p class="text-muted-foreground">${t.terms.section7Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section8}</h3>
-                        <p class="text-muted-foreground">${t.terms.section8Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section9}</h3>
-                        <p class="text-muted-foreground">${t.terms.section9Text}</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-foreground">${t.terms.section10}</h3>
-                        <p class="text-muted-foreground">${t.terms.section10Text}</p>
-                    </div>
-                `;
-            }
-
-            document.getElementById(contentId).innerHTML = content;
-        }
-
-        // --- Rendering ---
-        function updateText() {
-            const t = translations[currentLang];
-            document.getElementById('hero-title-1').innerText = t.title1;
-            document.getElementById('hero-title-2').innerText = t.title2;
-            document.getElementById('hero-subtitle').innerText = t.subtitle;
-            document.getElementById('hero-description').innerText = t.description;
-            
-            searchInputHero.placeholder = t.search;
-            searchInputDesktop.placeholder = t.search;
-
-            // Update footer
-            document.getElementById('footer-desc').innerText = t.footerDesc;
-            document.getElementById('footer-about').innerText = t.footerAbout;
-            document.getElementById('footer-privacy').innerText = t.footerPrivacy;
-            document.getElementById('footer-terms').innerText = t.footerTerms;
-            
-            // Update contact link
-            const contactBtn = document.getElementById('footer-contact');
-            contactBtn.innerHTML = `
-                <i data-lucide="mail" class="w-4 h-4"></i>
-                ${t.footerContact}
-            `;
-            lucide.createIcons();
-        }
-
-        function renderCategories() {
-            const t = translations[currentLang].categories;
-            let html = '';
-            
-            const allActive = activeCategory === 'all';
-            const btnClass = "rounded-full px-6 transition-all duration-300 h-9 flex items-center";
-            const activeClass = "bg-primary text-primary-foreground shadow-lg shadow-primary/25";
-            const inactiveClass = "hover:bg-primary/10 text-foreground/80";
-
-            html += `<button onclick="setCategory('all')" class="${btnClass} ${allActive ? activeClass : inactiveClass}">${t.all}</button>`;
-
-            categoriesList.forEach(cat => {
-                const isActive = activeCategory === cat;
-                html += `<button onclick="setCategory('${cat}')" class="${btnClass} ${isActive ? activeClass : inactiveClass} whitespace-nowrap">${t[cat]}</button>`;
-            });
-
-            categoriesContainer.innerHTML = html;
-        }
-
-        function renderTools() {
-            const t = translations[currentLang];
-            
-            let filtered = tools;
-            if (activeCategory !== 'all') {
-                filtered = filtered.filter(tool => tool.category === activeCategory);
-            }
-            if (searchQuery) {
-                filtered = filtered.filter(tool => 
-                    tool.name.toLowerCase().includes(searchQuery) || 
-                    tool.description[currentLang].toLowerCase().includes(searchQuery)
-                );
-            }
-
-            if (filtered.length === 0) {
-                toolsGrid.innerHTML = `
-                    <div class="col-span-full text-center py-20 fade-in-up visible">
-                        <div class="inline-block p-6 rounded-full bg-muted mb-4">
-                            <i data-lucide="search" class="w-8 h-8 text-muted-foreground"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-foreground">No tools found</h3>
-                    </div>`;
-                lucide.createIcons();
-                return;
-            }
-
-            let html = '';
-            filtered.forEach((tool, index) => {
-                const delay = index * 50;
-                html += `
-                <div class="group h-full relative overflow-hidden border border-border/40 bg-card/40 backdrop-blur-md hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 flex flex-col rounded-2xl fade-in-up" style="animation-delay: ${delay}ms">
-                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none z-0"></div>
-                    
-                    <div class="relative h-52 overflow-hidden m-2 rounded-xl">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity"></div>
-                        <img src="${tool.image}" alt="${tool.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div class="absolute top-3 right-3 z-20 glass-panel bg-black/30 text-white border-white/20 px-2 py-1 rounded text-xs backdrop-blur-md shadow-lg flex items-center gap-1">
-                            <i data-lucide="sparkles" class="w-3 h-3 text-primary-foreground"></i>
-                            ${t.categories[tool.category]}
-                        </div>
-                    </div>
-
-                    <div class="p-4 flex-grow relative z-10 flex flex-col">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">${tool.name}</h3>
-                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-primary rtl:rotate-180"></i>
-                            </div>
-                        </div>
-                        <p class="text-muted-foreground text-sm line-clamp-3 leading-relaxed group-hover:text-muted-foreground/80 transition-colors mb-4">
-                            ${tool.description[currentLang]}
-                        </p>
-                        
-                        <a href="${tool.url}" target="_blank" class="mt-auto w-full rounded-xl bg-muted/50 text-foreground hover:bg-primary hover:text-white transition-all duration-300 border border-border/50 hover:border-primary/50 shadow-sm hover:shadow-lg hover:shadow-primary/20 flex items-center justify-center h-10 gap-2 font-medium text-sm group/btn">
-                            ${t.visit}
-                            <i data-lucide="external-link" class="w-4 h-4 opacity-50 group-hover/btn:opacity-100 transition-opacity"></i>
-                        </a>
-                    </div>
-                </div>
-                `;
-            });
-
-            toolsGrid.innerHTML = html;
-            
-            lucide.createIcons();
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('visible');
-                });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.fade-in-up:not(.visible)').forEach(el => observer.observe(el));
-        }
-
-        init();
-
-    </script>
+
 </body>
 </html>
