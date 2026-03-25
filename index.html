@@ -1,2153 +1,901 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>سوق | منصة عرض المنتجات</title>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ink:      #0d0f14;
-      --ink-soft: #4a5568;
-      --ink-mute: #9aa3b2;
-      --surface:  #ffffff;
-      --surface2: #f7f8fa;
-      --surface3: #eef0f4;
-      --border:   #e3e7ee;
-      --accent:   #1a56db;
-      --accent2:  #0e3fa8;
-      --accent-r: #e53e3e;
-      --accent-g: #38a169;
-      --glow:     rgba(26,86,219,.18);
-      --radius-sm: 10px;
-      --radius:    18px;
-      --radius-lg: 26px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,.07);
-      --shadow:    0 4px 20px rgba(0,0,0,.08);
-      --shadow-lg: 0 12px 48px rgba(0,0,0,.12);
-      --transition: .22s cubic-bezier(.4,0,.2,1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تكسي طولكرم - خدمة توصيل سريعة وآمنة</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'IBM Plex Sans Arabic', sans-serif;
-      background: var(--surface2);
-      color: var(--ink);
-      min-height: 100vh;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    button { cursor: pointer; font-family: inherit; }
-    input, textarea, select { font-family: inherit; }
-    img { display: block; max-width: 100%; }
-    a { text-decoration: none; }
+        :root {
+            --primary: #FFB800;
+            --primary-dark: #E6A500;
+            --secondary: #0A0E27;
+            --accent: #FF6B6B;
+            --accent-2: #4ECDC4;
+            --success: #2ECC71;
+            --text: #2C3E50;
+            --text-light: #7F8C8D;
+            --bg: #F8F9FC;
+            --card-bg: #FFFFFF;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.15);
+            --gradient-1: linear-gradient(135deg, #FFB800 0%, #FF8C00 100%);
+            --gradient-2: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-3: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
 
-    /* ══ TOAST ══ */
-    #toastContainer {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      z-index: 9999; display: flex; flex-direction: column; gap: 10px;
-      pointer-events: none; width: min(360px, calc(100vw - 40px));
-    }
-    .toast {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--ink); color: #fff;
-      padding: 14px 18px; border-radius: var(--radius-sm);
-      font-size: 14px; font-weight: 500;
-      box-shadow: var(--shadow-lg);
-      animation: toastIn .3s ease forwards;
-      pointer-events: auto;
-    }
-    .toast.success { background: #1a4731; }
-    .toast.error   { background: #7b1d1d; }
-    .toast.info    { background: #1a2e5a; }
-    .toast-icon { font-size: 18px; flex-shrink: 0; }
-    .toast-out { animation: toastOut .3s ease forwards; }
-    @keyframes toastIn  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes toastOut { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(16px); } }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-    /* ══ LOADER ══ */
-    #globalLoader {
-      position: fixed; inset: 0; background: var(--surface);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 8888; transition: opacity .3s;
-    }
-    #globalLoader.hide { opacity: 0; pointer-events: none; }
-    .loader-logo { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .loader-icon {
-      width: 56px; height: 56px; border-radius: 18px;
-      background: var(--ink);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 26px; font-weight: 700;
-      animation: pulse 1.5s ease infinite;
-    }
-    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
-    .loader-dots { display: flex; gap: 6px; }
-    .loader-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: var(--border);
-      animation: dotPulse 1.2s ease infinite;
-    }
-    .loader-dot:nth-child(2) { animation-delay: .2s; }
-    .loader-dot:nth-child(3) { animation-delay: .4s; }
-    @keyframes dotPulse { 0%,100%{background:var(--border)} 50%{background:var(--accent)} }
+        /* Hero */
+        .hero {
+            background: var(--secondary);
+            color: white;
+            padding: 3rem 1.5rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -20%;
+            width: 150%; height: 200%;
+            background: radial-gradient(circle, rgba(255,184,0,0.15) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0; right: 0;
+            height: 80px;
+            background: var(--bg);
+            clip-path: polygon(0 50%, 100% 0, 100% 100%, 0 100%);
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0,0) rotate(0deg); }
+            33% { transform: translate(30px,-30px) rotate(5deg); }
+            66% { transform: translate(-20px,20px) rotate(-5deg); }
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .taxi-icon-container { position: relative; display: inline-block; margin-bottom: 1.5rem; }
+        .taxi-icon {
+            font-size: 5rem;
+            filter: drop-shadow(0 10px 30px rgba(255,184,0,0.4));
+            animation: car-bounce 3s ease-in-out infinite;
+        }
+        @keyframes car-bounce {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        .taxi-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            width: 150%; height: 150%;
+            background: radial-gradient(circle, rgba(255,184,0,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%,-50%) scale(1.2); }
+        }
+        .hero h1 {
+            font-size: 3rem; font-weight: 800; margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle { font-size: 1.3rem; font-weight: 300; margin-bottom: 0.5rem; opacity: 0.9; }
+        .hero p { font-size: 1.05rem; line-height: 1.8; margin-bottom: 0.5rem; opacity: 0.85; }
 
-    /* ══ MODAL CONFIRM ══ */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.45);
-      backdrop-filter: blur(6px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 7777; padding: 20px;
-      opacity: 0; pointer-events: none; transition: opacity .25s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: auto; }
-    .modal-box {
-      background: var(--surface); border-radius: var(--radius-lg);
-      padding: 36px 32px; max-width: 380px; width: 100%;
-      box-shadow: var(--shadow-lg);
-      transform: scale(.94) translateY(12px);
-      transition: transform .28s cubic-bezier(.34,1.56,.64,1);
-    }
-    .modal-overlay.open .modal-box { transform: scale(1) translateY(0); }
-    .modal-icon { font-size: 40px; margin-bottom: 16px; }
-    .modal-title { font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-    .modal-desc  { font-size: 14px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 28px; }
-    .modal-btns  { display: flex; gap: 10px; }
-    .modal-btn-cancel {
-      flex: 1; padding: 12px; border-radius: var(--radius-sm);
-      background: var(--surface3); color: var(--ink-soft);
-      border: none; font-size: 14px; font-weight: 600;
-      transition: background var(--transition);
-    }
-    .modal-btn-cancel:hover { background: var(--border); }
-    .modal-btn-confirm {
-      flex: 1; padding: 12px; border-radius: var(--radius-sm);
-      background: var(--accent-r); color: #fff;
-      border: none; font-size: 14px; font-weight: 700;
-      transition: opacity var(--transition);
-    }
-    .modal-btn-confirm:hover { opacity: .88; }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.2rem; margin-top: 2.5rem;
+            max-width: 600px; margin-left: auto; margin-right: auto;
+        }
+        .feature {
+            background: rgba(255,255,255,0.08);
+            padding: 1.5rem 1rem;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            cursor: pointer;
+        }
+        .feature:hover { transform: translateY(-8px) scale(1.05); background: rgba(255,255,255,0.15); }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 0.8rem; display: inline-block; animation: bounce 2s ease-in-out infinite; }
+        .feature:nth-child(1) .feature-icon { animation-delay: 0s; }
+        .feature:nth-child(2) .feature-icon { animation-delay: 0.2s; }
+        .feature:nth-child(3) .feature-icon { animation-delay: 0.4s; }
+        .feature:nth-child(4) .feature-icon { animation-delay: 0.6s; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .feature-text { font-size: 0.95rem; font-weight: 600; }
 
-    /* ══ NAV ══ */
-    nav {
-      background: rgba(255,255,255,.88);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 200;
-    }
-    .nav-inner {
-      max-width: 1120px; margin: 0 auto;
-      padding: 0 24px; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo {
-      display: flex; align-items: center; gap: 10px;
-      cursor: pointer; user-select: none;
-    }
-    .nav-logo-mark {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: var(--ink);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 17px; font-weight: 700;
-      letter-spacing: -.5px; flex-shrink: 0;
-    }
-    .nav-logo-name { font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -.3px; }
-    .nav-logo-dot  { color: var(--accent); }
-    .nav-right { display: flex; align-items: center; gap: 8px; }
-    .nav-btn {
-      padding: 8px 18px; border-radius: var(--radius-sm);
-      font-size: 14px; font-weight: 600; border: none;
-      transition: all var(--transition);
-    }
-    .nav-btn-ghost { background: transparent; color: var(--ink-soft); }
-    .nav-btn-ghost:hover { background: var(--surface3); color: var(--ink); }
-    .nav-btn-outline {
-      background: transparent; color: var(--ink);
-      border: 1.5px solid var(--border);
-    }
-    .nav-btn-outline:hover { border-color: var(--ink); }
-    .nav-btn-filled { background: var(--ink); color: #fff; }
-    .nav-btn-filled:hover { background: #2d3748; }
-    .nav-user {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--surface2); border-radius: var(--radius-sm);
-      padding: 5px 12px 5px 5px; border: 1px solid var(--border);
-    }
-    .nav-user-avatar { width: 30px; height: 30px; border-radius: 8px; object-fit: cover; }
-    .nav-user-name { font-size: 13px; font-weight: 600; color: var(--ink); }
-    .nav-separator { width: 1px; height: 20px; background: var(--border); }
-    .nav-logout {
-      background: none; border: none; color: var(--ink-mute);
-      font-size: 13px; padding: 4px 8px; border-radius: 6px;
-      transition: color var(--transition), background var(--transition);
-    }
-    .nav-logout:hover { color: var(--accent-r); background: #fff5f5; }
+        /* Nav */
+        .nav {
+            background: var(--card-bg);
+            box-shadow: var(--shadow-md);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-around;
+            padding: 1rem; gap: 1rem;
+            margin: 0 1rem; margin-top: -30px;
+            border-radius: 25px;
+        }
+        .nav-btn {
+            flex: 1; padding: 1rem 1.5rem;
+            background: var(--bg); border: 2px solid transparent;
+            font-size: 1.05rem; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            border-radius: 15px; font-weight: 700;
+            color: var(--text-light); position: relative; overflow: hidden;
+        }
+        .nav-btn::before {
+            content: '';
+            position: absolute; top: 50%; left: 50%;
+            width: 0; height: 0; border-radius: 50%;
+            background: var(--gradient-1);
+            transition: all 0.5s;
+            transform: translate(-50%,-50%);
+        }
+        .nav-btn.active::before { width: 300%; height: 300%; }
+        .nav-btn span { position: relative; z-index: 1; }
+        .nav-btn.active { color: var(--secondary); border-color: var(--primary); }
+        .nav-btn:hover:not(.active) { transform: translateY(-3px); box-shadow: var(--shadow-sm); background: white; }
 
-    /* ══ PAGES ══ */
-    .page { display: none; animation: fadeUp .35s ease; }
-    .page.active { display: block; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+        /* Sections */
+        .section { display: none; padding: 2rem 1.5rem; animation: fadeInUp 0.6s cubic-bezier(0.4,0,0.2,1); }
+        .section.active { display: block; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    /* ══ HOME ══ */
-    .home-hero {
-      max-width: 680px; margin: 0 auto;
-      padding: 90px 24px 70px; text-align: center;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--ink); color: #fff;
-      padding: 6px 16px; border-radius: 100px;
-      font-size: 12px; font-weight: 600; letter-spacing: .04em;
-      text-transform: uppercase; margin-bottom: 28px;
-    }
-    .hero-title {
-      font-size: clamp(38px, 7vw, 64px);
-      font-weight: 700; line-height: 1.15;
-      color: var(--ink); margin-bottom: 22px;
-      letter-spacing: -.02em;
-    }
-    .hero-title em { color: var(--accent); font-style: normal; }
-    .hero-desc {
-      font-size: 17px; color: var(--ink-soft);
-      line-height: 1.75; margin-bottom: 10px;
-      max-width: 520px; margin-left: auto; margin-right: auto;
-    }
-    .hero-note { font-size: 14px; color: var(--ink-mute); margin-bottom: 44px; }
-    .hero-note strong { color: var(--accent); font-weight: 600; }
-    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 72px; }
-    .btn-cta-primary {
-      padding: 15px 36px; border-radius: var(--radius-sm);
-      background: var(--ink); color: #fff; border: none;
-      font-size: 15px; font-weight: 700; letter-spacing: -.01em;
-      transition: all var(--transition);
-      box-shadow: 0 2px 0 rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.15);
-    }
-    .btn-cta-primary:hover { background: #1a202c; transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.18); }
-    .btn-cta-secondary {
-      padding: 15px 36px; border-radius: var(--radius-sm);
-      background: var(--surface); color: var(--ink);
-      border: 1.5px solid var(--border);
-      font-size: 15px; font-weight: 600;
-      transition: all var(--transition);
-    }
-    .btn-cta-secondary:hover { border-color: var(--ink); background: var(--surface2); }
-    .features-row {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
-      text-align: right;
-    }
-    .feat {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 22px 20px;
-      transition: box-shadow var(--transition), transform var(--transition);
-    }
-    .feat:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
-    .feat-icon { font-size: 26px; margin-bottom: 12px; }
-    .feat-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
-    .feat-desc { font-size: 13px; color: var(--ink-mute); line-height: 1.65; }
+        /* Map */
+        #map {
+            height: 450px; border-radius: 25px;
+            box-shadow: var(--shadow-lg); margin-bottom: 2rem;
+            border: 4px solid white; overflow: hidden;
+        }
 
-    /* ══ AUTH ══ */
-    .auth-wrap {
-      min-height: calc(100vh - 64px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 40px 20px;
-    }
-    .auth-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 44px 40px;
-      width: 100%; max-width: 430px;
-      box-shadow: var(--shadow-lg);
-    }
-    .auth-back {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: none; border: none;
-      color: var(--ink-mute); font-size: 13px;
-      margin-bottom: 28px; padding: 0;
-      transition: color var(--transition);
-    }
-    .auth-back:hover { color: var(--ink); }
-    .auth-head { margin-bottom: 32px; }
-    .auth-head h2 { font-size: 26px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; margin-bottom: 4px; }
-    .auth-head p  { font-size: 14px; color: var(--ink-mute); }
+        /* Form */
+        .form-card { background: var(--card-bg); padding: 2rem; border-radius: 25px; box-shadow: var(--shadow-md); }
+        .form-group { margin-bottom: 1.8rem; }
+        label {
+            display: block; margin-bottom: 0.8rem;
+            font-weight: 700; color: var(--secondary); font-size: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        input, textarea, select {
+            width: 100%; padding: 1.2rem 1.5rem;
+            border: 2px solid #E8ECF1; border-radius: 15px;
+            font-size: 1.05rem; transition: all 0.3s;
+            font-family: inherit; background: var(--bg);
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none; border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255,184,0,0.1);
+            background: white; transform: translateY(-2px);
+        }
+        textarea { resize: vertical; min-height: 120px; }
 
-    .field { margin-bottom: 22px; }
-    .field-label {
-      display: block; font-size: 13px; font-weight: 600;
-      color: var(--ink-soft); margin-bottom: 8px; letter-spacing: .01em;
-    }
-    .field-input {
-      width: 100%; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: 12px 16px;
-      font-size: 15px; color: var(--ink);
-      background: var(--surface);
-      transition: border-color var(--transition), box-shadow var(--transition);
-      outline: none;
-    }
-    .field-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(26,86,219,.1);
-    }
-    .field-input.error { border-color: var(--accent-r); }
+        .location-btn {
+            width: 100%; padding: 1.3rem;
+            background: var(--gradient-2); color: white; border: none;
+            border-radius: 15px; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; margin-bottom: 1.2rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+        .location-btn:hover { transform: translateY(-5px); box-shadow: 0 12px 35px rgba(102,126,234,0.4); }
 
-    .photo-zone { display: flex; align-items: center; gap: 16px; }
-    .photo-ring {
-      width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
-      border: 2px dashed var(--border); background: var(--surface2);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: border-color var(--transition);
-      position: relative;
-    }
-    .photo-ring:hover { border-color: var(--accent); }
-    .photo-ring.has-img { border-style: solid; border-color: var(--accent); }
-    .photo-ring img { width: 100%; height: 100%; object-fit: cover; }
-    .photo-ring-placeholder { color: var(--ink-mute); font-size: 26px; }
-    .photo-ring input { display: none; }
-    .photo-info { flex: 1; }
-    .photo-info p { font-size: 13px; color: var(--ink-soft); margin-bottom: 8px; }
-    .photo-info span { font-size: 12px; color: var(--ink-mute); }
+        #selectedLocation {
+            color: var(--success); font-weight: 700; text-align: center;
+            padding: 1rem; background: rgba(46,204,113,0.1);
+            border-radius: 12px; margin-top: 1rem;
+            animation: slideIn 0.5s;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-    .btn-submit {
-      width: 100%; background: var(--ink); color: #fff; border: none;
-      padding: 15px; border-radius: var(--radius-sm);
-      font-size: 16px; font-weight: 700; letter-spacing: -.01em;
-      box-shadow: 0 2px 0 rgba(0,0,0,.3);
-      transition: all var(--transition);
-    }
-    .btn-submit:hover { background: #1a202c; transform: translateY(-1px); }
-    .btn-submit:disabled { opacity: .5; cursor: default; transform: none; }
+        .submit-btn {
+            width: 100%; padding: 1.5rem;
+            background: var(--gradient-1); color: var(--secondary); border: none;
+            border-radius: 18px; font-size: 1.2rem; font-weight: 800;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            box-shadow: 0 10px 30px rgba(255,184,0,0.4);
+        }
+        .submit-btn:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 45px rgba(255,184,0,0.5); }
+        .submit-btn:active { transform: translateY(-2px) scale(0.98); }
 
-    /* ══ DASHBOARD ══ */
-    .dash-layout { max-width: 920px; margin: 0 auto; padding: 32px 20px; }
-    .dash-top {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
-    }
-    .dash-greeting { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
-    .dash-greeting span { color: var(--accent); }
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 28px;
-      margin-bottom: 18px;
-    }
-    .card-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 15px; font-weight: 700; color: var(--ink);
-      margin-bottom: 22px;
-    }
-    .card-title-icon {
-      width: 32px; height: 32px; border-radius: 9px;
-      background: var(--surface2); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center; font-size: 15px;
-    }
-    .profile-strip {
-      display: flex; align-items: center; gap: 14px;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px;
-    }
-    .profile-strip-img {
-      width: 52px; height: 52px; border-radius: 14px; object-fit: cover;
-      border: 2px solid var(--border);
-    }
-    .profile-strip-name { font-weight: 700; font-size: 16px; color: var(--ink); }
-    .profile-strip-role { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+        /* Driver */
+        .password-container {
+            background: var(--card-bg); padding: 3rem 2rem;
+            border-radius: 30px; box-shadow: var(--shadow-lg);
+            max-width: 450px; margin: 0 auto; text-align: center;
+        }
+        .password-container h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--secondary); font-weight: 800; }
+        .lock-icon { font-size: 5rem; margin-bottom: 1.5rem; animation: swing 2s ease-in-out infinite; }
+        @keyframes swing {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
 
-    textarea.field-input { resize: vertical; min-height: 80px; }
-    .field-hint { font-size: 12px; color: var(--ink-mute); margin-top: 5px; }
+        .requests-container { display: none; }
+        .requests-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; padding: 1.5rem;
+            background: var(--gradient-1); border-radius: 20px; color: var(--secondary);
+        }
+        .requests-count { font-size: 2.5rem; font-weight: 800; }
 
-    .prod-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .prod-count-badge {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 8px; padding: 4px 12px;
-      font-size: 13px; font-weight: 600; color: var(--ink-soft);
-    }
-    .btn-add-product {
-      display: flex; align-items: center; gap: 6px;
-      background: var(--ink); color: #fff; border: none;
-      padding: 9px 18px; border-radius: var(--radius-sm);
-      font-size: 13px; font-weight: 700;
-      transition: all var(--transition);
-    }
-    .btn-add-product:hover { background: #2d3748; }
-    .btn-add-product:disabled { opacity: .4; cursor: default; }
+        /* ── الكارد بدون أي حركة تُعيد الرسم ── */
+        .request-card {
+            background: var(--card-bg); padding: 2rem; border-radius: 25px;
+            margin-bottom: 1.5rem; box-shadow: var(--shadow-md);
+            border-right: 6px solid var(--primary);
+            transition: box-shadow 0.3s, transform 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .request-card:hover { transform: translateX(-8px) translateY(-5px); box-shadow: var(--shadow-lg); }
 
-    .products-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px;
-    }
-    .prod-card {
-      background: var(--surface2); border: 1.5px solid var(--border);
-      border-radius: var(--radius); padding: 14px;
-      position: relative; transition: border-color var(--transition);
-    }
-    .prod-num { font-size: 11px; font-weight: 700; color: var(--ink-mute); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 10px; }
-    .btn-prod-remove {
-      position: absolute; top: 10px; left: 10px;
-      width: 26px; height: 26px; border-radius: 50%;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--ink-mute); font-size: 12px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all var(--transition);
-    }
-    .btn-prod-remove:hover { background: #fff0f0; border-color: var(--accent-r); color: var(--accent-r); }
+        /* ── بادج "جديد" يظهر للطلبات التي وصلت بعد الدخول ── */
+        .new-badge {
+            position: absolute; top: 16px; left: 16px;
+            background: #FF6B6B; color: white;
+            font-size: 0.8rem; font-weight: 700;
+            padding: 4px 12px; border-radius: 20px;
+            animation: badge-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes badge-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
 
-    .img-drop-area {
-      width: 100%; height: 130px;
-      background: var(--surface); border: 1.5px dashed var(--border);
-      border-radius: var(--radius-sm); cursor: pointer;
-      overflow: hidden; position: relative; margin-bottom: 10px;
-      display: flex; align-items: center; justify-content: center;
-      transition: border-color var(--transition);
-    }
-    .img-drop-area:hover { border-color: var(--accent); }
-    .img-drop-area img { width: 100%; height: 100%; object-fit: cover; }
-    .img-drop-area input { display: none; }
-    .img-drop-placeholder { text-align: center; color: var(--ink-mute); }
-    .img-drop-placeholder span:first-child { font-size: 24px; display: block; margin-bottom: 5px; }
-    .img-drop-placeholder span:last-child  { font-size: 12px; }
+        .request-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+            border-bottom: 3px solid var(--bg);
+        }
+        .request-id {
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text; font-size: 1.3rem;
+        }
+        .request-time { font-size: 0.9rem; color: var(--text-light); background: var(--bg); padding: 0.5rem 1rem; border-radius: 20px; }
 
-    .prod-input, .prod-textarea {
-      width: 100%; border: 1.5px solid var(--border);
-      border-radius: 8px; padding: 8px 11px;
-      font-size: 13px; color: var(--ink);
-      background: var(--surface); outline: none;
-      transition: border-color var(--transition);
-      font-family: inherit; margin-bottom: 8px;
-    }
-    .prod-input:focus, .prod-textarea:focus { border-color: var(--accent); }
-    .prod-textarea { resize: none; margin-bottom: 0; }
+        .request-detail {
+            margin-bottom: 1.2rem; display: flex; gap: 1rem;
+            padding: 0.8rem; background: var(--bg); border-radius: 12px;
+            transition: background 0.3s;
+        }
+        .request-detail:hover { background: #f0f1f5; }
+        .detail-label { font-weight: 700; color: var(--secondary); min-width: 100px; display: flex; align-items: center; gap: 0.5rem; }
+        .detail-value { color: var(--text); flex: 1; }
 
-    .empty-products-msg { text-align: center; padding: 48px 20px; color: var(--ink-mute); }
-    .empty-products-msg .empty-icon { font-size: 44px; margin-bottom: 10px; }
-    .empty-products-msg p { font-size: 14px; }
+        .accept-btn {
+            width: 100%; padding: 1.3rem; background: var(--success);
+            color: white; border: none; border-radius: 15px;
+            font-weight: 800; font-size: 1.1rem; cursor: pointer;
+            margin-top: 1.5rem; transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(46,204,113,0.3);
+        }
+        .accept-btn:hover { background: #27AE60; transform: translateY(-3px); }
+        .accept-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    .dash-footer { display: flex; gap: 12px; margin-top: 6px; }
-    .btn-save-page {
-      flex: 1; background: var(--ink); color: #fff; border: none;
-      padding: 16px; border-radius: var(--radius);
-      font-size: 16px; font-weight: 700; letter-spacing: -.01em;
-      box-shadow: 0 2px 0 rgba(0,0,0,.25);
-      transition: all var(--transition);
-    }
-    .btn-save-page:hover { background: #1a202c; transform: translateY(-2px); }
-    .btn-save-page:disabled { opacity: .5; cursor: default; transform: none; }
-    .btn-delete-page {
-      background: #fff5f5; color: var(--accent-r); border: 1px solid #fecaca;
-      padding: 16px 22px; border-radius: var(--radius);
-      font-size: 14px; font-weight: 700;
-      transition: all var(--transition);
-    }
-    .btn-delete-page:hover { background: #fee2e2; }
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.8rem 1.5rem; border-radius: 25px;
+            font-size: 0.95rem; font-weight: 700; box-shadow: var(--shadow-sm);
+        }
+        .status-pending { background: linear-gradient(135deg,#fff3cd,#ffe69c); color: #856404; }
 
-    /* ══ BROWSE ══ */
-    .browse-layout { max-width: 1120px; margin: 0 auto; padding: 48px 20px; }
-    .browse-head { margin-bottom: 36px; }
-    .browse-head h2 { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; margin-bottom: 6px; }
-    .browse-head p  { font-size: 15px; color: var(--ink-mute); }
-    .browse-loading { text-align: center; padding: 80px 20px; color: var(--ink-mute); }
-    .loading-spinner {
-      width: 36px; height: 36px; border: 3px solid var(--border);
-      border-top-color: var(--accent); border-radius: 50%;
-      animation: spin .7s linear infinite; margin: 0 auto 16px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .sellers-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px;
-    }
-    .seller-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 24px 16px 20px;
-      text-align: center; cursor: pointer;
-      transition: all var(--transition);
-    }
-    .seller-card:hover { border-color: var(--ink); box-shadow: var(--shadow); transform: translateY(-3px); }
-    .seller-avatar {
-      width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
-      margin: 0 auto 12px; border: 2px solid var(--border);
-    }
-    .seller-name {
-      font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 5px;
-      word-break: break-word; overflow-wrap: break-word;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .seller-meta { font-size: 12px; color: var(--ink-mute); }
-    .seller-meta strong { color: var(--accent); }
-    .browse-empty { text-align: center; padding: 80px 20px; }
-    .browse-empty .empty-big { font-size: 60px; margin-bottom: 14px; }
-    .browse-empty p { font-size: 18px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
-    .browse-empty small { font-size: 14px; color: var(--ink-mute); }
+        /* ── شريط تحديث خفيف بدون إعادة رسم ── */
+        .update-bar {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.8rem 1.2rem; margin-bottom: 1.5rem;
+            background: rgba(46,204,113,0.08);
+            border: 1px solid rgba(46,204,113,0.2);
+            border-radius: 12px; font-size: 0.9rem; color: var(--text-light);
+        }
+        .update-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--success);
+            animation: live-pulse 2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
 
-    /* ══ STORE ══ */
-    .store-layout { max-width: 920px; margin: 0 auto; padding: 32px 20px; }
-    .btn-back-store {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--ink); padding: 9px 18px; border-radius: var(--radius-sm);
-      font-size: 14px; font-weight: 600;
-      transition: all var(--transition);
-    }
-    .btn-back-store:hover { border-color: var(--ink); }
-    .store-hero {
-      background: var(--ink); border-radius: var(--radius-lg);
-      padding: 48px 32px; text-align: center; margin-bottom: 32px;
-      position: relative; overflow: hidden;
-    }
-    .store-hero::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 60% 80% at 50% -20%, rgba(26,86,219,.35), transparent);
-      pointer-events: none;
-    }
-    .store-hero-img {
-      width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
-      margin: 0 auto 18px; border: 3px solid rgba(255,255,255,.2);
-      position: relative; z-index: 1;
-    }
-    .store-hero-name {
-      font-size: 26px; font-weight: 700; color: #fff;
-      letter-spacing: -.02em; margin-bottom: 14px; position: relative; z-index: 1;
-    }
-    .store-phone-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-      color: #fff; padding: 10px 24px; border-radius: 100px;
-      font-size: 15px; font-weight: 600;
-      transition: background var(--transition); position: relative; z-index: 1;
-    }
-    .store-phone-btn:hover { background: rgba(255,255,255,.2); }
-    .store-bio {
-      font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.75;
-      margin-top: 16px; max-width: 500px; margin-left: auto; margin-right: auto;
-      position: relative; z-index: 1;
-    }
-    .store-section-title {
-      font-size: 18px; font-weight: 700; color: var(--ink);
-      letter-spacing: -.01em; margin-bottom: 18px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .store-section-title span { font-size: 13px; font-weight: 500; color: var(--ink-mute); }
-    .store-products-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px;
-    }
-    .store-prod-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
-      transition: all var(--transition);
-    }
-    .store-prod-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
-    .store-prod-img  { width: 100%; height: 165px; object-fit: cover; }
-    .store-prod-placeholder {
-      width: 100%; height: 165px; background: var(--surface2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 38px; color: var(--border);
-    }
-    .store-prod-body { padding: 12px 14px; }
-    .store-prod-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-    .store-prod-desc { font-size: 12px; color: var(--ink-mute); line-height: 1.55; }
-    .store-empty { text-align: center; padding: 60px 20px; color: var(--ink-mute); font-size: 15px; }
+        /* Notification */
+        .notification {
+            position: fixed; top: 30px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg); padding: 1.5rem 2.5rem;
+            border-radius: 20px; box-shadow: var(--shadow-lg);
+            z-index: 1000; display: none; max-width: 90%;
+            animation: notifSlide 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);
+            font-weight: 600;
+        }
+        @keyframes notifSlide {
+            from { transform: translate(-50%,-150px) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%,0) scale(1); opacity: 1; }
+        }
+        .notification.success { border-right: 6px solid var(--success); background: linear-gradient(135deg,#fff,#f0fff4); }
+        .notification.error { border-right: 6px solid #e74c3c; background: linear-gradient(135deg,#fff,#fff5f5); }
 
-    /* ══ ADMIN ══ */
-    .btn-admin {
-      position: fixed; top: 18px; left: 16px; z-index: 300;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--ink-mute); padding: 6px 12px; border-radius: 8px;
-      font-size: 11px; font-weight: 600; letter-spacing: .02em;
-      transition: all var(--transition); white-space: nowrap;
-    }
-    .btn-admin:hover { background: var(--surface3); color: var(--ink); border-color: var(--ink-mute); }
-    @media (max-width: 480px) {
-      .btn-admin { font-size: 10px; padding: 5px 9px; top: 20px; left: 8px; }
-    }
-    .admin-modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      backdrop-filter: blur(8px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9000; padding: 20px;
-      opacity: 0; pointer-events: none; transition: opacity .25s;
-    }
-    .admin-modal-overlay.open { opacity: 1; pointer-events: auto; }
-    .admin-modal-box {
-      background: var(--surface); border-radius: var(--radius-lg);
-      padding: 36px 32px; max-width: 400px; width: 100%;
-      box-shadow: var(--shadow-lg); position: relative;
-      transform: scale(.94) translateY(12px);
-      transition: transform .28s cubic-bezier(.34,1.56,.64,1);
-    }
-    .admin-modal-overlay.open .admin-modal-box { transform: scale(1) translateY(0); }
-    .admin-modal-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-    .admin-modal-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: var(--ink); color: #fff; font-size: 20px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .admin-modal-title { font-size: 18px; font-weight: 700; color: var(--ink); }
-    .admin-modal-sub   { font-size: 13px; color: var(--ink-mute); margin-top: 2px; }
-    .admin-close {
-      position: absolute; top: 14px; left: 14px;
-      background: none; border: none; color: var(--ink-mute); font-size: 20px; padding: 4px;
-      cursor: pointer;
-    }
-    .admin-pages-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; max-height: 60vh; overflow-y: auto; }
-    .admin-page-row {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 10px 14px;
-    }
-    .admin-page-avatar { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
-    .admin-page-info { flex: 1; min-width: 0; }
-    .admin-page-name  { font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .admin-page-count { font-size: 12px; color: var(--ink-mute); }
-    .btn-admin-delete {
-      background: #fff0f0; border: 1px solid #fecaca; color: var(--accent-r);
-      padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700;
-      flex-shrink: 0; transition: all var(--transition); cursor: pointer;
-    }
-    .btn-admin-delete:hover { background: #fee2e2; }
-    .admin-empty { text-align: center; padding: 32px 20px; color: var(--ink-mute); font-size: 14px; }
-    .admin-loading { text-align: center; padding: 24px; color: var(--ink-mute); font-size: 14px; }
-    .admin-pass-error { font-size: 13px; color: var(--accent-r); margin-top: 8px; display: none; }
+        /* Loading */
+        .loading { display: none; text-align: center; padding: 3rem; }
+        .spinner { border: 5px solid var(--bg); border-top: 5px solid var(--primary); border-radius: 50%; width: 60px; height: 60px; animation: spin 0.8s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { margin-top: 1.5rem; color: var(--text-light); font-weight: 600; }
 
-    /* ══ RESPONSIVE ══ */
-    #changePassCard > div { grid-template-columns: 1fr !important; }
-    @media (max-width: 700px) {
-      .auth-card { padding: 32px 22px; }
-      .features-row { grid-template-columns: 1fr; }
-      .sellers-grid { grid-template-columns: repeat(2, 1fr); }
-      .store-products-grid { grid-template-columns: repeat(2, 1fr); }
-      .products-grid { grid-template-columns: 1fr; }
-      .dash-footer { flex-direction: column; }
-      .btn-delete-page { order: 2; }
-      .nav-user-name { display: none; }
-      .nav-browse-btn { font-size: 12px; padding: 7px 12px; }
-      .store-hero { padding: 36px 20px; }
-      .hero-title { font-size: 34px; }
-      .hero-actions { flex-direction: column; align-items: stretch; }
-      .hero-actions button { text-align: center; }
-    }
-    @media (max-width: 400px) {
-      .sellers-grid { grid-template-columns: 1fr; }
-      .store-products-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+        .empty-state { text-align: center; padding: 4rem 1rem; color: var(--text-light); }
+        .empty-state-icon { font-size: 6rem; margin-bottom: 1.5rem; opacity: 0.4; animation: float 3s ease-in-out infinite; }
+        .empty-state-text { font-size: 1.2rem; font-weight: 600; }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2.2rem; }
+            .features { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .nav { margin: 0 0.5rem; margin-top: -20px; padding: 0.8rem; gap: 0.5rem; }
+            .nav-btn { padding: 0.8rem 1rem; font-size: 0.95rem; }
+            #map { height: 350px; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- LOADER -->
-<div id="globalLoader">
-  <div class="loader-logo">
-    <div class="loader-icon">س</div>
-    <div class="loader-dots">
-      <div class="loader-dot"></div>
-      <div class="loader-dot"></div>
-      <div class="loader-dot"></div>
-    </div>
-    <div id="loaderMsg" style="font-size:13px;color:var(--ink-mute);margin-top:4px;opacity:0;transition:opacity .4s">جارٍ التحميل...</div>
-  </div>
-</div>
-
-<!-- TOAST CONTAINER -->
-<div id="toastContainer"></div>
-
-<!-- CONFIRM MODAL -->
-<div class="modal-overlay" id="confirmModal">
-  <div class="modal-box">
-    <div class="modal-icon" id="confirmIcon">⚠️</div>
-    <div class="modal-title" id="confirmTitle">هل أنت متأكد؟</div>
-    <div class="modal-desc"  id="confirmDesc">هذا الإجراء لا يمكن التراجع عنه.</div>
-    <div class="modal-btns">
-      <button class="modal-btn-cancel" id="confirmCancelBtn">إلغاء</button>
-      <button class="modal-btn-confirm" id="confirmBtn">تأكيد</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN BUTTON -->
-<button class="btn-admin" id="btnAdmin">⚙ الإدارة</button>
-
-<!-- ADMIN PASSWORD MODAL -->
-<div class="admin-modal-overlay" id="adminPassModal">
-  <div class="admin-modal-box">
-    <button class="admin-close" id="btnCloseAdminPass">✕</button>
-    <div class="admin-modal-head">
-      <div class="admin-modal-icon">🔒</div>
-      <div>
-        <div class="admin-modal-title">لوحة الإدارة</div>
-        <div class="admin-modal-sub">أدخل كلمة السر للمتابعة</div>
-      </div>
-    </div>
-    <input type="password" class="field-input" id="adminPassInput" placeholder="كلمة السر...">
-    <div class="admin-pass-error" id="adminPassError">كلمة السر غير صحيحة</div>
-    <button class="btn-submit" id="btnAdminLogin" style="margin-top:16px">دخول</button>
-  </div>
-</div>
-
-<!-- ADMIN PANEL MODAL -->
-<div class="admin-modal-overlay" id="adminPanelModal">
-  <div class="admin-modal-box" style="max-width:480px">
-    <button class="admin-close" id="btnCloseAdminPanel">✕</button>
-    <div class="admin-modal-head">
-      <div class="admin-modal-icon">🛡️</div>
-      <div>
-        <div class="admin-modal-title">لوحة الإدارة</div>
-        <div class="admin-modal-sub">إدارة صفحات المستخدمين | انسخ قواعد Firebase بالأسفل</div>
-      </div>
-    </div>
-    <div id="adminPagesList" class="admin-pages-list">
-      <div class="admin-loading">جارٍ التحميل...</div>
-    </div>
-    <div style="margin-top:14px;text-align:center">
-      <button id="btnShowRules" style="background:none;border:none;color:var(--ink-mute);font-size:12px;cursor:pointer;text-decoration:underline">
-        عرض قواعد Firebase المقترحة
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <div class="nav-logo" id="navLogo">
-      <div class="nav-logo-mark">س</div>
-      <div class="nav-logo-name">سوق<span class="nav-logo-dot">.</span></div>
-    </div>
-    <div class="nav-right" id="navRight"></div>
-  </div>
-</nav>
-
-<!-- HOME -->
-<div id="page-home" class="page active">
-  <div class="home-hero">
-    <div class="hero-badge">🛍️ منصة عرض المنتجات المحلية</div>
-    <h1 class="hero-title">اعرض منتجاتك<br><em>وتواصل مع العملاء</em></h1>
-    <p class="hero-desc">منصة رائعة تتيح لك إنشاء صفحة خاصة بك لعرض منتجاتك والتواصل مع عملائك بشكل مباشر.</p>
-    <p class="hero-note">أنشئ صفحتك الخاصة وأضف حتى <strong>10 منتجات</strong> مع صور وأوصاف — مجاناً تماماً.</p>
-    <div class="hero-actions" id="heroActions"></div>
-    <div class="features-row">
-      <div class="feat">
-        <div class="feat-icon">👤</div>
-        <div class="feat-name">سجّل بسهولة</div>
-        <div class="feat-desc">ادخل اسمك وصورتك وابدأ فوراً</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">🛒</div>
-        <div class="feat-name">أضف منتجاتك</div>
-        <div class="feat-desc">صور وأوصاف كاملة لكل منتج</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">📱</div>
-        <div class="feat-name">تواصل مباشر</div>
-        <div class="feat-desc">العملاء يتواصلون معك مباشرة</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- LOGIN -->
-<div id="page-login" class="page">
-  <div class="auth-wrap">
-    <div class="auth-card">
-      <button class="auth-back" id="loginBackBtn">← رجوع</button>
-      <div class="auth-head">
-        <h2>أهلاً بك 👋</h2>
-        <p>أنشئ حسابك أو سجّل دخولك بكلمة السر</p>
-      </div>
-      <div class="field">
-        <label class="field-label">الصورة الشخصية *</label>
-        <div class="photo-zone">
-          <label class="photo-ring" id="photoRing" for="loginPhotoInput">
-            <div class="photo-ring-placeholder" id="photoPlaceholder">📷</div>
-            <input type="file" accept="image/*" id="loginPhotoInput">
-          </label>
-          <div class="photo-info">
-            <p>صورة واضحة لك أو لعلامتك التجارية</p>
-            <span>JPG, PNG — بحد أقصى 5MB</span>
-          </div>
+<div class="hero">
+    <div class="hero-content">
+        <div class="taxi-icon-container">
+            <div class="taxi-glow"></div>
+            <div class="taxi-icon">🚖</div>
         </div>
-      </div>
-      <div class="field">
-        <label class="field-label" for="loginName">اسمك (للعرض فقط) *</label>
-        <input type="text" class="field-input" id="loginName"
-          placeholder="اكتب اسمك هنا..." maxlength="60">
-      </div>
-      <div class="field">
-        <label class="field-label" for="loginPassword">كلمة السر *</label>
-        <div style="position:relative">
-          <input type="password" class="field-input" id="loginPassword"
-            placeholder="اختر كلمة سر قوية..." maxlength="64"
-            style="padding-left:44px">
-          <button type="button" id="togglePassBtn"
-            style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink-mute);font-size:18px;cursor:pointer;padding:0;line-height:1">👁</button>
+        <h1>تكسي طولكرم</h1>
+        <p class="hero-subtitle">خدمتك في أي وقت، في أي مكان</p>
+        <p>احجز تكسي بكل سهولة وأمان من هاتفك المحمول</p>
+        <p>خدمة توصيل سريعة ومريحة متاحة على مدار الساعة</p>
+        <div class="features">
+            <div class="feature"><div class="feature-icon">⚡</div><div class="feature-text">سريع وآمن</div></div>
+            <div class="feature"><div class="feature-icon">💰</div><div class="feature-text">أسعار مناسبة</div></div>
+            <div class="feature"><div class="feature-icon">📍</div><div class="feature-text">تتبع مباشر</div></div>
+            <div class="feature"><div class="feature-icon">⭐</div><div class="feature-text">خدمة ممتازة</div></div>
         </div>
-        <div class="field-hint" id="passHint">كلمة السر تُستخدم لحماية حسابك — لن تظهر لأحد</div>
-      </div>
-      <button class="btn-submit" id="loginBtn">دخول / إنشاء حساب ←</button>
     </div>
-  </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="page-dashboard" class="page">
-  <div class="dash-layout">
-    <div class="dash-top">
-      <div class="dash-greeting" id="dashGreeting">لوحة التحكم</div>
-      <button class="nav-btn nav-btn-outline" id="dashBrowseBtn">تصفح المنتجات</button>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="card-title-icon">👤</div> معلومات صفحتك</div>
-      <div class="profile-strip" id="profileStrip"></div>
-      <div class="field">
-        <label class="field-label" for="dashPhone">رقم الهاتف للتواصل *</label>
-        <input type="tel" class="field-input" id="dashPhone" placeholder="05xxxxxxxx" maxlength="20">
-        <div class="field-hint" id="phoneHint"></div>
-      </div>
-      <div class="field">
-        <label class="field-label" for="dashBio">
-          نبذة عنك
-          <span id="bioCounter" style="font-weight:400; color: var(--ink-mute);"> — 0/500</span>
-        </label>
-        <textarea class="field-input" id="dashBio" rows="3"
-          placeholder="اكتب وصفاً مختصراً عنك أو عن ما تبيعه..." maxlength="500"></textarea>
-      </div>
-    </div>
-    <div class="card">
-      <div class="prod-bar">
-        <div class="card-title" style="margin-bottom:0">
-          <div class="card-title-icon">🛒</div>
-          منتجاتي
-          <div class="prod-count-badge" id="prodCountBadge">0 / 10</div>
-        </div>
-        <button class="btn-add-product" id="btnAddProd">
-          <span>+</span> إضافة منتج
-        </button>
-      </div>
-      <div id="productsGrid"></div>
-    </div>
-    <!-- Change Password Card -->
-    <div class="card" id="changePassCard">
-      <div class="card-title"><div class="card-title-icon">🔑</div> تغيير كلمة السر</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="field" style="margin-bottom:0">
-          <label class="field-label" for="newPass1">كلمة السر الجديدة</label>
-          <input type="password" class="field-input" id="newPass1" placeholder="4 أحرف على الأقل" maxlength="64">
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <label class="field-label" for="newPass2">تأكيد كلمة السر</label>
-          <input type="password" class="field-input" id="newPass2" placeholder="أعد الكتابة" maxlength="64">
-        </div>
-      </div>
-      <button class="nav-btn nav-btn-outline" id="btnChangePass" style="margin-top:14px;width:100%">تحديث كلمة السر 🔒</button>
-    </div>
-
-    <div class="dash-footer">
-      <button class="btn-save-page" id="saveBtn">حفظ الصفحة</button>
-      <button class="btn-delete-page" id="deleteBtn" style="display:none">حذف الصفحة</button>
-    </div>
-  </div>
+<div class="nav">
+    <button class="nav-btn active" onclick="showSection('request')"><span>🚕 طلب تكسي</span></button>
+    <button class="nav-btn" onclick="showSection('driver')"><span>👨‍✈️ السائق</span></button>
 </div>
 
-<!-- BROWSE -->
-<div id="page-browse" class="page">
-  <div class="browse-layout">
-    <div class="browse-head">
-      <h2>البائعون المسجلون</h2>
-      <p>اضغط على أي بائع لعرض متجره ومنتجاته</p>
-      <input type="search" id="browseSearch" class="field-input"
-        placeholder="ابحث عن بائع..." style="margin-top:16px;max-width:320px">
+<div id="notification" class="notification"></div>
+
+<!-- Request Section -->
+<div id="request-section" class="section active">
+    <div id="map"></div>
+    <div class="form-card">
+        <form id="requestForm">
+            <div class="form-group">
+                <button type="button" class="location-btn" onclick="selectLocationOnMap()">
+                    <span>📍</span><span>حدد موقعك على الخريطة</span>
+                </button>
+                <input type="hidden" id="selectedLat" required>
+                <input type="hidden" id="selectedLng" required>
+                <div id="selectedLocation"></div>
+            </div>
+            <div class="form-group">
+                <label><span>📱</span> رقم الهاتف</label>
+                <input type="tel" id="phone" placeholder="05xxxxxxxx" required pattern="[0-9]{10}">
+            </div>
+            <div class="form-group">
+                <label><span>📍</span> موقعك الحالي (وصف)</label>
+                <input type="text" id="currentLocation" placeholder="مثال: شارع الخضراء، قرب مسجد النور" required>
+            </div>
+            <div class="form-group">
+                <label><span>🎯</span> إلى أين؟</label>
+                <textarea id="destination" placeholder="مثال: مستشفى طولكرم الحكومي" required></textarea>
+            </div>
+            <div class="form-group">
+                <label><span>👥</span> عدد الركاب</label>
+                <select id="passengers" required>
+                    <option value="">اختر عدد الركاب</option>
+                    <option value="1">راكب واحد</option>
+                    <option value="2">راكبان</option>
+                    <option value="3">3 ركاب</option>
+                    <option value="4">4 ركاب</option>
+                    <option value="5+">أكثر من 4</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-btn">🚖 اطلب تكسي الآن</button>
+        </form>
     </div>
-    <div id="sellersGrid"></div>
-    <div id="browseLoadMore" style="display:none;text-align:center;margin-top:28px">
-      <button class="btn-cta-secondary" id="btnLoadMore">تحميل المزيد ↓</button>
-      <div style="font-size:12px;color:var(--ink-mute);margin-top:8px" id="browsePageInfo"></div>
-    </div>
-  </div>
 </div>
 
-<!-- STORE -->
-<div id="page-store" class="page">
-  <div class="store-layout">
-    <div id="storeContent"></div>
-  </div>
+<!-- Driver Section -->
+<div id="driver-section" class="section">
+    <div class="password-container" id="passwordContainer">
+        <div class="lock-icon">🔐</div>
+        <h2>دخول السائق</h2>
+        <div class="form-group">
+            <label><span>🔑</span> كلمة المرور</label>
+            <input type="password" id="driverPassword" placeholder="أدخل كلمة المرور"
+                   onkeydown="if(event.key==='Enter') verifyDriver()">
+        </div>
+        <button class="submit-btn" onclick="verifyDriver()">دخول</button>
+    </div>
+
+    <div class="requests-container" id="requestsContainer">
+        <div class="requests-header">
+            <div>
+                <h2 style="margin:0;font-size:1.5rem;">📋 الطلبات الواردة</h2>
+            </div>
+            <div class="requests-count" id="requestsCount">0</div>
+        </div>
+
+        <!-- شريط "مباشر" يُثبت للسائق أن الاتصال حي -->
+        <div class="update-bar">
+            <div class="update-dot"></div>
+            <span>مباشر — يتم تحديث الطلبات تلقائياً فور ورودها</span>
+            <span id="lastUpdateTime" style="margin-right:auto;font-size:0.8rem;"></span>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p class="loading-text">جاري تحميل الطلبات...</p>
+        </div>
+        <div id="requestsList"></div>
+    </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-/* ═══════════════════════════════════════════════════
-   FIREBASE CONFIG
-═══════════════════════════════════════════════════ */
-firebase.initializeApp({
-  databaseURL: "https://namenam-1a7ab-default-rtdb.firebaseio.com/"
-});
-const db = firebase.database();
+/* ─────────────────────────────────────────────
+   Firebase Config
+───────────────────────────────────────────── */
+const FIREBASE_URL = 'https://tiksehamod-default-rtdb.firebaseio.com';
+const ENCODED_PASSWORD = btoa('1230964');
 
-/* ═══════════════════════════════════════════════════
-   CONSTANTS & STATE
-═══════════════════════════════════════════════════ */
-const MAX_PRODUCTS = 10;
-const MAX_BIO      = 500;
-const PAGE_SIZE    = 20;
+/* ─────────────────────────────────────────────
+   Map
+───────────────────────────────────────────── */
+let map, marker, selectingLocation = false;
 
-// كلمة سر الأدمن كـ SHA-256 مقسّمة لصعوبة الكشف — الأصل: 12345321
-const _AH = ['b32f4fbf','c653cd8c','adb24cc7','1234ad3c',
-             '0528329a','cb794593','ba1739d3','8319e3d8'].join('');
-
-let currentUser     = null;
-let userPage        = null;
-let products        = [];
-let loginPhotoData  = '';
-let allPages        = [];
-let browseScrollY   = 0;
-let currentStoreUid = null;
-let modalResolver   = null;
-let browsePage      = 0;
-let browseFiltered  = [];
-let storeCache      = {};
-
-/* ═══════════════════════════════════════════════════
-   UTILITY
-═══════════════════════════════════════════════════ */
-// ✅ FIX: HTML-escapes all output to prevent XSS
-function esc(s) {
-  if (s == null) return '';
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+function initMap() {
+    map = L.map('map').setView([32.3117, 35.0278], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    map.on('click', function(e) {
+        if (selectingLocation) setLocation(e.latlng.lat, e.latlng.lng);
+    });
 }
 
-function genUID() {
-  return Math.random().toString(36).slice(2, 11) + Date.now().toString(36);
+function selectLocationOnMap() {
+    selectingLocation = true;
+    showNotification('اضغط على الخريطة لتحديد موقعك', 'success');
 }
 
-async function hashString(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+function setLocation(lat, lng) {
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+    document.getElementById('selectedLat').value = lat;
+    document.getElementById('selectedLng').value = lng;
+    document.getElementById('selectedLocation').textContent =
+        `✅ تم تحديد الموقع: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    selectingLocation = false;
+    map.setView([lat, lng], 15);
 }
 
-/* ═══════════════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════════════ */
-function toast(msg, type = 'info', duration = 3500) {
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ'}</span><span>${esc(msg)}</span>`;
-  document.getElementById('toastContainer').appendChild(el);
-  setTimeout(() => {
-    el.classList.add('toast-out');
-    setTimeout(() => el.remove(), 320);
-  }, duration);
-}
+/* ─────────────────────────────────────────────
+   Customer: Submit Request
+───────────────────────────────────────────── */
+document.getElementById('requestForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-/* ═══════════════════════════════════════════════════
-   MODAL CONFIRM
-   ✅ FIX: event listeners attached in JS, not inline onclick
-═══════════════════════════════════════════════════ */
-function openConfirm({ icon = '⚠️', title = 'هل أنت متأكد؟', desc = 'هذا الإجراء لا يمكن التراجع عنه.' }) {
-  return new Promise(resolve => {
-    modalResolver = resolve;
-    document.getElementById('confirmIcon').textContent  = icon;
-    document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmDesc').textContent  = desc;
-    document.getElementById('confirmModal').classList.add('open');
-  });
-}
+    if (!document.getElementById('selectedLat').value) {
+        showNotification('⚠️ يرجى تحديد موقعك على الخريطة أولاً', 'error');
+        return;
+    }
 
-function closeModal(result = false) {
-  document.getElementById('confirmModal').classList.remove('open');
-  if (modalResolver) {
-    const r = modalResolver;
-    modalResolver = null;
-    r(result);
-  }
-}
+    const submitBtn = this.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ جاري الإرسال...';
 
-document.getElementById('confirmBtn').addEventListener('click', () => closeModal(true));
-document.getElementById('confirmCancelBtn').addEventListener('click', () => closeModal(false));
-document.getElementById('confirmModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal(false);
-});
-
-/* ═══════════════════════════════════════════════════
-   IMAGE COMPRESSION
-═══════════════════════════════════════════════════ */
-function compressImage(file, maxW, maxH, quality) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      let w = img.width, h = img.height;
-      if (w > maxW || h > maxH) {
-        const r = Math.min(maxW / w, maxH / h);
-        w = Math.round(w * r);
-        h = Math.round(h * r);
-      }
-      const c = document.createElement('canvas');
-      c.width = w; c.height = h;
-      c.getContext('2d').drawImage(img, 0, 0, w, h);
-      resolve(c.toDataURL('image/jpeg', quality));
+    const requestData = {
+        phone:           document.getElementById('phone').value,
+        currentLocation: document.getElementById('currentLocation').value,
+        destination:     document.getElementById('destination').value,
+        passengers:      document.getElementById('passengers').value,
+        latitude:        document.getElementById('selectedLat').value,
+        longitude:       document.getElementById('selectedLng').value,
+        timestamp:       new Date().toISOString(),
+        status:          'pending',
+        requestId:       'REQ' + Date.now()
     };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('فشل قراءة الصورة')); };
-    img.src = url;
-  });
-}
 
-/* ═══════════════════════════════════════════════════
-   HASH / PAGE ROUTING
-   ✅ FIX: single _activatePage + clean showPage — no duplication
-═══════════════════════════════════════════════════ */
-function _activatePage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const el = document.getElementById('page-' + name);
-  if (el) el.classList.add('active');
-}
+    try {
+        const response = await fetch(`${FIREBASE_URL}/requests.json`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(requestData)
+        });
 
-function showPage(name) {
-  if (name === 'dashboard' && !currentUser) { showPage('login'); return; }
-
-  // Save browse scroll position before leaving
-  if (document.querySelector('.page.active')?.id === 'page-browse') {
-    browseScrollY = window.scrollY;
-  }
-
-  if (name === 'store' && currentStoreUid) {
-    history.pushState(null, '', '#store/' + encodeURIComponent(currentStoreUid));
-    _activatePage('store');
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    return;
-  }
-
-  if (name === 'browse') {
-    history.pushState(null, '', '#browse');
-    _activatePage('browse');
-    loadBrowse();
-    setTimeout(() => window.scrollTo({ top: browseScrollY, behavior: 'instant' }), 60);
-    return;
-  }
-
-  if (name === 'dashboard') {
-    history.pushState(null, '', '#dashboard');
-    _activatePage('dashboard');
-    loadDashboard();
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    return;
-  }
-
-  if (name === 'login') {
-    history.pushState(null, '', '#login');
-    _activatePage('login');
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    // إذا كان للمستخدم حساب محفوظ، أعد ملء الاسم والصورة
-    prefillLoginIfSaved();
-    return;
-  }
-
-  // home (default)
-  history.pushState(null, '', '#home');
-  _activatePage('home');
-  window.scrollTo({ top: 0, behavior: 'instant' });
-}
-
-// نسخة sync تُستخدم في init (تعرض الصفحة فوراً بدون انتظار Firebase)
-function handleHashRouteSync() {
-  const hash = window.location.hash;
-  if (hash.startsWith('#store/')) {
-    // أظهر صفحة المتجر فوراً، البيانات تُحمّل بعدها
-    _activatePage('store');
-    const uid = decodeURIComponent(hash.slice(7));
-    if (uid) {
-      currentStoreUid = uid;
-      document.getElementById('storeContent').innerHTML =
-        `<div class="browse-loading"><div class="loading-spinner"></div><p>جارٍ تحميل المتجر...</p></div>`;
-      withTimeout(loadStoreByUid(uid), 10000).catch(() => {
-        toast('فشل تحميل المتجر — تحقق من اتصالك', 'error');
-        showPage('browse');
-      });
+        if (response.ok) {
+            const data = await response.json();
+            showNotification('✅ تم إرسال طلبك بنجاح! سيصلك التكسي قريباً', 'success');
+            this.reset();
+            document.getElementById('selectedLocation').textContent = '';
+            if (marker) { map.removeLayer(marker); marker = null; }
+            document.getElementById('selectedLat').value = '';
+            document.getElementById('selectedLng').value = '';
+            listenForAcceptance(data.name);
+        } else {
+            showNotification('❌ حدث خطأ في إرسال الطلب، يرجى المحاولة مرة أخرى', 'error');
+        }
+    } catch (error) {
+        showNotification('❌ خطأ في الاتصال بالخادم', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🚖 اطلب تكسي الآن';
     }
-  } else if (hash === '#browse') {
-    _activatePage('browse');
-    loadBrowse();
-  } else if (hash === '#dashboard') {
-    if (currentUser) { _activatePage('dashboard'); }
-    else { _activatePage('login'); prefillLoginIfSaved(); }
-  } else if (hash === '#login') {
-    _activatePage('login');
-    prefillLoginIfSaved();
-  } else {
-    _activatePage('home');
-  }
+});
+
+/* ─────────────────────────────────────────────
+   Customer: Listen for acceptance (SSE)
+   — يستخدم Firebase SSE بدل polling
+───────────────────────────────────────────── */
+function listenForAcceptance(firebaseKey) {
+    const url = `${FIREBASE_URL}/requests/${firebaseKey}.json`;
+    const source = new EventSource(url);
+    const timeout = setTimeout(() => source.close(), 300000); // 5 دقائق
+
+    source.addEventListener('put', function(e) {
+        try {
+            const payload = JSON.parse(e.data);
+            const data = payload.data;
+            if (data && data.status === 'accepted') {
+                clearTimeout(timeout);
+                source.close();
+                showNotification('🎉 تم قبول طلبك! التكسي في الطريق إليك', 'success');
+            }
+        } catch(_) {}
+    });
+
+    source.onerror = function() { source.close(); clearTimeout(timeout); };
 }
 
-// ✅ FIX: single handleHashRoute, handles all cases correctly
-async function handleHashRoute() {
-  const hash = window.location.hash;
-  if (hash.startsWith('#store/')) {
-    const uid = decodeURIComponent(hash.slice(7));
-    if (uid) await loadStoreByUid(uid);
-  } else if (hash === '#browse') {
-    _activatePage('browse');
-    loadBrowse();
-  } else if (hash === '#dashboard') {
-    if (currentUser) { _activatePage('dashboard'); loadDashboard(); }
-    else { showPage('login'); }
-  } else if (hash === '#login') {
-    _activatePage('login');
-    prefillLoginIfSaved();
-  } else {
-    _activatePage('home');
-  }
-}
-
-/* ═══════════════════════════════════════════════════
-   UNSAVED CHANGES
-═══════════════════════════════════════════════════ */
-function hasUnsavedChanges() {
-  if (!currentUser) return false;
-  const phoneEl = document.getElementById('dashPhone');
-  const bioEl   = document.getElementById('dashBio');
-  if (!phoneEl || !bioEl) return false;
-  if (phoneEl.value.trim() !== (userPage?.phone || '')) return true;
-  if (bioEl.value         !== (userPage?.bio   || '')) return true;
-  const validNow   = products.filter(p => (p.name || '').trim() || p.imageURL);
-  const savedProds = userPage?.products || [];
-  if (validNow.length !== savedProds.length) return true;
-  return false;
-}
-
-/* ═══════════════════════════════════════════════════
-   INIT
-   ✅ FIX: single init call, no duplication
-═══════════════════════════════════════════════════ */
-// مساعد: ينفّذ Promise مع حد أقصى للانتظار (ms)
-function withTimeout(promise, ms) {
-  const timeout = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('timeout')), ms)
-  );
-  return Promise.race([promise, timeout]);
-}
-
-// إخفاء الـ loader بأمان
-let _loaderMsgTimer = null;
-function hideLoader() {
-  if (_loaderMsgTimer) { clearTimeout(_loaderMsgTimer); _loaderMsgTimer = null; }
-  const loader = document.getElementById('globalLoader');
-  if (!loader) return;
-  loader.classList.add('hide');
-  setTimeout(() => { if (loader.parentNode) loader.remove(); }, 400);
-}
-
-// تشغيل رسالة "جارٍ التحميل" بعد ثانية واحدة فقط إذا ما اختفى الـ loader
-function startLoaderFeedback() {
-  _loaderMsgTimer = setTimeout(() => {
-    const msg = document.getElementById('loaderMsg');
-    if (msg) { msg.style.opacity = '1'; msg.textContent = 'جارٍ الاتصال...'; }
-  }, 1000);
-}
-
-// ضمان إخفاء الـ loader حتى لو حدث خطأ — يُنفَّذ بعد 500ms كحد أقصى
-setTimeout(hideLoader, 500);
-
-(function init() {
-  // ─── 1. استعادة الجلسة من localStorage (فورية - لا شبكة) ───
-  try {
-    const saved = localStorage.getItem('mkt_user');
-    if (saved) {
-      currentUser = JSON.parse(saved);
-      if (!currentUser.passHash) currentUser.passHash = null;
-    }
-  } catch(e) {
-    localStorage.removeItem('mkt_user');
-  }
-
-  // ─── 2. رسم الواجهة ───
-  try { renderNav(); } catch(e) { console.error('renderNav:', e); }
-  try { renderHeroActions(); } catch(e) { console.error('renderHeroActions:', e); }
-  try { attachEventListeners(); } catch(e) { console.error('attachEventListeners:', e); }
-  try { handleHashRouteSync(); } catch(e) { console.error('handleHashRouteSync:', e); }
-
-  // ─── 3. إخفاء الـ loader فوراً ───
-  hideLoader();
-
-  // ─── 4. Firebase في الخلفية ───
-  if (currentUser) {
-    withTimeout(loadUserPage(currentUser.uid), 8000)
-      .then(() => {
-        const active = document.querySelector('.page.active')?.id;
-        if (active === 'page-dashboard') loadDashboard();
-      })
-      .catch(() => {
-        const active = document.querySelector('.page.active')?.id;
-        if (active === 'page-dashboard') loadDashboard();
-      });
-  }
-
-  // ─── 5. أحداث التنقل ───
-  window.addEventListener('hashchange', handleHashRoute);
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden || !currentUser) return;
-    loadUserPage(currentUser.uid)
-      .then(() => {
-        if (document.querySelector('.page.active')?.id === 'page-dashboard') loadDashboard();
-      })
-      .catch(() => {});
-  });
-
-  window.addEventListener('beforeunload', e => {
-    if (hasUnsavedChanges()) {
-      e.preventDefault();
-      e.returnValue = 'لديك تغييرات غير محفوظة، هل تريد المغادرة؟';
-    }
-  });
-})();
-
-/* ═══════════════════════════════════════════════════
-   EVENT LISTENERS
-   ✅ FIX: all event wiring in one place, no inline onclick
-═══════════════════════════════════════════════════ */
-function attachEventListeners() {
-  // Nav & logo
-  document.getElementById('navLogo').addEventListener('click', () => showPage('home'));
-  document.getElementById('dashBrowseBtn').addEventListener('click', () => showPage('browse'));
-
-  // Login page
-  document.getElementById('loginBackBtn').addEventListener('click', () => showPage('home'));
-  document.getElementById('loginPhotoInput').addEventListener('change', function() { handleLoginPhoto(this); });
-  document.getElementById('loginBtn').addEventListener('click', doLogin);
-  document.getElementById('loginName').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-  document.getElementById('togglePassBtn').addEventListener('click', () => {
-    const inp = document.getElementById('loginPassword');
-    inp.type = inp.type === 'password' ? 'text' : 'password';
-  });
-
-  // Dashboard
-  document.getElementById('dashPhone').addEventListener('input', function() { validatePhone(this); });
-  document.getElementById('dashBio').addEventListener('input', updateBioCount);
-  document.getElementById('btnAddProd').addEventListener('click', addProduct);
-  document.getElementById('saveBtn').addEventListener('click', savePage);
-  document.getElementById('deleteBtn').addEventListener('click', confirmDeletePage);
-  document.getElementById('btnChangePass').addEventListener('click', changePassword);
-
-  // Browse search + load more
-  document.getElementById('browseSearch').addEventListener('input', function() { filterSellers(this.value); });
-  document.getElementById('btnLoadMore').addEventListener('click', loadMoreSellers);
-
-  // Admin
-  document.getElementById('btnAdmin').addEventListener('click', openAdminModal);
-  document.getElementById('btnCloseAdminPass').addEventListener('click', closeAdminModal);
-  document.getElementById('btnCloseAdminPanel').addEventListener('click', closeAdminPanel);
-  document.getElementById('btnAdminLogin').addEventListener('click', checkAdminPass);
-  document.getElementById('adminPassInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkAdminPass(); });
-
-  // Rules modal
-  document.getElementById('btnShowRules').addEventListener('click', openRulesModal);
-  document.getElementById('btnCloseRules').addEventListener('click', closeRulesModal);
-  document.getElementById('rulesModal').addEventListener('click', function(e) {
-    if (e.target === this) closeRulesModal();
-  });
-  document.getElementById('btnCopyRules').addEventListener('click', () => {
-    navigator.clipboard?.writeText(FIREBASE_RULES)
-      .then(() => toast('تم نسخ القواعد ✓', 'success'))
-      .catch(() => fallbackCopy(FIREBASE_RULES));
-  });
-
-  // Close admin modals when clicking backdrop
-  document.getElementById('adminPassModal').addEventListener('click', function(e) {
-    if (e.target === this) closeAdminModal();
-  });
-  document.getElementById('adminPanelModal').addEventListener('click', function(e) {
-    if (e.target === this) closeAdminPanel();
-  });
-}
-
-/* ═══════════════════════════════════════════════════
-   NAV
-═══════════════════════════════════════════════════ */
-function renderNav() {
-  const el = document.getElementById('navRight');
-  if (currentUser) {
-    el.innerHTML = `
-      <button class="nav-btn nav-btn-outline nav-browse-btn" id="navBrowseBtn">تصفح المنتجات</button>
-      <div class="nav-user">
-        <img class="nav-user-avatar" src="${esc(currentUser.photoURL)}" alt="${esc(currentUser.name)}">
-        <span class="nav-user-name">${esc(currentUser.name)}</span>
-      </div>
-      <div class="nav-separator"></div>
-      <button class="nav-logout" id="navLogoutBtn">خروج</button>`;
-    document.getElementById('navBrowseBtn').addEventListener('click', () => showPage('browse'));
-    document.getElementById('navLogoutBtn').addEventListener('click', doLogout);
-  } else {
-    el.innerHTML = `
-      <button class="nav-btn nav-btn-outline nav-browse-btn" id="navBrowseBtn">تصفح المنتجات</button>
-      <button class="nav-btn nav-btn-filled" id="navLoginBtn">تسجيل الدخول</button>`;
-    document.getElementById('navBrowseBtn').addEventListener('click', () => showPage('browse'));
-    document.getElementById('navLoginBtn').addEventListener('click', () => showPage('login'));
-  }
-}
-
-function renderHeroActions() {
-  const el = document.getElementById('heroActions');
-  if (currentUser) {
-    el.innerHTML = `
-      <button class="btn-cta-primary" id="heroPrimaryBtn">إدارة صفحتي ←</button>
-      <button class="btn-cta-secondary" id="heroSecondaryBtn">تصفح المنتجات</button>`;
-    document.getElementById('heroPrimaryBtn').addEventListener('click', () => showPage('dashboard'));
-  } else {
-    el.innerHTML = `
-      <button class="btn-cta-primary" id="heroPrimaryBtn">ابدأ الآن — مجاناً ←</button>
-      <button class="btn-cta-secondary" id="heroSecondaryBtn">تصفح المنتجات</button>`;
-    document.getElementById('heroPrimaryBtn').addEventListener('click', () => showPage('login'));
-  }
-  document.getElementById('heroSecondaryBtn').addEventListener('click', () => showPage('browse'));
-}
-
-/* ═══════════════════════════════════════════════════
-   FIREBASE: LOAD USER PAGE
-═══════════════════════════════════════════════════ */
-function loadUserPage(uid) {
-  return db.ref('pages/' + uid).get().then(snap => {
-    if (snap.exists()) {
-      userPage = snap.val();
-      products = Array.isArray(userPage.products)
-        ? userPage.products.map(p => ({ ...p }))
-        : [];
+/* ─────────────────────────────────────────────
+   Driver: Login
+───────────────────────────────────────────── */
+function verifyDriver() {
+    const password = document.getElementById('driverPassword').value;
+    if (btoa(password) === ENCODED_PASSWORD) {
+        document.getElementById('passwordContainer').style.display = 'none';
+        document.getElementById('requestsContainer').style.display  = 'block';
+        loadRequestsOnce();          // تحميل أولي
+        startFirebaseSSEDriver();    // ثم مستمع مباشر بدون polling
     } else {
-      userPage = null;
-      products = [];
+        showNotification('❌ كلمة المرور غير صحيحة', 'error');
     }
-  }).catch(err => {
-    // عند فشل الاتصال — لا نكسر الواجهة
-    console.warn('loadUserPage failed:', err?.message);
-    userPage = null;
-    products = [];
-  });
 }
 
-/* ═══════════════════════════════════════════════════
-   LOGIN
-═══════════════════════════════════════════════════ */
-function prefillLoginIfSaved() {
-  // إذا كان يوجد حساب محفوظ، أعد ملء بيانات النموذج تلقائياً
-  try {
-    const saved = localStorage.getItem('mkt_user');
-    if (!saved) return;
-    const u = JSON.parse(saved);
-    if (u.name) document.getElementById('loginName').value = u.name;
-    if (u.photoURL) {
-      loginPhotoData = u.photoURL;
-      const ring = document.getElementById('photoRing');
-      if (ring) {
-        ring.classList.add('has-img');
-        ring.innerHTML = `<img src="${u.photoURL}" alt="صورتك" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
-          <input type="file" accept="image/*" style="display:none">`;
-        ring.querySelector('input').addEventListener('change', function() { handleLoginPhoto(this); });
-      }
-    }
-    if (u.passHash) {
-      const hint = document.getElementById('passHint');
-      if (hint) hint.textContent = '🔑 لديك حساب محفوظ — أدخل كلمة سرك للدخول';
-    }
-  } catch(e) { /* ignore */ }
-}
+/* ─────────────────────────────────────────────
+   Driver: حالة القائمة المحلية (لا تُعيد رسم كامل)
+───────────────────────────────────────────── */
 
-function handleLoginPhoto(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 10 * 1024 * 1024) { toast('حجم الصورة يجب أن يكون أقل من 10MB', 'error'); return; }
-  compressImage(file, 400, 400, 0.82).then(data => {
-    loginPhotoData = data;
-    const ring = document.getElementById('photoRing');
-    ring.classList.add('has-img');
-    // ✅ FIX: rebuild ring HTML safely, re-attach listener
-    ring.innerHTML = `
-      <img src="${data}" alt="صورتك" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
-      <input type="file" accept="image/*" style="display:none">`;
-    ring.querySelector('input').addEventListener('change', function() { handleLoginPhoto(this); });
-  }).catch(() => toast('فشل تحميل الصورة', 'error'));
-}
+// خريطة الطلبات الموجودة حالياً  key→ requestData
+const knownRequests = new Map();
+// وقت دخول السائق لنعرف الطلبات "الجديدة"
+const driverLoginTime = Date.now();
 
-async function doLogin() {
-  const nameInput = document.getElementById('loginName');
-  const passInput = document.getElementById('loginPassword');
-  const name = nameInput.value.trim();
-  const pass = passInput.value;
+/* ── التحميل الأولي ── */
+async function loadRequestsOnce() {
+    const loading      = document.getElementById('loading');
+    const requestsList = document.getElementById('requestsList');
 
-  if (!name) {
-    nameInput.classList.add('error');
-    toast('الرجاء إدخال اسمك', 'error');
-    nameInput.focus(); return;
-  }
-  nameInput.classList.remove('error');
+    loading.style.display = 'block';
+    requestsList.innerHTML = '';
 
-  if (!pass || pass.length < 4) {
-    passInput.classList.add('error');
-    toast('كلمة السر يجب أن تكون 4 أحرف على الأقل', 'error');
-    passInput.focus(); return;
-  }
-  if (pass.length > 64) {
-    passInput.classList.add('error');
-    toast('كلمة السر طويلة جداً (64 حرف كحد أقصى)', 'error');
-    passInput.focus(); return;
-  }
-  passInput.classList.remove('error');
-
-  if (!loginPhotoData) { toast('الرجاء اختيار صورة شخصية', 'error'); return; }
-
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true; btn.textContent = 'جارٍ الدخول...';
-
-  // hash كلمة السر قبل تخزينها
-  const passHash = await hashString(pass);
-
-  // تحقق هل يوجد حساب محفوظ لنفس الـ UID
-  let uid;
-  let savedUser = null;
-  try {
-    const saved = localStorage.getItem('mkt_user');
-    if (saved) savedUser = JSON.parse(saved);
-  } catch(e) { /* ignore */ }
-
-  if (savedUser && savedUser.uid) {
-    // حساب موجود — تحقق من كلمة السر فقط إذا كانت محفوظة
-    if (savedUser.passHash) {
-      if (savedUser.passHash !== passHash) {
-        btn.disabled = false; btn.textContent = 'دخول / إنشاء حساب ←';
-        passInput.classList.add('error');
-        toast('كلمة السر غير صحيحة ❌', 'error'); return;
-      }
-    }
-    // إذا لم تكن محفوظة من قبل (حساب قديم) → احفظها الآن
-    uid = savedUser.uid;
-  } else {
-    // حساب جديد
-    uid = genUID();
-  }
-
-  currentUser = { uid, name, photoURL: loginPhotoData, passHash };
-  localStorage.setItem('mkt_user', JSON.stringify(currentUser));
-
-  loadUserPage(uid)
-    .catch(() => {})
-    .finally(() => {
-      btn.disabled = false;
-      btn.textContent = 'دخول / إنشاء حساب ←';
-      renderNav();
-      renderHeroActions();
-      toast(`أهلاً ${name}! 👋`, 'success');
-      showPage('dashboard');
-    });
-}
-
-async function changePassword() {
-  const p1 = document.getElementById('newPass1').value;
-  const p2 = document.getElementById('newPass2').value;
-  if (!p1 || p1.length < 4) {
-    document.getElementById('newPass1').classList.add('error');
-    toast('كلمة السر يجب أن تكون 4 أحرف على الأقل', 'error'); return;
-  }
-  if (p1 !== p2) {
-    document.getElementById('newPass2').classList.add('error');
-    toast('كلمتا السر غير متطابقتين', 'error'); return;
-  }
-  document.getElementById('newPass1').classList.remove('error');
-  document.getElementById('newPass2').classList.remove('error');
-  const newHash = await hashString(p1);
-  currentUser.passHash = newHash;
-  localStorage.setItem('mkt_user', JSON.stringify(currentUser));
-  document.getElementById('newPass1').value = '';
-  document.getElementById('newPass2').value = '';
-  toast('تم تغيير كلمة السر بنجاح 🔒', 'success');
-}
-
-function doLogout() {
-  localStorage.removeItem('mkt_user');
-  // تحرير الذاكرة
-  products.forEach(p => { if (p.imageURL?.startsWith('data:')) p.imageURL = ''; });
-  currentUser = null; userPage = null; products = []; loginPhotoData = '';
-  storeCache = {};
-  renderNav();
-  renderHeroActions();
-  showPage('home');
-  toast('تم تسجيل الخروج', 'info');
-}
-
-/* ═══════════════════════════════════════════════════
-   DASHBOARD
-═══════════════════════════════════════════════════ */
-function loadDashboard() {
-  if (!currentUser) return;
-
-  // ضمان التزامن: إذا userPage = null فـ products يجب أن تكون فارغة أيضاً
-  if (!userPage) products = [];
-
-  document.getElementById('dashGreeting').innerHTML =
-    `مرحباً، <span>${esc(currentUser.name)}</span> 👋`;
-  document.getElementById('profileStrip').innerHTML = `
-    <img class="profile-strip-img" src="${esc(currentUser.photoURL)}" alt="${esc(currentUser.name)}">
-    <div style="flex:1">
-      <div class="profile-strip-name">${esc(currentUser.name)}</div>
-      <div class="profile-strip-role">صاحب الصفحة</div>
-    </div>
-    ${userPage ? `<button id="viewMyStoreBtn" class="nav-btn nav-btn-outline" style="font-size:12px;padding:7px 12px">👁 عرض متجري</button>` : ''}`;
-  if (userPage) {
-    const btn = document.getElementById('viewMyStoreBtn');
-    if (btn) btn.addEventListener('click', () => viewStoreByUid(currentUser.uid));
-  }
-  document.getElementById('dashPhone').value = userPage?.phone || '';
-  document.getElementById('dashBio').value   = userPage?.bio   || '';
-  updateBioCount();
-  document.getElementById('deleteBtn').style.display = userPage ? 'block' : 'none';
-  renderProductsEditor();
-}
-
-function updateBioCount() {
-  const bio = document.getElementById('dashBio');
-  const len = bio.value.length;
-  const remaining = MAX_BIO - len;
-  const counter = document.getElementById('bioCounter');
-  counter.textContent = ` — ${len}/500 (${remaining} متبقي)`;
-  counter.style.color = remaining < 50 ? 'var(--accent-r)' : 'var(--ink-mute)';
-}
-
-// ✅ FIX: validate based on digit count only, not total length
-function validatePhone(input) {
-  const hint = document.getElementById('phoneHint');
-  // Allow digits, +, spaces, hyphens, parentheses
-  const val = input.value.replace(/[^\d+\s\-()]/g, '');
-  input.value = val;
-  const digitCount = val.replace(/\D/g, '').length;
-  if (val.length > 0 && digitCount < 7) {
-    hint.style.color = 'var(--accent-r)';
-    hint.textContent = 'رقم الهاتف قصير جداً';
-  } else {
-    hint.textContent = '';
-  }
-}
-
-/* ═══════════════════════════════════════════════════
-   PRODUCTS EDITOR
-   ✅ FIX: no JSON in onclick, all listeners attached programmatically
-═══════════════════════════════════════════════════ */
-function renderProductsEditor() {
-  document.getElementById('prodCountBadge').textContent = `${products.length} / ${MAX_PRODUCTS}`;
-  const addBtn = document.getElementById('btnAddProd');
-  if (addBtn) addBtn.disabled = products.length >= MAX_PRODUCTS;
-
-  const grid = document.getElementById('productsGrid');
-  if (products.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-products-msg">
-        <div class="empty-icon">📦</div>
-        <p>لا توجد منتجات بعد — أضف منتجك الأول!</p>
-      </div>`;
-    return;
-  }
-
-  // Build HTML without any JS in attributes
-  const html = products.map((p, i) => `
-    <div class="prod-card" id="prodCard${i}">
-      <button class="btn-prod-remove" data-index="${i}" title="حذف المنتج">✕</button>
-      <div class="prod-num">منتج ${i + 1}</div>
-      <label class="img-drop-area" for="prodImg${i}">
-        ${p.imageURL
-          ? `<img src="${esc(p.imageURL)}" alt="صورة المنتج">`
-          : `<div class="img-drop-placeholder"><span>🖼️</span><span>انقر لإضافة صورة</span></div>`}
-        <input type="file" accept="image/*" id="prodImg${i}" data-index="${i}">
-      </label>
-      <input class="prod-input" type="text" value="${esc(p.name)}"
-        placeholder="اسم المنتج" maxlength="80" data-index="${i}" data-field="name">
-      <textarea class="prod-textarea" rows="2" placeholder="وصف المنتج..."
-        data-index="${i}" data-field="description">${esc(p.description)}</textarea>
-    </div>`).join('');
-
-  grid.innerHTML = `<div class="products-grid">${html}</div>`;
-
-  // Attach listeners using event delegation on the grid
-  grid.querySelectorAll('.btn-prod-remove').forEach(btn => {
-    btn.addEventListener('click', () => removeProduct(Number(btn.dataset.index)));
-  });
-  grid.querySelectorAll('input[type="file"]').forEach(input => {
-    input.addEventListener('change', function() { handleProductImg(Number(this.dataset.index), this); });
-  });
-  grid.querySelectorAll('.prod-input, .prod-textarea').forEach(el => {
-    el.addEventListener('input', function() {
-      const i = Number(this.dataset.index);
-      const field = this.dataset.field;
-      if (products[i]) products[i][field] = this.value;
-    });
-  });
-}
-
-function addProduct() {
-  if (products.length >= MAX_PRODUCTS) {
-    toast('لا يمكن إضافة أكثر من 10 منتجات', 'error'); return;
-  }
-  products.push({ id: genUID(), name: '', description: '', imageURL: '' });
-  renderProductsEditor();
-  setTimeout(() => {
-    const last = document.getElementById(`prodCard${products.length - 1}`);
-    if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 80);
-}
-
-async function removeProduct(i) {
-  const confirmed = await openConfirm({
-    icon: '🗑️',
-    title: 'حذف المنتج؟',
-    desc: 'سيتم حذف هذا المنتج من قائمتك. يمكنك إعادة إضافته لاحقاً.'
-  });
-  if (!confirmed) return;
-  // Free image memory
-  if (products[i]?.imageURL?.startsWith('data:')) products[i].imageURL = '';
-  products.splice(i, 1);
-  renderProductsEditor();
-  toast('تم حذف المنتج', 'info');
-}
-
-function handleProductImg(i, input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 15 * 1024 * 1024) { toast('حجم الصورة يجب أن يكون أقل من 15MB', 'error'); return; }
-  const label = input.closest('.img-drop-area');
-  if (label) label.style.opacity = '0.5';
-  compressImage(file, 800, 800, 0.80).then(data => {
-    // Free old image memory before replacing
-    if (products[i]?.imageURL?.startsWith('data:')) products[i].imageURL = '';
-    products[i].imageURL = data;
-    if (label) {
-      label.style.opacity = '1';
-      label.innerHTML = `
-        <img src="${data}" alt="صورة المنتج">
-        <input type="file" accept="image/*" id="prodImg${i}" data-index="${i}" style="display:none">`;
-      label.querySelector('input').addEventListener('change', function() {
-        handleProductImg(Number(this.dataset.index), this);
-      });
-    }
-  }).catch(() => {
-    if (label) label.style.opacity = '1';
-    toast('فشل تحميل الصورة', 'error');
-  });
-}
-
-/* ═══════════════════════════════════════════════════
-   SAVE PAGE
-═══════════════════════════════════════════════════ */
-function savePage() {
-  if (!currentUser) return;
-  const phone = document.getElementById('dashPhone').value.trim();
-  if (!phone) {
-    document.getElementById('dashPhone').classList.add('error');
-    document.getElementById('dashPhone').focus();
-    toast('الرجاء إدخال رقم هاتفك', 'error'); return;
-  }
-  if (phone.replace(/\D/g, '').length < 7) {
-    toast('رقم الهاتف يبدو غير صحيح', 'error'); return;
-  }
-  document.getElementById('dashPhone').classList.remove('error');
-
-  const validProducts = products.filter(p => (p.name || '').trim() || p.imageURL);
-  if (validProducts.length === 0) {
-    toast('أضف منتجاً واحداً على الأقل قبل الحفظ', 'error'); return;
-  }
-
-  const bio = document.getElementById('dashBio').value.slice(0, MAX_BIO);
-  const btn = document.getElementById('saveBtn');
-  btn.disabled = true; btn.textContent = 'جارٍ الحفظ...';
-
-  const page = {
-    uid: currentUser.uid,
-    ownerName:  currentUser.name,
-    ownerPhoto: currentUser.photoURL,
-    phone, bio,
-    products: validProducts,
-    updatedAt: Date.now()
-  };
-
-  db.ref('pages/' + currentUser.uid).set(page)
-    .then(() => {
-      userPage = page;
-      // deep-copy + تحديث الكاش
-      products = validProducts.map(p => ({ ...p }));
-      storeCache[currentUser.uid] = { data: page, ts: Date.now() };
-      // تحديث كاش browse
-      const browseIdx = allPages.findIndex(p => p.uid === currentUser.uid);
-      if (browseIdx >= 0) allPages[browseIdx] = page;
-      else allPages.push(page);
-      try {
-        localStorage.setItem('mkt_browse_cache', JSON.stringify(allPages));
-        localStorage.setItem('mkt_browse_ts', String(Date.now()));
-      } catch(e) {}
-      btn.disabled = false; btn.textContent = 'حفظ الصفحة';
-      document.getElementById('deleteBtn').style.display = 'block';
-      toast('تم حفظ صفحتك بنجاح! ✓', 'success');
-      renderProductsEditor();
-    })
-    .catch(err => {
-      btn.disabled = false; btn.textContent = 'حفظ الصفحة';
-      toast('حدث خطأ: ' + err.message, 'error');
-    });
-}
-
-/* ═══════════════════════════════════════════════════
-   DELETE PAGE
-═══════════════════════════════════════════════════ */
-async function confirmDeletePage() {
-  const confirmed = await openConfirm({
-    icon: '🗑️',
-    title: 'حذف الصفحة؟',
-    desc: 'سيتم حذف صفحتك وجميع منتجاتها بشكل نهائي ولا يمكن التراجع عن هذا الإجراء.'
-  });
-  if (!confirmed) return;
-  const btn = document.getElementById('deleteBtn');
-  btn.disabled = true; btn.textContent = 'جارٍ الحذف...';
-  db.ref('pages/' + currentUser.uid).remove()
-    .then(() => {
-      // تحرير الذاكرة من الصور
-      products.forEach(p => { if (p.imageURL?.startsWith('data:')) p.imageURL = ''; });
-
-      // ─── إعادة ضبط الحالة بالكامل ───
-      userPage   = null;
-      products   = [];
-
-      // حذف من الكاشات
-      storeCache[currentUser.uid] = null;
-      allPages       = allPages.filter(p => p.uid !== currentUser.uid);
-      browseFiltered = browseFiltered.filter(p => p.uid !== currentUser.uid);
-      try {
-        localStorage.setItem('mkt_browse_cache', JSON.stringify(allPages));
-        localStorage.setItem('mkt_browse_ts', String(Date.now()));
-      } catch(e) {}
-
-      btn.disabled = false;
-      btn.textContent = 'حذف الصفحة';
-      btn.style.display = 'none';
-
-      // إعادة رسم الداشبورد بالحالة الفارغة الجديدة
-      loadDashboard();
-      toast('تم حذف الصفحة بنجاح ✓', 'success');
-    })
-    .catch(err => {
-      btn.disabled = false; btn.textContent = 'حذف الصفحة';
-      toast('فشل الحذف: ' + err.message, 'error');
-    });
-}
-
-/* ═══════════════════════════════════════════════════
-   BROWSE — مع Pagination وكاش
-═══════════════════════════════════════════════════ */
-function loadBrowse() {
-  const grid = document.getElementById('sellersGrid');
-  const searchInput = document.getElementById('browseSearch');
-  if (searchInput) searchInput.value = '';
-  browsePage = 0;
-  browseFiltered = [];
-
-  // استخدم الكاش إن وجد وحديث (5 دقائق)
-  const cacheKey = 'mkt_browse_cache';
-  const cacheTs  = 'mkt_browse_ts';
-  const cached   = localStorage.getItem(cacheKey);
-  const ts       = parseInt(localStorage.getItem(cacheTs) || '0');
-  if (cached && (Date.now() - ts) < 5 * 60 * 1000) {
     try {
-      allPages = JSON.parse(cached);
-      browseFiltered = allPages;
-      renderSellerPage(0, true);
-      return;
-    } catch(e) { /* ignore bad cache */ }
-  }
+        const res  = await fetch(`${FIREBASE_URL}/requests.json`);
+        const data = await res.json();
+        loading.style.display = 'none';
 
-  grid.innerHTML = `<div class="browse-loading"><div class="loading-spinner"></div><p>جارٍ تحميل البائعين...</p></div>`;
+        if (!data) { renderEmpty(); return; }
 
-  const browsePromise = db.ref('pages').once('value').then(snap => {
-    if (!snap.exists()) {
-      allPages = [];
-      document.getElementById('browseLoadMore').style.display = 'none';
-      grid.innerHTML = `
-        <div class="browse-empty" style="grid-column:1/-1">
-          <div class="empty-big">🏪</div>
-          <p>لا توجد صفحات بعد</p>
-          <small>كن أول من يعرض منتجاته!</small>
-        </div>`;
-      return;
+        const pending = Object.entries(data)
+            .filter(([, r]) => r.status === 'pending')
+            .sort((a, b) => new Date(b[1].timestamp) - new Date(a[1].timestamp));
+
+        if (pending.length === 0) { renderEmpty(); return; }
+
+        pending.forEach(([key, req]) => {
+            knownRequests.set(key, req);
+            requestsList.insertAdjacentHTML('beforeend', buildCardHTML(key, req, false));
+        });
+
+        updateCount();
+        updateLastTime();
+
+    } catch (_) {
+        loading.style.display = 'none';
+        renderError();
     }
-    allPages = Object.values(snap.val());
-    try {
-      localStorage.setItem(cacheKey, JSON.stringify(allPages));
-      localStorage.setItem(cacheTs, String(Date.now()));
-    } catch(e) {}
-    browseFiltered = allPages;
-    renderSellerPage(0, true);
-  });
-
-  withTimeout(browsePromise, 10000).catch(() => {
-    // إذا انتهت المهلة أو فشل الاتصال
-    grid.innerHTML = `
-      <div class="browse-empty" style="grid-column:1/-1">
-        <div class="empty-big">⚠️</div>
-        <p>تعذّر التحميل</p>
-        <small>تحقق من اتصالك بالإنترنت ثم أعد المحاولة</small>
-        <br><button class="btn-cta-secondary" style="margin-top:16px" onclick="loadBrowse()">↺ إعادة المحاولة</button>
-      </div>`;
-  });
 }
 
-// يعرض دفعة من البائعين (Pagination)
-function renderSellerPage(page, reset = false) {
-  const grid = document.getElementById('sellersGrid');
-  const start = page * PAGE_SIZE;
-  const slice = browseFiltered.slice(start, start + PAGE_SIZE);
-  const total = browseFiltered.length;
+/* ── Firebase SSE للسائق — يستمع لأي تغيير ── */
+function startFirebaseSSEDriver() {
+    const source = new EventSource(`${FIREBASE_URL}/requests.json`);
 
-  if (!total) {
-    grid.innerHTML = `<div class="browse-empty" style="grid-column:1/-1"><div class="empty-big">🔍</div><p>لا توجد نتائج</p></div>`;
-    document.getElementById('browseLoadMore').style.display = 'none';
-    return;
-  }
+    source.addEventListener('put', function(e) {
+        handleFirebaseEvent(JSON.parse(e.data));
+    });
 
-  const cardsHtml = slice.map(p => {
-    const pCount = (p.products || []).length;
-    return `
-      <div class="seller-card" data-uid="${esc(p.uid)}">
-        <img class="seller-avatar" src="${esc(p.ownerPhoto)}" alt="${esc(p.ownerName)}" loading="lazy">
-        <div class="seller-name">${esc(p.ownerName)}</div>
-        <div class="seller-meta"><strong>${pCount}</strong> منتج</div>
-      </div>`;
-  }).join('');
+    source.addEventListener('patch', function(e) {
+        handleFirebaseEvent(JSON.parse(e.data));
+    });
 
-  if (reset) {
-    grid.innerHTML = `<div class="sellers-grid">${cardsHtml}</div>`;
-  } else {
-    // أضف الكروت الجديدة لنفس الـ grid
-    const existing = grid.querySelector('.sellers-grid');
-    if (existing) existing.insertAdjacentHTML('beforeend', cardsHtml);
-  }
+    source.onerror = function() {
+        // إذا انقطع الاتصال، حاول مرة أخرى بعد 5 ثوانٍ
+        setTimeout(startFirebaseSSEDriver, 5000);
+        source.close();
+    };
+}
 
-  // ربط الأحداث للكروت الجديدة فقط
-  const allCards = grid.querySelectorAll('.seller-card');
-  allCards.forEach(card => {
-    if (!card._hasListener) {
-      card._hasListener = true;
-      card.addEventListener('click', () => viewStoreByUid(card.dataset.uid));
+/* ── معالجة الحدث من Firebase ── */
+function handleFirebaseEvent(payload) {
+    if (!payload || !payload.data) return;
+
+    const path = payload.path || '/';
+    const data = payload.data;
+
+    // حدث كامل (المسار = /)
+    if (path === '/') {
+        if (!data) { knownRequests.clear(); renderEmpty(); return; }
+
+        Object.entries(data).forEach(([key, req]) => {
+            if (req.status === 'pending') {
+                if (!knownRequests.has(key)) {
+                    // طلب جديد → أضفه للأعلى بدون مسح باقي القائمة
+                    knownRequests.set(key, req);
+                    addCardToTop(key, req);
+                }
+            } else if (req.status === 'accepted') {
+                // طلب قُبل → أزله بنعومة
+                if (knownRequests.has(key)) {
+                    knownRequests.delete(key);
+                    removeCard(key);
+                }
+            }
+        });
+
+        updateCount();
+        updateLastTime();
+        return;
     }
-  });
 
-  // زر "تحميل المزيد"
-  const loadMoreEl = document.getElementById('browseLoadMore');
-  const loaded = Math.min((page + 1) * PAGE_SIZE, total);
-  if (loaded < total) {
-    loadMoreEl.style.display = 'block';
-    document.getElementById('browsePageInfo').textContent =
-      `يظهر ${loaded} من أصل ${total} بائع`;
-  } else {
-    loadMoreEl.style.display = 'none';
-  }
-}
+    // حدث لطلب محدد (المسار = /KEY أو /KEY/status)
+    const parts = path.split('/').filter(Boolean);
+    const key   = parts[0];
 
-function loadMoreSellers() {
-  browsePage++;
-  renderSellerPage(browsePage, false);
-}
-
-function filterSellers(q) {
-  browsePage = 0;
-  const term = q.trim().toLowerCase();
-  browseFiltered = term ? allPages.filter(p => p.ownerName.toLowerCase().includes(term)) : allPages;
-  renderSellerPage(0, true);
-}
-
-/* ═══════════════════════════════════════════════════
-   STORE VIEW
-   ✅ FIX: always fetches data by UID from Firebase — no XSS from encoded data
-═══════════════════════════════════════════════════ */
-function viewStoreByUid(uid) {
-  currentStoreUid = uid;
-  history.pushState(null, '', '#store/' + encodeURIComponent(uid));
-  loadStoreByUid(uid);
-}
-
-async function loadStoreByUid(uid) {
-  currentStoreUid = uid;
-
-  // 1) كاش في الذاكرة أولاً
-  let page = allPages.find(p => p.uid === uid);
-
-  // 2) كاش localStorage (صالح 3 دقائق)
-  if (!page && storeCache[uid] && (Date.now() - storeCache[uid].ts) < 3 * 60 * 1000) {
-    page = storeCache[uid].data;
-  }
-
-  if (!page) {
-    // أظهر spinner أثناء التحميل
-    document.getElementById('storeContent').innerHTML =
-      `<div class="browse-loading"><div class="loading-spinner"></div><p>جارٍ تحميل المتجر...</p></div>`;
-    _activatePage('store');
-    try {
-      const snap = await db.ref('pages/' + uid).get();
-      if (!snap.exists()) { toast('المتجر غير موجود', 'error'); showPage('browse'); return; }
-      page = snap.val();
-      storeCache[uid] = { data: page, ts: Date.now() };
-    } catch(e) {
-      toast('فشل تحميل المتجر', 'error'); return;
+    if (parts.length === 1) {
+        // تغيّر الطلب كاملاً
+        if (!data || data.status === 'accepted') {
+            if (knownRequests.has(key)) { knownRequests.delete(key); removeCard(key); }
+        } else if (data.status === 'pending' && !knownRequests.has(key)) {
+            knownRequests.set(key, data);
+            addCardToTop(key, data);
+        }
+    } else if (parts.length === 2 && parts[1] === 'status' && data === 'accepted') {
+        if (knownRequests.has(key)) { knownRequests.delete(key); removeCard(key); }
     }
-  }
 
-  renderStore(page);
-  _activatePage('store');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+    updateCount();
+    updateLastTime();
 }
 
-function renderStore(page) {
-  const ps = Array.isArray(page.products) ? page.products : [];
-  const shareUrl = location.origin + location.pathname + '#store/' + encodeURIComponent(page.uid);
+/* ── إضافة كارد جديد للأعلى (بدون مسح القائمة) ── */
+function addCardToTop(key, req) {
+    const requestsList = document.getElementById('requestsList');
+    const empty = requestsList.querySelector('.empty-state');
+    if (empty) empty.remove();
 
-  document.getElementById('storeContent').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:24px">
-      <button class="btn-back-store" id="storeBackBtn">← العودة للتصفح</button>
-      <button class="btn-back-store" id="storeShareBtn">🔗 مشاركة</button>
-    </div>
-    <div class="store-hero">
-      <img class="store-hero-img" src="${esc(page.ownerPhoto)}" alt="${esc(page.ownerName)}">
-      <div class="store-hero-name">${esc(page.ownerName)}</div>
-      ${page.phone ? `<a href="tel:${esc(page.phone)}" class="store-phone-btn">📞 ${esc(page.phone)}</a>` : ''}
-      ${page.bio   ? `<p class="store-bio">${esc(page.bio)}</p>` : ''}
-    </div>
-    <div class="store-section-title">🛒 المنتجات <span>(${ps.length})</span></div>
-    ${ps.length === 0
-      ? `<div class="store-empty">📦 لا توجد منتجات بعد</div>`
-      : `<div class="store-products-grid">${
-          ps.map(p => `
-            <div class="store-prod-card">
-              ${p.imageURL
-                ? `<img class="store-prod-img" src="${esc(p.imageURL)}" alt="${esc(p.name || 'منتج')}" loading="lazy">`
-                : `<div class="store-prod-placeholder">📦</div>`}
-              <div class="store-prod-body">
-                ${p.name        ? `<div class="store-prod-name">${esc(p.name)}</div>`        : ''}
-                ${p.description ? `<div class="store-prod-desc">${esc(p.description)}</div>` : ''}
-              </div>
-            </div>`).join('')}
-        </div>`}`;
+    // إظهار إشعار صوتي/بصري
+    showNotification('🔔 طلب جديد وصل!', 'success');
 
-  // Attach store action listeners
-  document.getElementById('storeBackBtn').addEventListener('click', () => showPage('browse'));
-  document.getElementById('storeShareBtn').addEventListener('click', () => copyStoreLink(shareUrl));
+    const div = document.createElement('div');
+    div.innerHTML = buildCardHTML(key, req, true);
+    requestsList.insertBefore(div.firstElementChild, requestsList.firstChild);
 }
 
-function copyStoreLink(url) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url)
-      .then(() => toast('تم نسخ رابط المتجر ✓', 'success'))
-      .catch(() => fallbackCopy(url));
-  } else {
-    fallbackCopy(url);
-  }
-}
+/* ── إزالة كارد بنعومة ── */
+function removeCard(key) {
+    const card = document.getElementById(`card-${key}`);
+    if (!card) return;
 
-function fallbackCopy(url) {
-  const ta = document.createElement('textarea');
-  ta.value = url;
-  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
-  document.body.appendChild(ta);
-  ta.focus(); ta.select();
-  try { document.execCommand('copy'); toast('تم نسخ رابط المتجر ✓', 'success'); }
-  catch(e) { toast('فشل نسخ الرابط', 'error'); }
-  document.body.removeChild(ta);
-}
+    card.style.transition  = 'opacity 0.5s, transform 0.5s';
+    card.style.opacity     = '0';
+    card.style.transform   = 'translateX(40px)';
 
-/* ═══════════════════════════════════════════════════
-   ADMIN
-═══════════════════════════════════════════════════ */
-/* ─── نص قواعد Firebase الكامل ─── */
-const FIREBASE_RULES = `{
-  "rules": {
-    "pages": {
-      ".read": true,
-      "$uid": {
-        ".read": true,
-        ".write": "newData.exists() ? newData.child('uid').val() == $uid : data.child('uid').val() == $uid",
-        ".validate": "newData.hasChildren(['uid','ownerName','ownerPhoto','phone','products','updatedAt']) && newData.child('uid').isString() && newData.child('uid').val() == $uid && newData.child('ownerName').isString() && newData.child('ownerName').val().length >= 1 && newData.child('ownerName').val().length <= 60 && newData.child('ownerPhoto').isString() && newData.child('ownerPhoto').val().length <= 300000 && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 20 && newData.child('bio').isString() && newData.child('bio').val().length <= 500 && newData.child('updatedAt').isNumber()",
-        "products": { ".validate": "newData.val() == null || true" }
-      }
-    },
-    "_write_test_": { ".read": false, ".write": false },
-    "$other": { ".read": false, ".write": false }
-  }
-}`;
-
-function openRulesModal() {
-  document.getElementById('adminRulesText').textContent = FIREBASE_RULES;
-  document.getElementById('rulesModal').classList.add('open');
-}
-
-function closeRulesModal() {
-  document.getElementById('rulesModal').classList.remove('open');
-}
-
-function openAdminModal() {
-  document.getElementById('adminPassInput').value = '';
-  document.getElementById('adminPassError').style.display = 'none';
-  document.getElementById('adminPassInput').classList.remove('error');
-  document.getElementById('adminPassModal').classList.add('open');
-  setTimeout(() => document.getElementById('adminPassInput').focus(), 200);
-}
-
-function closeAdminModal() {
-  document.getElementById('adminPassModal').classList.remove('open');
-}
-
-function closeAdminPanel() {
-  document.getElementById('adminPanelModal').classList.remove('open');
-}
-
-async function checkAdminPass() {
-  const input  = document.getElementById('adminPassInput').value;
-  const hashed = await hashString(input);
-  if (hashed === _AH) {
-    closeAdminModal();
-    openAdminPanel();
-  } else {
-    const errEl = document.getElementById('adminPassError');
-    errEl.style.display = 'block';
-    document.getElementById('adminPassInput').classList.add('error');
     setTimeout(() => {
-      errEl.style.display = 'none';
-      document.getElementById('adminPassInput').classList.remove('error');
-    }, 3000);
-  }
+        card.remove();
+        if (knownRequests.size === 0) renderEmpty();
+    }, 500);
 }
 
-function openAdminPanel() {
-  document.getElementById('adminPanelModal').classList.add('open');
-  loadAdminPages();
-  testWritePermission();
+/* ── بناء HTML الكارد ── */
+function buildCardHTML(key, req, isNew) {
+    const date   = new Date(req.timestamp);
+    const newBadge = isNew ? '<span class="new-badge">جديد 🆕</span>' : '';
+    const mapsLink = req.latitude && req.longitude
+        ? `<a href="https://www.google.com/maps?q=${req.latitude},${req.longitude}"
+              target="_blank"
+              style="color:var(--primary);font-weight:700;font-size:0.9rem;">
+              🗺️ فتح في الخريطة
+           </a>`
+        : '';
+
+    return `
+    <div class="request-card" id="card-${key}">
+        ${newBadge}
+        <div class="request-header">
+            <div class="request-id">${escapeHTML(req.requestId || key)}</div>
+            <div class="request-time">⏰ ${date.toLocaleString('ar')}</div>
+        </div>
+        <div class="request-detail">
+            <span class="detail-label">📱 الهاتف:</span>
+            <span class="detail-value">
+                <a href="tel:${escapeHTML(req.phone)}" style="color:var(--primary);font-weight:700;">
+                    ${escapeHTML(req.phone)}
+                </a>
+            </span>
+        </div>
+        <div class="request-detail">
+            <span class="detail-label">📍 الموقع:</span>
+            <span class="detail-value">${escapeHTML(req.currentLocation)}</span>
+        </div>
+        <div class="request-detail">
+            <span class="detail-label">🎯 الوجهة:</span>
+            <span class="detail-value">${escapeHTML(req.destination)}</span>
+        </div>
+        <div class="request-detail">
+            <span class="detail-label">👥 الركاب:</span>
+            <span class="detail-value">${escapeHTML(String(req.passengers))}</span>
+        </div>
+        ${req.latitude ? `
+        <div class="request-detail">
+            <span class="detail-label">🗺️ موقع GPS:</span>
+            <span class="detail-value">${mapsLink}</span>
+        </div>` : ''}
+        <div style="margin-top:1rem;">
+            <span class="status-badge status-pending">⏳ قيد الانتظار</span>
+        </div>
+        <button class="accept-btn" id="btn-${key}" onclick="acceptRequest('${key}')">
+            ✅ قبول الطلب
+        </button>
+    </div>`;
 }
 
-function testWritePermission() {
-  if (!currentUser) return;
-  // اختبر الكتابة بـ uid حقيقي (uid المستخدم الحالي)
-  const testPayload = {
-    uid: currentUser.uid,
-    ownerName: currentUser.name || 'test',
-    ownerPhoto: '',
-    phone: '0500000000',
-    bio: '',
-    products: [],
-    updatedAt: Date.now()
-  };
-  const ref = db.ref('pages/' + currentUser.uid);
-  // قراءة أولاً لمعرفة إذا كان يوجد بيانات حقيقية
-  ref.get().then(snap => {
-    if (snap.exists()) {
-      // الموقع يشتغل والبيانات موجودة — كل شيء تمام
-      return;
+/* ── قبول الطلب ── */
+async function acceptRequest(key) {
+    const btn = document.getElementById(`btn-${key}`);
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري القبول...'; }
+
+    try {
+        const res = await fetch(`${FIREBASE_URL}/requests/${key}.json`, {
+            method:  'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ status: 'accepted' })
+        });
+
+        if (res.ok) {
+            showNotification('✅ تم قبول الطلب بنجاح', 'success');
+            // الكارد سيختفي تلقائياً من SSE listener
+        } else {
+            showNotification('❌ حدث خطأ في قبول الطلب', 'error');
+            if (btn) { btn.disabled = false; btn.textContent = '✅ قبول الطلب'; }
+        }
+    } catch (_) {
+        showNotification('❌ خطأ في الاتصال بالخادم', 'error');
+        if (btn) { btn.disabled = false; btn.textContent = '✅ قبول الطلب'; }
     }
-    // لا توجد بيانات — اختبر الكتابة بـ dummy ثم احذفه
-    ref.set(testPayload)
-      .then(() => ref.remove().catch(() => {}))
-      .catch(err => {
-        const msg = err?.code === 'PERMISSION_DENIED'
-          ? '⚠️ Firebase Rules تمنع الكتابة — انسخ القواعد المقترحة وطبّقها في Firebase Console'
-          : '⚠️ خطأ في الاتصال بـ Firebase: ' + (err?.message || '');
-        toast(msg, 'error', 8000);
-      });
-  }).catch(() => {});
 }
 
-// ✅ FIX: use data-uid attribute — no UID or name embedded in onclick strings
-function loadAdminPages() {
-  const list = document.getElementById('adminPagesList');
-  list.innerHTML = `<div class="admin-loading">
-    <div class="loading-spinner" style="width:28px;height:28px;margin:0 auto 10px"></div>
-    جارٍ التحميل...
-  </div>`;
+/* ── مساعدات ── */
+function updateCount() {
+    document.getElementById('requestsCount').textContent = knownRequests.size;
+}
 
-  db.ref('pages').once('value', snap => {
-    if (!snap.exists()) {
-      list.innerHTML = '<div class="admin-empty">📭 لا توجد صفحات مسجلة</div>';
-      return;
-    }
-    const pages = Object.values(snap.val());
-    list.innerHTML = pages.map(page => {
-      const pCount = (page.products || []).length;
-      return `
-        <div class="admin-page-row" id="adminRow_${esc(page.uid)}">
-          <img class="admin-page-avatar" src="${esc(page.ownerPhoto)}" alt="${esc(page.ownerName)}">
-          <div class="admin-page-info">
-            <div class="admin-page-name">${esc(page.ownerName)}</div>
-            <div class="admin-page-count">${pCount} منتج</div>
-          </div>
-          <button class="btn-admin-delete"
-            data-uid="${esc(page.uid)}"
-            data-name="${esc(page.ownerName)}">🗑 حذف</button>
+function updateLastTime() {
+    const el = document.getElementById('lastUpdateTime');
+    if (el) el.textContent = 'آخر تحديث: ' + new Date().toLocaleTimeString('ar');
+}
+
+function renderEmpty() {
+    const requestsList = document.getElementById('requestsList');
+    requestsList.innerHTML = `
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">لا توجد طلبات حالياً</p>
         </div>`;
-    }).join('');
-
-    // Attach delete listeners
-    list.querySelectorAll('.btn-admin-delete').forEach(btn => {
-      btn.addEventListener('click', () => adminDeletePage(btn.dataset.uid, btn.dataset.name));
-    });
-  }).catch(() => {
-    list.innerHTML = '<div class="admin-empty">حدث خطأ في التحميل</div>';
-  });
+    document.getElementById('requestsCount').textContent = '0';
 }
 
-async function adminDeletePage(uid, name) {
-  const confirmed = await openConfirm({
-    icon: '🗑️',
-    title: `حذف صفحة ${name}؟`,
-    desc: 'سيتم حذف هذه الصفحة وجميع منتجاتها نهائياً.'
-  });
-  if (!confirmed) return;
-
-  db.ref('pages/' + uid).remove()
-    .then(() => {
-      const row = document.getElementById('adminRow_' + uid);
-      if (row) row.remove();
-      const list = document.getElementById('adminPagesList');
-      if (!list.querySelector('.admin-page-row')) {
-        list.innerHTML = '<div class="admin-empty">📭 لا توجد صفحات مسجلة</div>';
-      }
-      allPages = allPages.filter(p => p.uid !== uid);
-      browseFiltered = browseFiltered.filter(p => p.uid !== uid);
-      storeCache[uid] = null;
-      try {
-        localStorage.setItem('mkt_browse_cache', JSON.stringify(allPages));
-        localStorage.setItem('mkt_browse_ts', String(Date.now()));
-      } catch(e) {}
-      toast(`تم حذف صفحة ${name} ✓`, 'success');
-
-      // إذا كان صاحب الصفحة المحذوفة هو المستخدم الحالي → أعد ضبطه فوراً
-      if (currentUser?.uid === uid) {
-        products   = [];
-        userPage   = null;
-        // إذا كان في لوحة التحكم، أعد رسمها لتعكس الحالة الفارغة
-        const activePage = document.querySelector('.page.active')?.id;
-        if (activePage === 'page-dashboard') loadDashboard();
-      }
-    })
-    .catch(err => {
-      toast('فشل الحذف — تأكد من Firebase Rules', 'error');
-      console.error(err);
-    });
+function renderError() {
+    document.getElementById('requestsList').innerHTML = `
+        <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <p class="empty-state-text">حدث خطأ في تحميل الطلبات</p>
+        </div>`;
 }
+
+function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+}
+
+/* ─────────────────────────────────────────────
+   Navigation
+───────────────────────────────────────────── */
+function showSection(section) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+    if (section === 'request') {
+        document.getElementById('request-section').classList.add('active');
+        document.querySelectorAll('.nav-btn')[0].classList.add('active');
+        setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+    } else {
+        document.getElementById('driver-section').classList.add('active');
+        document.querySelectorAll('.nav-btn')[1].classList.add('active');
+    }
+}
+
+/* ─────────────────────────────────────────────
+   Notification
+───────────────────────────────────────────── */
+let notifTimer;
+function showNotification(message, type) {
+    clearTimeout(notifTimer);
+    const n = document.getElementById('notification');
+    n.textContent = message;
+    n.className   = `notification ${type}`;
+    n.style.display = 'block';
+    notifTimer = setTimeout(() => { n.style.display = 'none'; }, 5000);
+}
+
+/* ─────────────────────────────────────────────
+   Init
+───────────────────────────────────────────── */
+window.onload = initMap;
 </script>
-<!-- FIREBASE RULES MODAL -->
-<div class="admin-modal-overlay" id="rulesModal">
-  <div class="admin-modal-box" style="max-width:560px">
-    <button class="admin-close" id="btnCloseRules">✕</button>
-    <div class="admin-modal-head">
-      <div class="admin-modal-icon" style="background:#0369a1">📋</div>
-      <div>
-        <div class="admin-modal-title">قواعد Firebase</div>
-        <div class="admin-modal-sub">انسخها وضعها في Firebase Console ← Rules</div>
-      </div>
-    </div>
-    <pre id="adminRulesText" style="background:#1e1e1e;color:#d4d4d4;padding:14px;border-radius:10px;font-size:11px;overflow-x:auto;direction:ltr;max-height:55vh;overflow-y:auto;white-space:pre;line-height:1.6"></pre>
-    <button id="btnCopyRules" class="btn-submit" style="margin-top:14px;background:#0369a1">📋 نسخ القواعد</button>
-  </div>
-</div>
-
-
 </body>
 </html>
