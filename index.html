@@ -981,6 +981,55 @@ body {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
 }
+
+/* ===== ADMIN PANEL ===== */
+#screen-admin {
+  background: linear-gradient(160deg, #f0f7f0, #e8f3e8);
+}
+
+.admin-user-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+  margin-bottom: 12px;
+}
+.admin-user-card:hover { box-shadow: var(--shadow-md); border-color: var(--primary); }
+
+.admin-user-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg2);
+  font-size: 24px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+}
+.admin-user-avatar img { width:100%; height:100%; object-fit:cover; }
+
+.admin-user-info { flex: 1; }
+.admin-user-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.admin-user-phone { font-size: 13px; color: var(--text3); margin-top: 2px; }
+.admin-user-role {
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  display: inline-block; margin-top: 4px;
+}
+.admin-user-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.admin-tabs { display:flex; gap:4px; background: var(--bg2); padding:4px; border-radius: var(--radius-sm); margin-bottom:20px; }
+.admin-tab {
+  flex:1; text-align:center; padding:9px 14px;
+  border-radius:8px; cursor:pointer;
+  font-size:13px; font-weight:600; color:var(--text3);
+  transition:all 0.2s;
+}
+.admin-tab.active { background:var(--surface); color:var(--primary); box-shadow:0 1px 6px rgba(0,0,0,0.08); }
 </style>
 </head>
 <body>
@@ -1008,6 +1057,7 @@ body {
       <button class="btn btn-ghost" onclick="showScreen('screen-student-login')">دخول الطالب</button>
       <button class="btn btn-primary" onclick="showScreen('screen-student-register')">تسجيل جديد</button>
       <button class="btn btn-accent btn-sm" onclick="openSupervisorPass()">🔐 المشرف</button>
+      <button class="btn btn-ghost btn-sm" onclick="openAdminPass()" style="color:var(--text3);font-size:12px;padding:6px 10px">⚙️ إدارة</button>
     </div>
   </nav>
 
@@ -1055,6 +1105,143 @@ body {
 
   <div class="home-footer">
     منصة جامع © 2025 — جميع الحقوق محفوظة
+  </div>
+</div>
+
+<!-- ============================== ADMIN PASSWORD ============================== -->
+<div class="screen" id="screen-admin-pass">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">🕌</div>
+      <div><div class="navbar-title">جامع</div></div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost" onclick="showScreen('screen-home')">← رجوع</button>
+    </div>
+  </nav>
+  <div class="auth-wrapper">
+    <div class="auth-card fade-in">
+      <div class="auth-header">
+        <div class="auth-icon" style="background:linear-gradient(135deg,#2c3e50,#4a6274)">⚙️</div>
+        <div class="auth-title">لوحة الإدارة</div>
+        <div class="auth-sub">أدخل رمز الإدارة للمتابعة</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">رمز الإدارة</label>
+        <input type="password" class="form-input" id="admin-pass-input" placeholder="أدخل رمز الإدارة" onkeypress="if(event.key==='Enter')verifyAdminPass()">
+      </div>
+      <button class="btn btn-full btn-lg" onclick="verifyAdminPass()" style="background:linear-gradient(135deg,#2c3e50,#4a6274);color:white;border:none;padding:13px 28px;border-radius:14px;font-family:Cairo,sans-serif;font-size:16px;font-weight:600;cursor:pointer">
+        🔓 دخول الإدارة
+      </button>
+      <div style="margin-top:16px;text-align:center;">
+        <span class="form-link" onclick="showScreen('screen-home')">← العودة للرئيسية</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== ADMIN DASHBOARD ============================== -->
+<div class="screen" id="screen-admin">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo" style="background:linear-gradient(135deg,#2c3e50,#4a6274)">⚙️</div>
+      <div>
+        <div class="navbar-title">لوحة الإدارة</div>
+        <div class="navbar-subtitle">إدارة جميع الحسابات</div>
+      </div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-home')">🚪 خروج</button>
+    </div>
+  </nav>
+
+  <div style="max-width:860px;margin:0 auto;padding:28px 24px">
+
+    <div class="page-header">
+      <div class="page-title" style="color:#2c3e50">⚙️ لوحة الإدارة</div>
+      <div class="page-sub">تعديل وحذف حسابات الطلاب والمشرفين</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" style="margin-bottom:24px">
+      <div class="stat-card">
+        <div class="stat-icon green">👥</div>
+        <div class="stat-value" id="admin-count-students">0</div>
+        <div class="stat-label">طالب</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.1)">👑</div>
+        <div class="stat-value" id="admin-count-supervisors">0</div>
+        <div class="stat-label">مشرف</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">📋</div>
+        <div class="stat-value" id="admin-count-tasks">0</div>
+        <div class="stat-label">مهمة</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">💬</div>
+        <div class="stat-value" id="admin-count-msgs">0</div>
+        <div class="stat-label">رسالة</div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar" style="margin-bottom:20px">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="admin-search" placeholder="ابحث بالاسم أو رقم الهاتف..." oninput="adminSearch()">
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="adminSwitchTab('students',this)">👥 الطلاب</div>
+      <div class="admin-tab" onclick="adminSwitchTab('supervisors',this)">👑 المشرفون</div>
+    </div>
+
+    <!-- Students List -->
+    <div id="admin-tab-students">
+      <div id="admin-students-list"></div>
+    </div>
+
+    <!-- Supervisors List -->
+    <div id="admin-tab-supervisors" style="display:none">
+      <div id="admin-supervisors-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Edit User Modal (Admin) -->
+<div class="modal-overlay" id="modal-admin-edit">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <span class="modal-title">✏️ تعديل بيانات المستخدم</span>
+      <button class="modal-close" onclick="closeModal('modal-admin-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="admin-edit-id">
+      <input type="hidden" id="admin-edit-role">
+      <div class="avatar-upload">
+        <div class="avatar-preview" id="admin-edit-avatar-preview" onclick="triggerAvatarUpload('admin-edit-avatar-file')" style="width:80px;height:80px;font-size:32px">
+          👤
+          <img id="admin-edit-avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%">
+        </div>
+        <input type="file" id="admin-edit-avatar-file" accept="image/*" style="display:none" onchange="adminHandleAvatar()">
+        <span style="font-size:12px;color:var(--text3)">اضغط لتغيير الصورة</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل</label>
+        <input type="text" class="form-input" id="admin-edit-name" placeholder="الاسم">
+      </div>
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input type="tel" class="form-input" id="admin-edit-phone" placeholder="رقم الهاتف">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-admin-edit')">إلغاء</button>
+      <button class="btn btn-primary" onclick="adminSaveUser()">💾 حفظ التغييرات</button>
+    </div>
   </div>
 </div>
 
@@ -2553,6 +2740,248 @@ window.deleteMessage = async function(studentId, msgId) {
     showToast('تم حذف الرسالة', 'info');
   } catch(e) {
     showToast('خطأ في الحذف', 'error');
+  }
+};
+
+// ============================================================
+// ADMIN PANEL
+// ============================================================
+const ADMIN_PASS = '12340987';
+let adminNewAvatarData = null;
+let adminAllStudents = [];
+let adminAllSupervisors = [];
+let adminCurrentTab = 'students';
+
+window.openAdminPass = function() {
+  showScreen('screen-admin-pass');
+  document.getElementById('admin-pass-input').value = '';
+};
+
+window.verifyAdminPass = function() {
+  const v = document.getElementById('admin-pass-input').value.trim();
+  if (v === ADMIN_PASS) {
+    showScreen('screen-admin');
+    loadAdminData();
+  } else {
+    showToast('رمز الإدارة غير صحيح', 'error');
+    document.getElementById('admin-pass-input').value = '';
+    document.getElementById('admin-pass-input').focus();
+  }
+};
+
+window.loadAdminData = async function() {
+  showLoading();
+  try {
+    const [stSnap, supSnap, taskSnap, msgSnap] = await Promise.all([
+      get(ref(db, 'students')),
+      get(ref(db, 'supervisors')),
+      get(ref(db, 'tasks')),
+      get(ref(db, 'messages')),
+    ]);
+
+    adminAllStudents   = stSnap.exists()   ? Object.values(stSnap.val())   : [];
+    adminAllSupervisors= supSnap.exists()  ? Object.values(supSnap.val())  : [];
+    const tasks        = taskSnap.exists() ? Object.values(taskSnap.val()) : [];
+    let msgCount = 0;
+    if (msgSnap.exists()) {
+      Object.values(msgSnap.val()).forEach(studentMsgs => {
+        msgCount += Object.keys(studentMsgs).length;
+      });
+    }
+
+    document.getElementById('admin-count-students').textContent    = adminAllStudents.length;
+    document.getElementById('admin-count-supervisors').textContent = adminAllSupervisors.length;
+    document.getElementById('admin-count-tasks').textContent       = tasks.length;
+    document.getElementById('admin-count-msgs').textContent        = msgCount;
+
+    renderAdminStudents(adminAllStudents);
+    renderAdminSupervisors(adminAllSupervisors);
+    hideLoading();
+  } catch(e) {
+    hideLoading();
+    showToast('خطأ في تحميل البيانات: ' + e.message, 'error');
+  }
+};
+
+window.adminSwitchTab = function(tab, el) {
+  adminCurrentTab = tab;
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('admin-tab-students').style.display    = tab === 'students'    ? '' : 'none';
+  document.getElementById('admin-tab-supervisors').style.display = tab === 'supervisors' ? '' : 'none';
+};
+
+window.adminSearch = function() {
+  const q = document.getElementById('admin-search').value.trim().toLowerCase();
+  if (adminCurrentTab === 'students') {
+    renderAdminStudents(q ? adminAllStudents.filter(u => u.name.toLowerCase().includes(q) || u.phone.includes(q)) : adminAllStudents);
+  } else {
+    renderAdminSupervisors(q ? adminAllSupervisors.filter(u => u.name.toLowerCase().includes(q) || u.phone.includes(q)) : adminAllSupervisors);
+  }
+};
+
+function renderAdminStudents(list) {
+  const el = document.getElementById('admin-students-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👥</div><div class="empty-state-title">لا يوجد طلاب</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(u => adminUserCardHTML(u, 'student')).join('');
+}
+
+function renderAdminSupervisors(list) {
+  const el = document.getElementById('admin-supervisors-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👑</div><div class="empty-state-title">لا يوجد مشرفون</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(u => adminUserCardHTML(u, 'supervisor')).join('');
+}
+
+function adminUserCardHTML(u, role) {
+  const roleLabel = role === 'supervisor' ? '👑 مشرف' : '📖 طالب';
+  const roleColor = role === 'supervisor'
+    ? 'background:rgba(201,168,76,0.12);color:#b8860b'
+    : 'background:rgba(26,107,69,0.1);color:var(--primary)';
+  const avatarInner = u.avatar
+    ? `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    : `<span>${role === 'supervisor' ? '👑' : '👤'}</span>`;
+  return `
+    <div class="admin-user-card">
+      <div class="admin-user-avatar">${avatarInner}</div>
+      <div class="admin-user-info">
+        <div class="admin-user-name">${u.name}</div>
+        <div class="admin-user-phone">📱 ${u.phone}</div>
+        <span class="admin-user-role" style="${roleColor}">${roleLabel}</span>
+      </div>
+      <div class="admin-user-actions">
+        <button class="btn btn-outline btn-sm" onclick="adminOpenEdit('${u.id}','${role}')">✏️ تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="adminDeleteUser('${u.id}','${role}')">🗑 حذف</button>
+      </div>
+    </div>
+  `;
+}
+
+window.adminOpenEdit = function(userId, role) {
+  const list = role === 'student' ? adminAllStudents : adminAllSupervisors;
+  const user = list.find(u => u.id === userId);
+  if (!user) return;
+
+  adminNewAvatarData = null;
+  document.getElementById('admin-edit-id').value   = userId;
+  document.getElementById('admin-edit-role').value = role;
+  document.getElementById('admin-edit-name').value  = user.name;
+  document.getElementById('admin-edit-phone').value = user.phone;
+
+  // Reset avatar preview
+  const img = document.getElementById('admin-edit-avatar-img');
+  const preview = document.getElementById('admin-edit-avatar-preview');
+  if (user.avatar) {
+    img.src = user.avatar;
+    img.style.display = 'block';
+    preview.childNodes[0].textContent = '';
+  } else {
+    img.src = '';
+    img.style.display = 'none';
+    preview.childNodes[0].textContent = role === 'supervisor' ? '👑' : '👤';
+  }
+
+  openModal('modal-admin-edit');
+};
+
+window.adminHandleAvatar = function() {
+  const f = document.getElementById('admin-edit-avatar-file').files[0];
+  if (!f) return;
+  // Compress image before storing
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 200;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = h * MAX / w; w = MAX; } }
+      else       { if (h > MAX) { w = w * MAX / h; h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      adminNewAvatarData = canvas.toDataURL('image/jpeg', 0.7);
+      const previewImg = document.getElementById('admin-edit-avatar-img');
+      previewImg.src = adminNewAvatarData;
+      previewImg.style.display = 'block';
+      document.getElementById('admin-edit-avatar-preview').childNodes[0].textContent = '';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(f);
+};
+
+window.adminSaveUser = async function() {
+  const id   = document.getElementById('admin-edit-id').value;
+  const role = document.getElementById('admin-edit-role').value;
+  const name = document.getElementById('admin-edit-name').value.trim();
+  const phone= document.getElementById('admin-edit-phone').value.trim();
+
+  if (!name || !phone) { showToast('أدخل الاسم ورقم الهاتف', 'error'); return; }
+
+  showLoading();
+  try {
+    const path = role === 'student' ? `students/${id}` : `supervisors/${id}`;
+    const updates = { name, phone };
+    if (adminNewAvatarData) updates.avatar = adminNewAvatarData;
+
+    await update(ref(db, path), updates);
+
+    // Update local list
+    const list = role === 'student' ? adminAllStudents : adminAllSupervisors;
+    const idx  = list.findIndex(u => u.id === id);
+    if (idx !== -1) { list[idx].name = name; list[idx].phone = phone; if (adminNewAvatarData) list[idx].avatar = adminNewAvatarData; }
+
+    closeModal('modal-admin-edit');
+    if (role === 'student') renderAdminStudents(adminAllStudents);
+    else renderAdminSupervisors(adminAllSupervisors);
+
+    hideLoading();
+    showToast('✅ تم تحديث البيانات بنجاح', 'success');
+  } catch(e) {
+    hideLoading();
+    showToast('خطأ: ' + e.message, 'error');
+  }
+};
+
+window.adminDeleteUser = async function(userId, role) {
+  const list = role === 'student' ? adminAllStudents : adminAllSupervisors;
+  const user = list.find(u => u.id === userId);
+  const label = role === 'student' ? 'الطالب' : 'المشرف';
+
+  if (!confirm(`هل أنت متأكد من حذف ${label} "${user?.name}"؟\n${role === 'student' ? 'سيتم حذف جميع مهامه ورسائله أيضاً.' : ''}`)) return;
+
+  showLoading();
+  try {
+    if (role === 'student') {
+      // Delete student + their tasks + their messages
+      await remove(ref(db, `students/${userId}`));
+      // Delete tasks
+      const taskSnap = await get(ref(db, 'tasks'));
+      if (taskSnap.exists()) {
+        const tasks = Object.values(taskSnap.val()).filter(t => t.studentId === userId);
+        for (const t of tasks) await remove(ref(db, `tasks/${t.id}`));
+      }
+      // Delete messages
+      await remove(ref(db, `messages/${userId}`));
+      adminAllStudents = adminAllStudents.filter(u => u.id !== userId);
+      document.getElementById('admin-count-students').textContent = adminAllStudents.length;
+      renderAdminStudents(adminAllStudents);
+    } else {
+      await remove(ref(db, `supervisors/${userId}`));
+      adminAllSupervisors = adminAllSupervisors.filter(u => u.id !== userId);
+      document.getElementById('admin-count-supervisors').textContent = adminAllSupervisors.length;
+      renderAdminSupervisors(adminAllSupervisors);
+    }
+    hideLoading();
+    showToast(`✅ تم حذف ${label} بنجاح`, 'info');
+  } catch(e) {
+    hideLoading();
+    showToast('خطأ في الحذف: ' + e.message, 'error');
   }
 };
 
