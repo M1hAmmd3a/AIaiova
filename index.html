@@ -920,63 +920,6 @@ body {
   color: rgba(255,255,255,0.8);
 }
 
-/* Audio message bubble */
-.audio-bubble {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  min-width: 220px;
-}
-
-.audio-play-btn {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: none;
-  background: var(--primary);
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s;
-  box-shadow: 0 2px 8px var(--primary-glow);
-}
-.audio-play-btn:hover { transform: scale(1.08); }
-
-.chat-msg.from-supervisor .audio-play-btn {
-  background: var(--primary);
-}
-.chat-msg.from-student .audio-play-btn {
-  background: rgba(255,255,255,0.25);
-  box-shadow: none;
-}
-
-.audio-waveform {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  height: 28px;
-}
-
-.wave-bar {
-  width: 3px;
-  border-radius: 2px;
-  background: var(--primary-light);
-  transition: height 0.1s;
-}
-.chat-msg.from-student .wave-bar {
-  background: rgba(255,255,255,0.5);
-}
-
-.audio-duration {
-  font-size: 12px;
-  color: var(--text3);
-  white-space: nowrap;
-}
-.chat-msg.from-student .audio-duration { color: rgba(255,255,255,0.7); }
-
 /* Chat input area */
 .chat-input-area {
   border-top: 1px solid var(--border);
@@ -1023,48 +966,6 @@ body {
   box-shadow: 0 3px 12px var(--primary-glow);
 }
 .chat-send-btn:hover { transform: scale(1.08); }
-
-.record-btn {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border2);
-  background: var(--surface);
-  color: var(--text3);
-  font-size: 20px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-.record-btn:hover { border-color: var(--red); color: var(--red); background: rgba(192,57,43,0.05); }
-.record-btn.recording {
-  background: var(--red);
-  border-color: var(--red);
-  color: white;
-  animation: pulse-red 1s infinite;
-}
-
-@keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(192,57,43,0); }
-}
-
-.recording-indicator {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--red);
-  font-weight: 600;
-  padding: 6px 0;
-}
-.recording-indicator.show { display: flex; }
-.rec-dot {
-  width: 8px; height: 8px;
-  background: var(--red);
-  border-radius: 50%;
-  animation: pulse-red 1s infinite;
-}
 
 /* Student messages section */
 .st-chat-container {
@@ -1707,26 +1608,18 @@ body {
   <div class="modal" style="max-width:600px">
     <div class="modal-header">
       <div>
-        <span class="modal-title">📨 المراسلة مع الطالب</span>
+        <span class="modal-title">📨 رسائل للطالب</span>
         <div id="msg-modal-student-name" style="font-size:13px;color:var(--text3);margin-top:2px"></div>
       </div>
       <button class="modal-close" onclick="closeModal('modal-messages')">✕</button>
     </div>
     <div class="modal-body" style="padding:0">
-      <!-- Chat messages area -->
       <div class="chat-messages" id="sup-chat-messages" style="height:340px;border-radius:0">
         <div class="empty-state"><div class="empty-state-icon">💬</div><div class="empty-state-title">لا توجد رسائل بعد</div></div>
       </div>
-      <!-- Input area -->
       <div class="chat-input-area">
-        <div class="recording-indicator" id="recording-indicator">
-          <div class="rec-dot"></div>
-          <span>جارٍ التسجيل... <span id="rec-timer">0:00</span></span>
-          <button class="btn btn-danger btn-sm" onclick="cancelRecording()" style="margin-right:auto">إلغاء</button>
-        </div>
-        <div class="chat-input-row" id="chat-input-row">
-          <button class="record-btn" id="record-btn" onclick="toggleRecording()" title="تسجيل رسالة صوتية">🎤</button>
-          <input type="text" class="chat-text-input" id="sup-msg-input" placeholder="اكتب رسالة للطالب..." onkeypress="if(event.key==='Enter')sendTextMessage()">
+        <div class="chat-input-row">
+          <input type="text" class="chat-text-input" id="sup-msg-input" placeholder="اكتب رسالة نصية للطالب..." onkeypress="if(event.key==='Enter')sendTextMessage()">
           <button class="chat-send-btn" onclick="sendTextMessage()" title="إرسال">➤</button>
         </div>
       </div>
@@ -2553,14 +2446,8 @@ window.saveSettings = async function() {
 };
 
 // ============================================================
-// MESSAGING SYSTEM
+// MESSAGING SYSTEM — نصي فقط
 // ============================================================
-
-let mediaRecorder = null;
-let audioChunks = [];
-let recordingTimer = null;
-let recordingSeconds = 0;
-let isRecording = false;
 
 window.openMessagesModal = function() {
   if (!APP.currentStudentId) return;
@@ -2590,10 +2477,7 @@ window.loadStudentMessages = async function() {
     const snap = await get(ref(db, `messages/${APP.currentUser.id}`));
     const msgs = snap.exists() ? Object.values(snap.val()).sort((a,b) => a.createdAt - b.createdAt) : [];
     renderMessagesInContainer(container, msgs, 'student');
-    // Mark as read
-    if (msgs.length) {
-      document.getElementById('st-msgs-badge').style.display = 'none';
-    }
+    if (msgs.length) document.getElementById('st-msgs-badge').style.display = 'none';
   } catch(e) {
     container.innerHTML = `<div style="text-align:center;color:var(--red);padding:20px">خطأ في تحميل الرسائل</div>`;
   }
@@ -2604,43 +2488,22 @@ function renderMessagesInContainer(container, msgs, viewerRole) {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💬</div><div class="empty-state-title">لا توجد رسائل بعد</div><div class="empty-state-sub">${viewerRole === 'student' ? 'ستظهر هنا رسائل المشرف' : 'ابدأ المحادثة بإرسال رسالة'}</div></div>`;
     return;
   }
-
   container.innerHTML = msgs.map(msg => {
     const isFromSupervisor = msg.senderRole === 'supervisor';
     const side = isFromSupervisor ? 'from-supervisor' : 'from-student';
     const senderLabel = isFromSupervisor ? '👑 المشرف' : '👤 الطالب';
     const timeStr = formatTime(msg.createdAt);
-
-    if (msg.type === 'audio') {
-      const waveHTML = Array.from({length: 18}, (_, i) => {
-        const h = 6 + Math.sin(i * 0.7 + msg.createdAt) * 8 + Math.random() * 6;
-        return `<div class="wave-bar" style="height:${Math.max(4, h)}px"></div>`;
-      }).join('');
-
-      return `
-        <div class="chat-msg ${side}">
-          <div class="chat-sender-name">${senderLabel}</div>
-          <div class="chat-bubble audio-bubble">
-            <button class="audio-play-btn" onclick="playAudioMessage('${msg.id}', '${msg.audioData ? msg.id : ''}', this)" data-audio="${msg.audioData || ''}">▶</button>
-            <div class="audio-waveform">${waveHTML}</div>
-            <div class="audio-duration">${msg.duration || '0:00'}</div>
-            <audio id="audio-${msg.id}" src="${msg.audioData || ''}" style="display:none"></audio>
-          </div>
-          <div class="chat-meta">${timeStr} ${isFromSupervisor && viewerRole === 'supervisor' ? `<button onclick="deleteMessage('${msg.studentId || APP.currentStudentId}','${msg.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:11px;padding:0 4px">حذف</button>` : ''}</div>
-        </div>
-      `;
-    } else {
-      return `
-        <div class="chat-msg ${side}">
-          <div class="chat-sender-name">${senderLabel}</div>
-          <div class="chat-bubble">${escapeHtml(msg.text)}</div>
-          <div class="chat-meta">${timeStr} ${isFromSupervisor && viewerRole === 'supervisor' ? `<button onclick="deleteMessage('${msg.studentId || APP.currentStudentId}','${msg.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:11px;padding:0 4px">حذف</button>` : ''}</div>
-        </div>
-      `;
-    }
+    const deleteBtn = (isFromSupervisor && viewerRole === 'supervisor')
+      ? `<button onclick="deleteMessage('${msg.studentId || APP.currentStudentId}','${msg.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:11px;padding:0 4px">حذف</button>`
+      : '';
+    return `
+      <div class="chat-msg ${side}">
+        <div class="chat-sender-name">${senderLabel}</div>
+        <div class="chat-bubble">${escapeHtml(msg.text)}</div>
+        <div class="chat-meta">${timeStr} ${deleteBtn}</div>
+      </div>
+    `;
   }).join('');
-
-  // Scroll to bottom
   setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
 }
 
@@ -2653,28 +2516,11 @@ function formatTime(ts) {
   return new Date(ts).toLocaleTimeString('ar-SA', { hour:'2-digit', minute:'2-digit' });
 }
 
-window.playAudioMessage = function(msgId, id, btn) {
-  const audio = document.getElementById(`audio-${msgId}`);
-  if (!audio || !audio.src) { showToast('الملف الصوتي غير متاح', 'error'); return; }
-  if (audio.paused) {
-    // Stop all others
-    document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; });
-    document.querySelectorAll('.audio-play-btn').forEach(b => b.textContent = '▶');
-    audio.play();
-    btn.textContent = '⏸';
-    audio.onended = () => { btn.textContent = '▶'; };
-  } else {
-    audio.pause();
-    btn.textContent = '▶';
-  }
-};
-
 window.sendTextMessage = async function() {
   const input = document.getElementById('sup-msg-input');
   const text = input.value.trim();
   if (!text) return;
   if (!APP.currentStudentId) return;
-
   input.value = '';
   showLoading();
   try {
@@ -2709,119 +2555,6 @@ window.deleteMessage = async function(studentId, msgId) {
     showToast('خطأ في الحذف', 'error');
   }
 };
-
-// ---- AUDIO RECORDING ----
-window.toggleRecording = async function() {
-  if (isRecording) {
-    stopRecording();
-  } else {
-    await startRecording();
-  }
-};
-
-async function startRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioChunks = [];
-    recordingSeconds = 0;
-
-    const options = MediaRecorder.isTypeSupported('audio/webm') ? { mimeType: 'audio/webm' } : {};
-    mediaRecorder = new MediaRecorder(stream, options);
-
-    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = async () => {
-      stream.getTracks().forEach(t => t.stop());
-      await saveAudioMessage();
-    };
-
-    mediaRecorder.start(100);
-    isRecording = true;
-
-    // UI
-    document.getElementById('record-btn').classList.add('recording');
-    document.getElementById('recording-indicator').classList.add('show');
-
-    recordingTimer = setInterval(() => {
-      recordingSeconds++;
-      const m = Math.floor(recordingSeconds / 60);
-      const s = recordingSeconds % 60;
-      document.getElementById('rec-timer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
-      if (recordingSeconds >= 120) stopRecording(); // Max 2 min
-    }, 1000);
-
-  } catch(e) {
-    showToast('لا يمكن الوصول للمايكروفون. تأكد من منح الإذن.', 'error');
-  }
-}
-
-function stopRecording() {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-  }
-  isRecording = false;
-  clearInterval(recordingTimer);
-  document.getElementById('record-btn').classList.remove('recording');
-  document.getElementById('recording-indicator').classList.remove('show');
-}
-
-window.cancelRecording = function() {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.ondataavailable = null;
-    mediaRecorder.onstop = null;
-    mediaRecorder.stop();
-    mediaRecorder.stream?.getTracks().forEach(t => t.stop());
-  }
-  audioChunks = [];
-  isRecording = false;
-  clearInterval(recordingTimer);
-  document.getElementById('record-btn').classList.remove('recording');
-  document.getElementById('recording-indicator').classList.remove('show');
-  showToast('تم إلغاء التسجيل', 'info');
-};
-
-async function saveAudioMessage() {
-  if (!audioChunks.length || !APP.currentStudentId) return;
-  showLoading();
-  try {
-    const blob = new Blob(audioChunks, { type: audioChunks[0]?.type || 'audio/webm' });
-
-    // Convert to base64 to store in Firebase
-    const base64 = await blobToBase64(blob);
-
-    const m = Math.floor(recordingSeconds / 60);
-    const s = recordingSeconds % 60;
-    const duration = `${m}:${s.toString().padStart(2,'0')}`;
-
-    const id = generateId();
-    const msg = {
-      id,
-      type: 'audio',
-      audioData: base64,
-      duration,
-      senderRole: 'supervisor',
-      senderName: APP.currentUser.name,
-      studentId: APP.currentStudentId,
-      createdAt: Date.now(),
-      read: false,
-    };
-    await set(ref(db, `messages/${APP.currentStudentId}/${id}`), msg);
-    hideLoading();
-    showToast('✅ تم إرسال الرسالة الصوتية', 'success');
-    await loadMessagesInModal(APP.currentStudentId);
-  } catch(e) {
-    hideLoading();
-    showToast('خطأ في حفظ الصوت: ' + e.message, 'error');
-  }
-}
-
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
 
 // ============================================================
 // INIT - CHECK SESSION
