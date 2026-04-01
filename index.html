@@ -392,7 +392,11 @@ body {
     </div>
   </nav>
   <div class="home-hero fade-in">
-    <div class="home-badge">✨ منصة متكاملة لحفظ القرآن الكريم</div>
+    <div class="home-badge" style="gap:16px;padding:8px 22px">
+      <span>دورة أحباب الله</span>
+      <span style="width:1px;height:18px;background:rgba(26,107,69,0.25);display:inline-block"></span>
+      <span>دورة تاج الوقار</span>
+    </div>
     <h1 class="home-title">متابعة حفظ القرآن<br><span>بطريقة ذكية ومنظمة</span></h1>
     <p class="home-desc">منصة متكاملة تربط الطالب بمشرفه لمتابعة حفظ القرآن الكريم وإدارة المهام والمراجعات بشكل منظم واحترافي.</p>
     <div class="home-cta">
@@ -1565,7 +1569,14 @@ function renderStudentTasks(tasks) {
     <div class="task-item" onclick="openTaskDetail('${t.id}')" style="cursor:pointer">
       <div class="task-status-dot ${statusDotClass(t.status)}"></div>
       <div class="task-content">
-        <div class="task-title">📋 واجب — ${formatDate(t.createdAt)}</div>
+        <div class="task-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <span>📋 واجب</span>
+          ${(t.sentDateHijri || t.sentDateMiladi) ? `
+          <div style="text-align:left;font-size:11px;color:var(--text3);line-height:1.5">
+            ${t.sentDateHijri ? `<div style="font-weight:600;color:var(--primary-dark)">${t.sentDateHijri}</div>` : ''}
+            ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
+          </div>` : `<span style="font-size:12px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
+        </div>
         <div class="task-meta" style="margin-top:8px">
           ${t.deadline ? `<span class="task-date">📅 موعد التسميع القادم: ${formatDate(t.deadline)}</span>` : ''}
           ${t.points !== undefined && t.points !== '' ? `<span class="task-points">⭐ تقييم: ${t.points}/10</span>` : ''}
@@ -1586,6 +1597,15 @@ window.openTaskDetail = function(taskId) {
   if (!task) return;
   document.getElementById('detail-body').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:16px">
+      ${(task.sentDateHijri || task.sentDateMiladi) ? `
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">📅</span>
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:2px">تاريخ إرسال الواجب</div>
+          ${task.sentDateHijri ? `<div style="font-size:14px;font-weight:700;color:var(--primary-dark)">${task.sentDateHijri}</div>` : ''}
+          ${task.sentDateMiladi ? `<div style="font-size:12px;color:var(--text3)">${task.sentDateMiladi}</div>` : ''}
+        </div>
+      </div>` : ''}
       ${(task.newMemorized || task.oldMemorized) ? `
       <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:16px">
         <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">📖 ما تم تسميعه</div>
@@ -1617,10 +1637,6 @@ window.openTaskDetail = function(taskId) {
         </div>
       </div>` : ''}
       ${task.note ? `<div class="detail-row"><div class="detail-label">ملاحظة المشرف</div><div class="note-box">${task.note}</div></div>` : ''}
-      <div class="detail-row">
-        <div class="detail-label">تاريخ الإضافة</div>
-        <div class="detail-value">${formatDate(task.createdAt)}</div>
-      </div>
     </div>
   `;
   openModal('modal-task-detail');
@@ -1916,24 +1932,42 @@ function renderSupStudentTasks(studentId) {
     <div class="task-item">
       <div class="task-status-dot ${statusDotClass(t.status)}"></div>
       <div class="task-content">
-        <div class="task-title">📋 واجب — ${formatDate(t.createdAt)}</div>
+        <div class="task-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <span>📋 واجب</span>
+          ${(t.sentDateHijri || t.sentDateMiladi) ? `
+          <div style="text-align:left;font-size:11px;color:var(--text3);line-height:1.5">
+            ${t.sentDateHijri ? `<div style="font-weight:600;color:var(--primary-dark)">${t.sentDateHijri}</div>` : ''}
+            ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
+          </div>` : `<span style="font-size:12px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
+        </div>
         ${(t.newMemorized || t.oldMemorized) ? `
         <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;margin:8px 0">
-          <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:6px">📖 تم التسميع</div>
+          <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:6px">📖 ما تم تسميعه</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
             ${t.newMemorized ? `<div><span style="color:var(--text3)">الجديد: </span><strong>${t.newMemorized}</strong></div>` : ''}
             ${t.oldMemorized ? `<div><span style="color:var(--text3)">القديم: </span><strong>${t.oldMemorized}</strong></div>` : ''}
           </div>
         </div>` : ''}
+        ${t.points !== undefined && t.points !== '' ? `
+        <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:8px 12px;margin:6px 0;display:flex;align-items:center;gap:8px">
+          <span style="font-size:13px;color:var(--text3)">التقييم:</span>
+          <span style="font-size:18px;font-weight:800;color:var(--accent)">${t.points}</span>
+          <span style="font-size:12px;color:var(--text3)">/ 10</span>
+          <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-right:4px">
+            <div style="width:${(parseFloat(t.points)/10)*100}%;height:100%;background:${parseFloat(t.points)>=8?'var(--primary)':parseFloat(t.points)>=5?'var(--orange)':'var(--red)'};border-radius:3px"></div>
+          </div>
+        </div>` : ''}
         ${(t.newHw || t.oldHw) ? `
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-          ${t.newHw ? `<div style="background:rgba(26,107,69,0.06);border:1px solid var(--border);border-radius:8px;padding:8px"><div style="font-size:11px;color:var(--text3)">الجديد</div><div style="font-size:13px;font-weight:600">${t.newHw}</div></div>` : ''}
-          ${t.oldHw ? `<div style="background:rgba(36,113,163,0.06);border:1px solid var(--border);border-radius:8px;padding:8px"><div style="font-size:11px;color:var(--text3)">القديم</div><div style="font-size:13px;font-weight:600">${t.oldHw}</div></div>` : ''}
+        <div style="background:rgba(26,107,69,0.04);border:1px solid rgba(26,107,69,0.15);border-radius:8px;padding:10px;margin:6px 0">
+          <div style="font-size:11px;color:var(--primary);font-weight:700;margin-bottom:6px">📝 الواجب المطلوب</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            ${t.newHw ? `<div style="background:rgba(26,107,69,0.06);border:1px solid var(--border);border-radius:6px;padding:8px"><div style="font-size:11px;color:var(--text3)">الجديد</div><div style="font-size:13px;font-weight:600">${t.newHw}</div></div>` : ''}
+            ${t.oldHw ? `<div style="background:rgba(36,113,163,0.06);border:1px solid var(--border);border-radius:6px;padding:8px"><div style="font-size:11px;color:var(--text3)">القديم</div><div style="font-size:13px;font-weight:600">${t.oldHw}</div></div>` : ''}
+          </div>
         </div>` : ''}
         <div class="task-meta">
           <span class="task-badge ${statusBadgeClass(t.status)}">${statusLabel(t.status)}</span>
           ${t.deadline ? `<span class="task-date">📅 موعد التسميع القادم: ${formatDate(t.deadline)}</span>` : ''}
-          ${t.points !== undefined && t.points !== '' ? `<span class="task-points">⭐ ${t.points}/10</span>` : ''}
         </div>
         ${t.note ? `<div class="note-box" style="margin-top:8px">💬 ${t.note}</div>` : ''}
       </div>
@@ -1974,8 +2008,15 @@ function renderSupAllTasks() {
       <div class="task-item">
         <div class="task-status-dot ${statusDotClass(t.status)}"></div>
         <div class="task-content">
-          <div style="font-size:12px;color:var(--text3);margin-bottom:4px">👤 ${student?.name || 'طالب محذوف'}</div>
-          <div class="task-title">📋 واجب — ${formatDate(t.createdAt)}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+            <span style="font-size:12px;color:var(--text3)">👤 ${student?.name || 'طالب محذوف'}</span>
+            ${(t.sentDateHijri || t.sentDateMiladi) ? `
+            <div style="text-align:left;font-size:11px;color:var(--text3);line-height:1.5">
+              ${t.sentDateHijri ? `<div style="font-weight:600;color:var(--primary-dark)">${t.sentDateHijri}</div>` : ''}
+              ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
+            </div>` : `<span style="font-size:11px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
+          </div>
+          <div class="task-title">📋 واجب</div>
           ${(t.newHw || t.oldHw) ? `
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;font-size:13px">
             ${t.newHw ? `<div><span style="color:var(--text3)">الجديد: </span><strong>${t.newHw}</strong></div>` : ''}
@@ -1983,7 +2024,7 @@ function renderSupAllTasks() {
           </div>` : ''}
           <div class="task-meta">
             <span class="task-badge ${statusBadgeClass(t.status)}">${statusLabel(t.status)}</span>
-            ${t.deadline ? `<span class="task-date">🎤 ${formatDate(t.deadline)}</span>` : ''}
+            ${t.deadline ? `<span class="task-date">📅 موعد التسميع القادم: ${formatDate(t.deadline)}</span>` : ''}
             ${t.points !== undefined && t.points !== '' ? `<span class="task-points">⭐ ${t.points}/10</span>` : ''}
           </div>
         </div>
@@ -2146,6 +2187,7 @@ window.saveTask = async function() {
   showLoading();
   try {
     const id = generateId();
+    const now = new Date();
     const task = {
       id,
       studentId: APP.currentStudentId,
@@ -2159,6 +2201,8 @@ window.saveTask = async function() {
       note: document.getElementById('task-note').value.trim(),
       createdAt: Date.now(),
       supervisorId: APP.currentUser.id,
+      sentDateHijri: document.getElementById('task-today-hijri').textContent || '',
+      sentDateMiladi: document.getElementById('task-today-miladi').textContent || '',
     };
     await set(ref(db, `tasks/${id}`), task);
     APP.allTasks.push(task);
