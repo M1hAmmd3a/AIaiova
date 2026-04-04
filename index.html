@@ -48,11 +48,10 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg2); }
 ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
 
-/* ===== SCREENS ===== */
 .screen { display:none; min-height:100vh; }
 .screen.active { display:block; }
 
-/* ===== NAVBAR ===== */
+/* NAVBAR */
 .navbar {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -66,7 +65,6 @@ body {
   z-index: 100;
   box-shadow: 0 2px 15px rgba(26,107,69,0.06);
 }
-
 .navbar-brand { display: flex; align-items: center; gap: 12px; }
 .navbar-logo {
   width: 42px; height: 42px;
@@ -80,7 +78,7 @@ body {
 .navbar-subtitle { font-size: 11px; color: var(--text3); font-weight: 400; }
 .navbar-actions { display:flex; gap:10px; align-items:center; }
 
-/* ===== BUTTONS ===== */
+/* BUTTONS */
 .btn {
   padding: 9px 20px;
   border-radius: var(--radius-sm);
@@ -109,210 +107,68 @@ body {
 .btn-lg { padding: 13px 28px; font-size: 16px; border-radius: 14px; }
 .btn-full { width: 100%; justify-content: center; }
 
-/* ===== HOME ===== */
+/* HOME */
 #screen-home { background: linear-gradient(160deg, #f0f7f0 0%, #e8f3e8 40%, #f5faf5 100%); }
-
-.home-hero {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 80px 24px 60px;
-  text-align: center;
-}
+.home-hero { max-width: 900px; margin: 0 auto; padding: 80px 24px 60px; text-align: center; }
 .home-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(26,107,69,0.08);
-  border: 1px solid rgba(26,107,69,0.2);
-  color: var(--primary);
-  padding: 7px 18px;
-  border-radius: 50px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 28px;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(26,107,69,0.08); border: 1px solid rgba(26,107,69,0.2);
+  color: var(--primary); padding: 7px 18px; border-radius: 50px;
+  font-size: 13px; font-weight: 600; margin-bottom: 28px;
 }
-.home-title {
-  font-family: 'Amiri', serif;
-  font-size: clamp(36px, 6vw, 62px);
-  color: var(--primary-dark);
-  line-height: 1.3;
-  margin-bottom: 20px;
-}
-.home-title span {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+.home-title { font-family: 'Amiri', serif; font-size: clamp(36px, 6vw, 62px); color: var(--primary-dark); line-height: 1.3; margin-bottom: 20px; }
+.home-title span { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .home-desc { font-size: 17px; color: var(--text2); line-height: 1.8; max-width: 600px; margin: 0 auto 44px; }
 .home-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.home-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  max-width: 900px;
-  margin: 60px auto;
-  padding: 0 24px;
-}
-.feature-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  text-align: center;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-}
+.home-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 900px; margin: 60px auto; padding: 0 24px; }
+.feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; text-align: center; box-shadow: var(--shadow); transition: all 0.3s ease; }
 .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary); }
-.feature-icon {
-  width: 56px; height: 56px;
-  background: linear-gradient(135deg, var(--primary-glow), rgba(26,107,69,0.05));
-  border: 1.5px solid rgba(26,107,69,0.15);
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px;
-  margin: 0 auto 16px;
-}
+.feature-icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary-glow), rgba(26,107,69,0.05)); border: 1.5px solid rgba(26,107,69,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px; }
 .feature-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
 .feature-desc { font-size: 13px; color: var(--text3); line-height: 1.6; }
 .home-footer { text-align:center; padding: 30px; font-size: 13px; color: var(--text3); border-top: 1px solid var(--border); margin-top: 40px; }
 
-/* ===== AUTH ===== */
-.auth-wrapper {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: linear-gradient(160deg, #f0f7f0, #e8f3e8);
-}
-.auth-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 44px 40px;
-  width: 100%;
-  max-width: 460px;
-  box-shadow: var(--shadow-lg);
-}
+/* AUTH */
+.auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: linear-gradient(160deg, #f0f7f0, #e8f3e8); }
+.auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 44px 40px; width: 100%; max-width: 460px; box-shadow: var(--shadow-lg); }
 .auth-header { text-align: center; margin-bottom: 36px; }
-.auth-icon {
-  width: 68px; height: 68px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 32px;
-  margin: 0 auto 18px;
-  box-shadow: 0 6px 20px var(--primary-glow);
-}
+.auth-icon { width: 68px; height: 68px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 18px; box-shadow: 0 6px 20px var(--primary-glow); }
 .auth-title { font-family: 'Amiri', serif; font-size: 26px; color: var(--primary-dark); margin-bottom: 6px; }
 .auth-sub { font-size: 14px; color: var(--text3); }
 
-/* ===== FORM ===== */
+/* FORM */
 .form-group { margin-bottom: 20px; }
 .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
 .form-input, .form-select, .form-textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1.5px solid var(--border2);
-  border-radius: var(--radius-sm);
-  font-family: 'Cairo', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  background: var(--surface);
-  transition: all 0.2s;
-  outline: none;
-  direction: rtl;
+  width: 100%; padding: 12px 16px; border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm); font-family: 'Cairo', sans-serif; font-size: 14px;
+  color: var(--text); background: var(--surface); transition: all 0.2s; outline: none; direction: rtl;
 }
-.form-input:focus, .form-select:focus, .form-textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
-  background: #fafff9;
-}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); background: #fafff9; }
 .form-textarea { resize: vertical; min-height: 90px; }
 .form-select { cursor: pointer; }
-
 .avatar-upload { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; }
-.avatar-preview {
-  width: 90px; height: 90px;
-  border-radius: 50%;
-  border: 3px solid var(--border2);
-  object-fit: cover;
-  background: var(--bg2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 36px;
-  color: var(--text3);
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.2s;
-}
+.avatar-preview { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--border2); object-fit: cover; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--text3); cursor: pointer; overflow: hidden; transition: all 0.2s; }
 .avatar-preview:hover { border-color: var(--primary); }
 .avatar-preview img { width:100%; height:100%; object-fit:cover; }
-
-.form-divider {
-  text-align: center;
-  font-size: 13px;
-  color: var(--text3);
-  margin: 20px 0;
-  position: relative;
-}
-.form-divider::before, .form-divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: calc(50% - 40px);
-  height: 1px;
-  background: var(--border);
-}
+.form-divider { text-align: center; font-size: 13px; color: var(--text3); margin: 20px 0; position: relative; }
+.form-divider::before, .form-divider::after { content: ''; position: absolute; top: 50%; width: calc(50% - 40px); height: 1px; background: var(--border); }
 .form-divider::before { right: 0; }
 .form-divider::after { left: 0; }
 .form-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; }
 .form-link:hover { text-decoration: underline; }
 
-/* ===== DASHBOARD ===== */
+/* DASHBOARD */
 .dashboard-layout { display: flex; min-height: calc(100vh - 68px); }
-.sidebar {
-  width: 260px;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
-  padding: 20px 0;
-  flex-shrink: 0;
-  position: sticky;
-  top: 68px;
-  height: calc(100vh - 68px);
-  overflow-y: auto;
-}
+.sidebar { width: 260px; background: var(--surface); border-left: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; position: sticky; top: 68px; height: calc(100vh - 68px); overflow-y: auto; }
 .sidebar-user { padding: 16px 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; text-align: center; }
-.sidebar-avatar {
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  border: 3px solid var(--primary-glow);
-  object-fit: cover;
-  margin: 0 auto 10px;
-  display: block;
-  background: var(--bg2);
-  font-size: 28px;
-  line-height: 58px;
-  text-align: center;
-  overflow: hidden;
-}
+.sidebar-avatar { width: 64px; height: 64px; border-radius: 50%; border: 3px solid var(--primary-glow); object-fit: cover; margin: 0 auto 10px; display: block; background: var(--bg2); font-size: 28px; line-height: 58px; text-align: center; overflow: hidden; }
 .sidebar-avatar img { width:100%; height:100%; object-fit:cover; }
 .sidebar-name { font-size: 15px; font-weight: 700; color: var(--text); }
-.sidebar-role {
-  font-size: 12px; color: var(--primary);
-  background: var(--primary-glow);
-  border: 1px solid rgba(26,107,69,0.2);
-  padding: 2px 10px; border-radius: 50px;
-  display: inline-block; margin-top: 5px;
-}
+.sidebar-role { font-size: 12px; color: var(--primary); background: var(--primary-glow); border: 1px solid rgba(26,107,69,0.2); padding: 2px 10px; border-radius: 50px; display: inline-block; margin-top: 5px; }
 .sidebar-nav { padding: 0 12px; }
 .nav-section-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; padding: 14px 8px 6px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 11px 14px; border-radius: var(--radius-sm);
-  cursor: pointer; font-size: 14px; font-weight: 500;
-  color: var(--text2); transition: all 0.2s; margin-bottom: 3px;
-}
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text2); transition: all 0.2s; margin-bottom: 3px; }
 .nav-item:hover { background: var(--bg2); color: var(--primary); }
 .nav-item.active { background: var(--primary-glow); color: var(--primary); font-weight: 700; border: 1px solid rgba(26,107,69,0.15); }
 .nav-item-icon { font-size: 18px; width: 24px; text-align: center; }
@@ -323,20 +179,10 @@ body {
 .page-title { font-family: 'Amiri', serif; font-size: 26px; color: var(--primary-dark); margin-bottom: 4px; }
 .page-sub { font-size: 14px; color: var(--text3); }
 
-/* ===== STATS ===== */
+/* STATS */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
-.stat-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 22px 20px;
-  box-shadow: var(--shadow); transition: all 0.2s;
-  position: relative; overflow: hidden;
-}
-.stat-card::before {
-  content: ''; position: absolute; top: 0; right: 0;
-  width: 4px; height: 100%;
-  background: linear-gradient(to bottom, var(--primary), var(--primary-light));
-  border-radius: 0 var(--radius) var(--radius) 0;
-}
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; box-shadow: var(--shadow); transition: all 0.2s; position: relative; overflow: hidden; }
+.stat-card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--primary), var(--primary-light)); border-radius: 0 var(--radius) var(--radius) 0; }
 .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 12px; }
 .stat-icon.green { background: rgba(26,107,69,0.1); }
@@ -346,13 +192,13 @@ body {
 .stat-value { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 4px; }
 .stat-label { font-size: 13px; color: var(--text3); font-weight: 500; }
 
-/* ===== CARDS ===== */
+/* CARDS */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
 .card-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); }
 .card-title { font-size: 16px; font-weight: 700; color: var(--text); }
 .card-body { padding: 22px; }
 
-/* ===== STUDENTS ===== */
+/* STUDENTS */
 .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 .student-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); transition: all 0.2s; cursor: pointer; }
 .student-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
@@ -365,7 +211,7 @@ body {
 .student-stat-val { font-size: 18px; font-weight: 800; color: var(--primary); }
 .student-stat-lbl { font-size: 11px; color: var(--text3); }
 
-/* ===== TASKS ===== */
+/* TASKS */
 .task-list { display:flex; flex-direction:column; gap:12px; }
 .task-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); transition: all 0.2s; display: flex; align-items: flex-start; gap: 14px; }
 .task-item:hover { box-shadow: var(--shadow-md); }
@@ -387,46 +233,20 @@ body {
 .task-points { font-size: 13px; font-weight: 700; color: var(--accent); background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25); padding: 3px 10px; border-radius: 20px; }
 .task-actions { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
 
-/* ===== واجب sections ===== */
-.wajib-section {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  margin-bottom: 14px;
-}
-.wajib-section-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 10px;
-}
-.wajib-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.wajib-field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text2);
-  margin-bottom: 5px;
-}
-.wajib-field .form-input {
-  padding: 9px 12px;
-  font-size: 13px;
-}
+/* WAJIB SECTIONS */
+.wajib-section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 14px; }
+.wajib-section-title { font-size: 12px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.wajib-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.wajib-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
+.wajib-field .form-input { padding: 9px 12px; font-size: 13px; }
 
-/* ===== SEARCH ===== */
+/* SEARCH */
 .search-bar { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1.5px solid var(--border2); border-radius: var(--radius-sm); padding: 0 14px; transition: all 0.2s; }
 .search-bar:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
 .search-bar input { border: none; outline: none; background: transparent; font-family: 'Cairo', sans-serif; font-size: 14px; color: var(--text); flex: 1; padding: 12px 0; direction: rtl; }
 .search-icon { color: var(--text3); font-size: 16px; }
 
-/* ===== MODAL ===== */
+/* MODAL */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
 .modal-overlay.open { display: flex; }
 .modal { background: var(--surface); border-radius: var(--radius-lg); width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: modalIn 0.25s ease; }
@@ -438,7 +258,7 @@ body {
 .modal-body { padding: 24px; }
 .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
 
-/* ===== TOAST ===== */
+/* TOAST */
 .toast-container { position: fixed; bottom: 24px; left: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
 .toast { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 18px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 12px; min-width: 280px; animation: toastIn 0.3s ease; font-size: 14px; font-weight: 500; }
 @keyframes toastIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -447,32 +267,32 @@ body {
 .toast.info { border-right: 4px solid var(--blue); }
 .toast-icon { font-size: 20px; }
 
-/* ===== LOADING ===== */
+/* LOADING */
 .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px); z-index: 9998; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
 .loading-overlay.show { display: flex; }
 .spinner { width: 44px; height: 44px; border: 3px solid var(--border2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ===== TABS ===== */
+/* TABS */
 .tabs { display:flex; gap:4px; background: var(--bg2); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 20px; }
 .tab { flex: 1; text-align: center; padding: 9px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text3); transition: all 0.2s; }
 .tab.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
 .tab:hover:not(.active) { color: var(--text2); }
 
-/* ===== PROGRESS ===== */
+/* PROGRESS */
 .progress-bar-wrap { height: 8px; background: var(--bg2); border-radius: 4px; overflow: hidden; margin-top: 6px; }
 .progress-bar-fill { height: 100%; background: linear-gradient(to left, var(--primary), var(--primary-light)); border-radius: 4px; transition: width 0.5s ease; }
 
-/* ===== EMPTY STATE ===== */
+/* EMPTY STATE */
 .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
 .empty-state-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.5; }
 .empty-state-title { font-size: 17px; font-weight: 700; color: var(--text2); margin-bottom: 8px; }
 .empty-state-sub { font-size: 14px; line-height: 1.6; }
 
-/* ===== NOTE BOX ===== */
+/* NOTE BOX */
 .note-box { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: var(--text2); line-height: 1.6; }
 
-/* ===== PROFILE ===== */
+/* PROFILE */
 .profile-header { display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 22px; box-shadow: var(--shadow); }
 .profile-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--border); background: var(--bg2); font-size: 36px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
 .profile-avatar img { width:100%; height:100%; object-fit:cover; }
@@ -480,12 +300,54 @@ body {
 .profile-phone { font-size: 14px; color: var(--text3); margin-top: 4px; }
 .profile-badges { display:flex; gap:8px; margin-top: 10px; flex-wrap:wrap; }
 
-/* ===== TASK DETAIL ===== */
+/* DETAIL */
 .detail-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
 .detail-label { font-size: 12px; color: var(--text3); font-weight: 600; }
 .detail-value { font-size: 14px; color: var(--text); line-height: 1.7; }
 
-/* ===== RESPONSIVE ===== */
+/* ADMIN TABLE */
+.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.admin-table th { background: var(--surface2); padding: 12px 16px; text-align: right; font-weight: 700; color: var(--text2); border-bottom: 2px solid var(--border); }
+.admin-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+.admin-table tr:hover td { background: var(--bg2); }
+.admin-table .pass-cell { font-family: monospace; letter-spacing: 2px; color: var(--primary); }
+
+/* CHAT */
+.chat-container { display: flex; flex-direction: column; height: calc(100vh - 280px); min-height: 400px; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 12px; }
+.chat-msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.6; position: relative; }
+.chat-msg.sent { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; align-self: flex-end; border-bottom-left-radius: 4px; }
+.chat-msg.received { background: var(--surface); border: 1px solid var(--border); color: var(--text); align-self: flex-start; border-bottom-right-radius: 4px; }
+.chat-msg-meta { font-size: 11px; opacity: 0.7; margin-top: 4px; }
+.chat-msg.sent .chat-msg-meta { text-align: left; }
+.chat-msg.received .chat-msg-meta { text-align: right; }
+.chat-input-area { display: flex; gap: 8px; align-items: center; }
+.chat-input { flex: 1; padding: 12px 16px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); font-family: 'Cairo', sans-serif; font-size: 14px; outline: none; direction: rtl; background: var(--surface); }
+.chat-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+.chat-send-btn { padding: 12px 20px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 600; font-size: 14px; }
+.chat-send-btn:hover { opacity: 0.9; }
+.chat-student-selector { margin-bottom: 16px; }
+
+/* STUDENT CHAT ITEM */
+.chat-student-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border); background: var(--surface); margin-bottom: 8px; transition: all 0.2s; }
+.chat-student-item:hover { border-color: var(--primary); background: var(--primary-glow); }
+.chat-student-item.active { border-color: var(--primary); background: var(--primary-glow); }
+.chat-student-item-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden; flex-shrink: 0; }
+.chat-student-item-avatar img { width:100%; height:100%; object-fit:cover; }
+.chat-unread-badge { background: var(--red); color: white; font-size: 11px; padding: 2px 7px; border-radius: 20px; margin-right: auto; }
+
+/* ANIMATIONS */
+.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+.slide-section { display:none; }
+.slide-section.active { display:block; animation: fadeIn 0.25s ease; }
+
+/* RATING */
+.rating-display { display: flex; align-items: center; gap: 6px; }
+.rating-stars { display: flex; gap: 2px; direction: ltr; }
+.rating-star { font-size: 16px; }
+.rating-num { font-size: 14px; font-weight: 700; color: var(--accent); }
+
 @media (max-width: 768px) {
   .dashboard-layout { flex-direction: column; }
   .sidebar { width: 100%; height: auto; position: relative; top: 0; }
@@ -497,37 +359,19 @@ body {
   .profile-header { flex-direction: column; text-align: center; }
   .profile-badges { justify-content: center; }
   .wajib-row { grid-template-columns: 1fr; }
+  .chat-container { height: 60vh; }
 }
-
-/* ===== ANIMATIONS ===== */
-.fade-in { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-.slide-section { display:none; }
-.slide-section.active { display:block; animation: fadeIn 0.25s ease; }
-
-/* ===== RATING ===== */
-.rating-display { display: flex; align-items: center; gap: 6px; }
-.rating-stars { display: flex; gap: 2px; direction: ltr; }
-.rating-star { font-size: 16px; }
-.rating-num { font-size: 14px; font-weight: 700; color: var(--accent); }
-
-/* ===== ADMIN TABLE ===== */
-.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.admin-table th { background: var(--surface2); padding: 12px 16px; text-align: right; font-weight: 700; color: var(--text2); border-bottom: 2px solid var(--border); }
-.admin-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
-.admin-table tr:hover td { background: var(--bg2); }
-.admin-table .pass-cell { font-family: monospace; letter-spacing: 2px; color: var(--primary); }
 </style>
 </head>
 <body>
 
-<!-- ===== LOADING ===== -->
+<!-- LOADING -->
 <div class="loading-overlay" id="loading">
   <div class="spinner"></div>
   <div style="font-size:14px;color:var(--text3)">جاري التحميل...</div>
 </div>
 
-<!-- ===== TOAST ===== -->
+<!-- TOAST -->
 <div class="toast-container" id="toast-container"></div>
 
 <!-- ============================== HOME ============================== -->
@@ -544,11 +388,15 @@ body {
       <button class="btn btn-ghost" onclick="showScreen('screen-student-login')">دخول الطالب</button>
       <button class="btn btn-primary" onclick="showScreen('screen-student-register')">تسجيل جديد</button>
       <button class="btn btn-accent btn-sm" onclick="openSupervisorPass()">🔐 المشرف</button>
+      <button class="btn btn-outline btn-sm" onclick="openAdminPass()" style="border-color:var(--red);color:var(--red)">🛡 الإدارة</button>
     </div>
   </nav>
-
   <div class="home-hero fade-in">
-    <div class="home-badge">✨ منصة متكاملة لحفظ القرآن الكريم</div>
+    <div class="home-badge" style="gap:16px;padding:8px 22px">
+      <span>دورة أحباب الله</span>
+      <span style="width:1px;height:18px;background:rgba(26,107,69,0.25);display:inline-block"></span>
+      <span>دورة تاج الوقار</span>
+    </div>
     <h1 class="home-title">متابعة حفظ القرآن<br><span>بطريقة ذكية ومنظمة</span></h1>
     <p class="home-desc">منصة متكاملة تربط الطالب بمشرفه لمتابعة حفظ القرآن الكريم وإدارة المهام والمراجعات بشكل منظم واحترافي.</p>
     <div class="home-cta">
@@ -556,34 +404,144 @@ body {
       <button class="btn btn-outline btn-lg" onclick="showScreen('screen-student-login')">🔑 لديّ حساب بالفعل</button>
     </div>
   </div>
-
   <div class="home-features">
-    <div class="feature-card">
-      <div class="feature-icon">📋</div>
-      <div class="feature-title">إدارة الواجبات</div>
-      <div class="feature-desc">تتبع واجبات الحفظ والمراجعة بشكل منظم مع تحديد مواعيد التسميع</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <div class="feature-title">إحصائيات التقدم</div>
-      <div class="feature-desc">متابعة تقدم الطلاب بلوحات إحصائية واضحة وشاملة</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">💬</div>
-      <div class="feature-title">ملاحظات المشرف</div>
-      <div class="feature-desc">تواصل مباشر بين الطالب والمشرف عبر الملاحظات والتعليقات</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">⭐</div>
-      <div class="feature-title">نظام التقييم</div>
-      <div class="feature-desc">تقييم أداء الطلاب من 10 لتحفيزهم على التفوق والإتقان</div>
-    </div>
+    <div class="feature-card"><div class="feature-icon">📋</div><div class="feature-title">إدارة الواجبات</div><div class="feature-desc">تتبع واجبات الحفظ والمراجعة بشكل منظم مع تحديد مواعيد التسميع</div></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">إحصائيات التقدم</div><div class="feature-desc">متابعة تقدم الطلاب بلوحات إحصائية واضحة وشاملة</div></div>
+    <div class="feature-card"><div class="feature-icon">💬</div><div class="feature-title">دردشة مباشرة</div><div class="feature-desc">تواصل مباشر بين الطالب والمشرف عبر نظام الدردشة الفوري</div></div>
+    <div class="feature-card"><div class="feature-icon">⭐</div><div class="feature-title">نظام التقييم</div><div class="feature-desc">تقييم أداء الطلاب من 10 لتحفيزهم على التفوق والإتقان</div></div>
   </div>
-
   <div class="home-footer">منصة جامع © 2025 — جميع الحقوق محفوظة</div>
 </div>
 
-<!-- ============================== SUPERVISOR PASSWORD SCREEN ============================== -->
+<!-- ============================== ADMIN PASSWORD ============================== -->
+<div class="screen" id="screen-admin-pass">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo" style="background:linear-gradient(135deg,var(--red),#e74c3c)">🛡</div>
+      <div><div class="navbar-title">جامع</div><div class="navbar-subtitle">لوحة الإدارة العليا</div></div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost" onclick="showScreen('screen-home')">← رجوع</button>
+    </div>
+  </nav>
+  <div class="auth-wrapper">
+    <div class="auth-card fade-in">
+      <div class="auth-header">
+        <div class="auth-icon" style="background:linear-gradient(135deg,var(--red),#e74c3c)">🛡</div>
+        <div class="auth-title">لوحة الإدارة العليا</div>
+        <div class="auth-sub">أدخل كلمة مرور الإدارة للمتابعة</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة مرور الإدارة</label>
+        <input type="password" class="form-input" id="admin-pass-input" placeholder="أدخل كلمة المرور" onkeypress="if(event.key==='Enter')verifyAdminPassword()">
+      </div>
+      <button class="btn btn-full btn-lg" onclick="verifyAdminPassword()" style="background:linear-gradient(135deg,var(--red),#e74c3c);color:white">🛡 دخول الإدارة</button>
+      <div style="margin-top:16px;text-align:center;">
+        <span class="form-link" onclick="showScreen('screen-home')">← العودة للرئيسية</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== ADMIN DASHBOARD ============================== -->
+<div class="screen" id="screen-admin-dashboard">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo" style="background:linear-gradient(135deg,var(--red),#e74c3c)">🛡</div>
+      <div>
+        <div class="navbar-title">جامع — الإدارة</div>
+        <div class="navbar-subtitle">لوحة الإدارة العليا</div>
+      </div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-home')">🚪 خروج</button>
+    </div>
+  </nav>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" style="font-size:28px;line-height:58px">🛡</div>
+        <div class="sidebar-name">الإدارة العليا</div>
+        <div class="sidebar-role" style="background:rgba(192,57,43,0.1);color:var(--red);border-color:rgba(192,57,43,0.3)">مدير النظام</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">لوحة الإدارة</div>
+        <div class="nav-item active" onclick="showAdminSection('students',this)"><span class="nav-item-icon">👥</span> حسابات الطلاب</div>
+        <div class="nav-item" onclick="showAdminSection('supervisors',this)"><span class="nav-item-icon">👑</span> حسابات المشرفين</div>
+        <div class="nav-item" onclick="showScreen('screen-home')"><span class="nav-item-icon">🚪</span> خروج</div>
+      </nav>
+    </aside>
+    <main class="dashboard-main">
+
+      <!-- ADMIN STUDENTS -->
+      <div class="slide-section active" id="admin-section-students">
+        <div class="page-header">
+          <div class="page-title">حسابات الطلاب 👥</div>
+          <div class="page-sub">عرض وتعديل وحذف حسابات الطلاب</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">قائمة الطلاب</span><span id="admin-students-count" style="font-size:13px;color:var(--text3)"></span></div>
+          <div class="card-body" style="overflow-x:auto">
+            <table class="admin-table">
+              <thead><tr><th>#</th><th>الاسم</th><th>رقم الهاتف</th><th>كلمة المرور</th><th>تاريخ التسجيل</th><th>الإجراءات</th></tr></thead>
+              <tbody id="admin-full-students-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN SUPERVISORS -->
+      <div class="slide-section" id="admin-section-supervisors">
+        <div class="page-header">
+          <div class="page-title">حسابات المشرفين 👑</div>
+          <div class="page-sub">عرض وتعديل وحذف حسابات المشرفين</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">قائمة المشرفين</span><span id="admin-supervisors-count" style="font-size:13px;color:var(--text3)"></span></div>
+          <div class="card-body" style="overflow-x:auto">
+            <table class="admin-table">
+              <thead><tr><th>#</th><th>الاسم</th><th>رقم الهاتف</th><th>كلمة المرور</th><th>تاريخ التسجيل</th><th>الإجراءات</th></tr></thead>
+              <tbody id="admin-full-supervisors-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Edit Account Modal (Admin) -->
+<div class="modal-overlay" id="modal-admin-edit">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="admin-edit-modal-title">✏️ تعديل الحساب</span>
+      <button class="modal-close" onclick="closeModal('modal-admin-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="admin-edit-id">
+      <input type="hidden" id="admin-edit-type">
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل</label>
+        <input type="text" class="form-input" id="admin-edit-name" placeholder="الاسم الكامل">
+      </div>
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input type="tel" class="form-input" id="admin-edit-phone" placeholder="رقم الهاتف">
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور الجديدة</label>
+        <input type="text" class="form-input" id="admin-edit-password" placeholder="اتركه فارغاً للإبقاء على الحالية">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-admin-edit')">إلغاء</button>
+      <button class="btn btn-primary" onclick="adminSaveEdit()">💾 حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== SUPERVISOR PASSWORD ============================== -->
 <div class="screen" id="screen-supervisor-pass">
   <nav class="navbar">
     <div class="navbar-brand">
@@ -635,8 +593,6 @@ body {
         <div class="tab active" onclick="switchSupTab('login',this)">تسجيل الدخول</div>
         <div class="tab" onclick="switchSupTab('register',this)">حساب جديد</div>
       </div>
-
-      <!-- Login -->
       <div id="sup-login" class="slide-section active">
         <div class="form-group">
           <label class="form-label">رقم الهاتف</label>
@@ -648,8 +604,6 @@ body {
         </div>
         <button class="btn btn-accent btn-full btn-lg" onclick="supervisorLogin()">👑 دخول المشرف</button>
       </div>
-
-      <!-- Register -->
       <div id="sup-register" class="slide-section">
         <div class="avatar-upload">
           <div class="avatar-preview" id="sup-avatar-preview" onclick="triggerAvatarUpload('sup-avatar-file')">
@@ -783,6 +737,10 @@ body {
           <span class="nav-item-icon">📋</span> واجباتي
           <span class="nav-badge" id="st-tasks-badge">0</span>
         </div>
+        <div class="nav-item" onclick="showStudentSection('chat',this)">
+          <span class="nav-item-icon">💬</span> الدردشة
+          <span class="nav-badge" id="st-chat-badge" style="display:none;background:var(--red)">!</span>
+        </div>
         <div class="nav-item" onclick="showStudentSection('profile',this)">
           <span class="nav-item-icon">👤</span> ملفي الشخصي
         </div>
@@ -792,6 +750,7 @@ body {
       </nav>
     </aside>
     <main class="dashboard-main">
+
       <!-- TASKS SECTION -->
       <div class="slide-section active" id="st-section-tasks">
         <div class="page-header">
@@ -800,12 +759,47 @@ body {
         </div>
         <div class="stats-grid">
           <div class="stat-card"><div class="stat-icon green">📋</div><div class="stat-value" id="st-total-tasks">0</div><div class="stat-label">إجمالي الواجبات</div></div>
-          <div class="stat-card"><div class="stat-icon red">⭐</div><div class="stat-value" id="st-points">0</div><div class="stat-label">معدل التقييم</div></div>
+          <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-value" id="st-progress-tasks">0</div><div class="stat-label">قيد التنفيذ</div></div>
+          <div class="stat-card"><div class="stat-icon blue">✅</div><div class="stat-value" id="st-done-tasks">0</div><div class="stat-label">مكتملة</div></div>
+          <div class="stat-card"><div class="stat-icon red">⭐</div><div class="stat-value" id="st-points">0</div><div class="stat-label">متوسط التقييم</div></div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">قائمة الواجبات</span></div>
           <div class="card-body">
             <div class="task-list" id="st-task-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT CHAT SECTION -->
+      <div class="slide-section" id="st-section-chat">
+        <div class="page-header">
+          <div class="page-title">الدردشة مع المشرف 💬</div>
+          <div class="page-sub">تواصل مباشر مع مشرفك</div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div id="st-chat-no-supervisor" style="display:none">
+              <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <div class="empty-state-title">لم يتم تعيين مشرف بعد</div>
+                <div class="empty-state-sub">سيتمكن من التواصل معك عند تعيين مشرف</div>
+              </div>
+            </div>
+            <div id="st-chat-area">
+              <div class="chat-container">
+                <div class="chat-messages" id="st-chat-messages">
+                  <div class="empty-state" style="padding:30px 20px">
+                    <div class="empty-state-icon">💬</div>
+                    <div class="empty-state-title">لا توجد رسائل بعد</div>
+                  </div>
+                </div>
+                <div class="chat-input-area">
+                  <input type="text" class="chat-input" id="st-chat-input" placeholder="اكتب رسالتك للمشرف..." onkeypress="if(event.key==='Enter')sendStudentMessage()">
+                  <button class="chat-send-btn" onclick="sendStudentMessage()">إرسال ✉️</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -855,10 +849,11 @@ body {
           <span class="nav-badge" id="sup-students-badge">0</span>
         </div>
         <div class="nav-item" onclick="showSupSection('tasks',this)">
-          <span class="nav-item-icon">📋</span> الواجبات
+          <span class="nav-item-icon">📋</span> جميع الواجبات
         </div>
-        <div class="nav-item" onclick="showSupSection('admin',this)">
-          <span class="nav-item-icon">🔒</span> إدارة الحسابات
+        <div class="nav-item" onclick="showSupSection('chat',this)">
+          <span class="nav-item-icon">💬</span> الدردشة
+          <span class="nav-badge" id="sup-chat-unread-badge" style="display:none;background:var(--red)">!</span>
         </div>
         <div class="nav-item" onclick="showSupSection('settings',this)">
           <span class="nav-item-icon">⚙️</span> الإعدادات
@@ -885,7 +880,7 @@ body {
         <div class="card">
           <div class="card-header">
             <span class="card-title">أحدث الطلاب</span>
-            <button class="btn btn-outline btn-sm" onclick="showSupSection('students',document.querySelector('#screen-supervisor-dashboard .nav-item:nth-child(2)'))">عرض الكل</button>
+            <button class="btn btn-outline btn-sm" onclick="showSupSection('students',null)">عرض الكل</button>
           </div>
           <div class="card-body">
             <div class="student-grid" id="sup-recent-students"></div>
@@ -916,6 +911,7 @@ body {
         <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
           <button class="btn btn-primary" onclick="openAddTaskModal()">➕ إضافة واجب</button>
           <button class="btn btn-outline" onclick="openAddNoteModal()">💬 إضافة ملاحظة</button>
+          <button class="btn btn-outline" onclick="openSupChatWithStudent()">✉️ مراسلة الطالب</button>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">الواجبات المكلف بها</span></div>
@@ -933,32 +929,41 @@ body {
       <div class="slide-section" id="sup-section-tasks">
         <div class="page-header">
           <div class="page-title">جميع الواجبات 📋</div>
+          <div class="page-sub">جميع الواجبات التي تم إرسالها للطلاب</div>
         </div>
         <div class="task-list" id="sup-all-tasks"></div>
       </div>
 
-      <!-- ADMIN - حسابات المستخدمين -->
-      <div class="slide-section" id="sup-section-admin">
+      <!-- SUPERVISOR CHAT -->
+      <div class="slide-section" id="sup-section-chat">
         <div class="page-header">
-          <div class="page-title">إدارة الحسابات 🔒</div>
-          <div class="page-sub">عرض جميع بيانات المستخدمين وكلمات مرورهم</div>
+          <div class="page-title">الدردشة مع الطلاب 💬</div>
+          <div class="page-sub">تواصل مباشر مع طلابك</div>
         </div>
-        <div class="card" style="margin-bottom:20px">
-          <div class="card-header"><span class="card-title">👥 حسابات الطلاب</span></div>
-          <div class="card-body" style="overflow-x:auto">
-            <table class="admin-table" id="admin-students-table">
-              <thead><tr><th>#</th><th>الاسم</th><th>رقم الهاتف</th><th>كلمة المرور</th><th>تاريخ التسجيل</th></tr></thead>
-              <tbody id="admin-students-tbody"></tbody>
-            </table>
+        <div style="display:flex;gap:20px;min-height:500px">
+          <div style="width:260px;flex-shrink:0">
+            <div style="font-size:13px;font-weight:700;color:var(--text3);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">قائمة الطلاب</div>
+            <div id="sup-chat-students-list"></div>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">👑 حسابات المشرفين</span></div>
-          <div class="card-body" style="overflow-x:auto">
-            <table class="admin-table" id="admin-supervisors-table">
-              <thead><tr><th>#</th><th>الاسم</th><th>رقم الهاتف</th><th>كلمة المرور</th><th>تاريخ التسجيل</th></tr></thead>
-              <tbody id="admin-supervisors-tbody"></tbody>
-            </table>
+          <div style="flex:1">
+            <div id="sup-chat-placeholder" class="empty-state">
+              <div class="empty-state-icon">💬</div>
+              <div class="empty-state-title">اختر طالباً للمحادثة</div>
+              <div class="empty-state-sub">اختر طالباً من القائمة على اليسار لبدء المحادثة</div>
+            </div>
+            <div id="sup-chat-area" style="display:none">
+              <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px">
+                <span id="sup-chat-student-avatar" style="font-size:22px">👤</span>
+                <span id="sup-chat-student-name">—</span>
+              </div>
+              <div class="chat-container">
+                <div class="chat-messages" id="sup-chat-messages"></div>
+                <div class="chat-input-area">
+                  <input type="text" class="chat-input" id="sup-chat-input" placeholder="اكتب رسالتك للطالب..." onkeypress="if(event.key==='Enter')sendSupervisorMessage()">
+                  <button class="chat-send-btn" onclick="sendSupervisorMessage()">إرسال ✉️</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -985,8 +990,8 @@ body {
           <div class="card-body">
             <p style="font-size:14px;color:var(--text2);line-height:1.8">
               <strong>منصة جامع</strong> لمتابعة حفظ القرآن الكريم<br>
-              إصدار 2.0 — Firebase Realtime Database<br>
-              كلمة مرور المشرف للوصول: <code style="background:var(--bg2);padding:2px 8px;border-radius:4px">12340987</code>
+              إصدار 3.0 — Firebase Realtime Database<br>
+              كلمة مرور المشرف: <code style="background:var(--bg2);padding:2px 8px;border-radius:4px">12340987</code>
             </p>
           </div>
         </div>
@@ -1006,7 +1011,15 @@ body {
       <button class="modal-close" onclick="closeModal('modal-add-task')">✕</button>
     </div>
     <div class="modal-body">
-      <!-- ما تم تسميعه -->
+      <!-- تاريخ اليوم -->
+      <div id="task-today-date-box" style="background:linear-gradient(135deg,var(--primary-glow),rgba(26,107,69,0.05));border:1.5px solid rgba(26,107,69,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:28px">📅</div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">تاريخ اليوم</div>
+          <div id="task-today-hijri" style="font-size:15px;font-weight:800;color:var(--primary-dark)"></div>
+          <div id="task-today-miladi" style="font-size:12px;color:var(--text3);margin-top:1px"></div>
+        </div>
+      </div>
       <div class="wajib-section">
         <div class="wajib-section-title">📖 ما تم تسميعه</div>
         <div class="wajib-row">
@@ -1020,13 +1033,6 @@ body {
           </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">التقييم من 10</label>
-        <input type="number" class="form-input" id="task-points" placeholder="مثال: 8" min="0" max="10">
-      </div>
-
-      <!-- الواجب الجديد -->
       <div class="wajib-section">
         <div class="wajib-section-title">📝 الواجب المطلوب</div>
         <div class="wajib-row">
@@ -1040,10 +1046,13 @@ body {
           </div>
         </div>
       </div>
-
       <div class="form-group">
-        <label class="form-label">موعد التسميع</label>
+        <label class="form-label">📅 موعد التسميع القادم</label>
         <input type="date" class="form-input" id="task-deadline">
+      </div>
+      <div class="form-group">
+        <label class="form-label">التقييم من 10</label>
+        <input type="number" class="form-input" id="task-points" placeholder="مثال: 8" min="0" max="10">
       </div>
       <div class="form-group">
         <label class="form-label">ملاحظة للطالب</label>
@@ -1067,28 +1076,19 @@ body {
     <div class="modal-body">
       <input type="hidden" id="edit-task-id">
       <input type="hidden" id="edit-task-student-id">
-
-      <!-- ما تم تسميعه -->
       <div class="wajib-section">
         <div class="wajib-section-title">📖 ما تم تسميعه</div>
         <div class="wajib-row">
           <div class="wajib-field">
             <label>الجديد الذي تم تسميعه</label>
-            <input type="text" class="form-input" id="edit-task-new-memorized" placeholder="مثال: سورة الكهف 1-10">
+            <input type="text" class="form-input" id="edit-task-new-memorized">
           </div>
           <div class="wajib-field">
             <label>القديم الذي تم تسميعه</label>
-            <input type="text" class="form-input" id="edit-task-old-memorized" placeholder="مثال: سورة البقرة 1-20">
+            <input type="text" class="form-input" id="edit-task-old-memorized">
           </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">التقييم من 10</label>
-        <input type="number" class="form-input" id="edit-task-points" min="0" max="10">
-      </div>
-
-      <!-- الواجب الجديد -->
       <div class="wajib-section">
         <div class="wajib-section-title">📝 الواجب المطلوب</div>
         <div class="wajib-row">
@@ -1102,10 +1102,13 @@ body {
           </div>
         </div>
       </div>
-
       <div class="form-group">
-        <label class="form-label">موعد التسميع</label>
+        <label class="form-label">📅 موعد التسميع القادم</label>
         <input type="date" class="form-input" id="edit-task-deadline">
+      </div>
+      <div class="form-group">
+        <label class="form-label">التقييم من 10</label>
+        <input type="number" class="form-input" id="edit-task-points" min="0" max="10">
       </div>
       <div class="form-group">
         <label class="form-label">ملاحظة للطالب</label>
@@ -1156,7 +1159,7 @@ body {
 <!-- Firebase SDK + App Logic -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, update, remove, push, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   databaseURL: "https://jam3-28aa3-default-rtdb.firebaseio.com/"
@@ -1169,15 +1172,19 @@ const db = getDatabase(app);
 // GLOBAL STATE
 // ============================================================
 window.APP = {
-  db, ref, set, get, update, remove,
+  db, ref, set, get, update, remove, push, onValue, off,
   currentUser: null,
   currentRole: null,
   currentStudentId: null,
   allStudents: [],
   allTasks: [],
   supervisorPass: '12340987',
+  adminPass: '12340987',
   studentAvatarData: null,
   supAvatarData: null,
+  activeChatStudentId: null,
+  chatListener: null,
+  studentChatListener: null,
 };
 
 // ============================================================
@@ -1210,6 +1217,11 @@ window.formatDate = function(ts) {
   return new Date(ts).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
+window.formatTime = function(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+};
+
 window.statusLabel = function(s) {
   return { new: 'جديدة', progress: 'قيد التنفيذ', done: 'منجزة', late: 'متأخرة' }[s] || s;
 };
@@ -1225,8 +1237,11 @@ function generateId() {
 }
 
 function getTodayDate() {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
+  return new Date().toISOString().split('T')[0];
+}
+
+function getChatId(idA, idB) {
+  return [idA, idB].sort().join('_');
 }
 
 // ============================================================
@@ -1282,12 +1297,167 @@ window.loadSession = function() {
 };
 
 window.logout = function() {
+  if (APP.chatListener) { off(ref(db, APP.chatListener)); APP.chatListener = null; }
+  if (APP.studentChatListener) { off(ref(db, APP.studentChatListener)); APP.studentChatListener = null; }
   localStorage.removeItem('jam3_user');
   localStorage.removeItem('jam3_role');
   APP.currentUser = null;
   APP.currentRole = null;
+  APP.activeChatStudentId = null;
   showScreen('screen-home');
   showToast('تم تسجيل الخروج', 'info');
+};
+
+// ============================================================
+// ADMIN
+// ============================================================
+window.openAdminPass = function() {
+  showScreen('screen-admin-pass');
+  document.getElementById('admin-pass-input').value = '';
+};
+
+window.verifyAdminPassword = function() {
+  const v = document.getElementById('admin-pass-input').value.trim();
+  if (v === APP.adminPass) {
+    showScreen('screen-admin-dashboard');
+    loadAdminData();
+    showToast('أهلاً بك في لوحة الإدارة ✅', 'success');
+  } else {
+    showToast('كلمة المرور غير صحيحة', 'error');
+    document.getElementById('admin-pass-input').value = '';
+  }
+};
+
+window.showAdminSection = function(section, el) {
+  document.querySelectorAll('#screen-admin-dashboard .nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('#screen-admin-dashboard .slide-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`admin-section-${section}`).classList.add('active');
+};
+
+async function loadAdminData() {
+  showLoading();
+  try {
+    const [studSnap, supSnap] = await Promise.all([
+      get(ref(db, 'students')),
+      get(ref(db, 'supervisors'))
+    ]);
+    const students = studSnap.exists() ? Object.values(studSnap.val()) : [];
+    const supervisors = supSnap.exists() ? Object.values(supSnap.val()) : [];
+
+    const countSt = document.getElementById('admin-students-count');
+    if (countSt) countSt.textContent = `(${students.length} طالب)`;
+    const countSup = document.getElementById('admin-supervisors-count');
+    if (countSup) countSup.textContent = `(${supervisors.length} مشرف)`;
+
+    const stbody = document.getElementById('admin-full-students-tbody');
+    stbody.innerHTML = students.length ? students.map((s, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${s.name}</strong></td>
+        <td dir="ltr">${s.phone}</td>
+        <td class="pass-cell">${s.password || '—'}</td>
+        <td>${formatDate(s.createdAt)}</td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="adminOpenEdit('${s.id}','student','${s.name}','${s.phone}','${s.password||''}')">✏️ تعديل</button>
+            <button class="btn btn-danger btn-sm" onclick="adminDeleteStudent('${s.id}')">🗑 حذف</button>
+          </div>
+        </td>
+      </tr>
+    `).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">لا يوجد طلاب</td></tr>`;
+
+    const supbody = document.getElementById('admin-full-supervisors-tbody');
+    supbody.innerHTML = supervisors.length ? supervisors.map((s, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${s.name}</strong></td>
+        <td dir="ltr">${s.phone}</td>
+        <td class="pass-cell">${s.password || '—'}</td>
+        <td>${formatDate(s.createdAt)}</td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="adminOpenEdit('${s.id}','supervisor','${s.name}','${s.phone}','${s.password||''}')">✏️ تعديل</button>
+            <button class="btn btn-danger btn-sm" onclick="adminDeleteSupervisor('${s.id}')">🗑 حذف</button>
+          </div>
+        </td>
+      </tr>
+    `).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">لا يوجد مشرفين</td></tr>`;
+
+    hideLoading();
+  } catch (e) {
+    hideLoading();
+    showToast('خطأ في تحميل البيانات', 'error');
+  }
+}
+
+window.adminOpenEdit = function(id, type, name, phone, password) {
+  document.getElementById('admin-edit-id').value = id;
+  document.getElementById('admin-edit-type').value = type;
+  document.getElementById('admin-edit-name').value = name;
+  document.getElementById('admin-edit-phone').value = phone;
+  document.getElementById('admin-edit-password').value = '';
+  document.getElementById('admin-edit-modal-title').textContent =
+    (type === 'student' ? '✏️ تعديل حساب طالب' : '✏️ تعديل حساب مشرف');
+  openModal('modal-admin-edit');
+};
+
+window.adminSaveEdit = async function() {
+  const id = document.getElementById('admin-edit-id').value;
+  const type = document.getElementById('admin-edit-type').value;
+  const name = document.getElementById('admin-edit-name').value.trim();
+  const phone = document.getElementById('admin-edit-phone').value.trim();
+  const newPass = document.getElementById('admin-edit-password').value.trim();
+
+  if (!name || !phone) { showToast('الاسم ورقم الهاتف مطلوبان', 'error'); return; }
+
+  showLoading();
+  try {
+    const path = type === 'student' ? `students/${id}` : `supervisors/${id}`;
+    const updates = { name, phone };
+    if (newPass) updates.password = newPass;
+    await update(ref(db, path), updates);
+    closeModal('modal-admin-edit');
+    hideLoading();
+    showToast('تم تحديث الحساب بنجاح ✅', 'success');
+    loadAdminData();
+  } catch (e) {
+    hideLoading();
+    showToast('خطأ: ' + e.message, 'error');
+  }
+};
+
+window.adminDeleteStudent = async function(studentId) {
+  if (!confirm('هل أنت متأكد من حذف هذا الطالب وجميع بياناته؟')) return;
+  showLoading();
+  try {
+    await remove(ref(db, `students/${studentId}`));
+    const taskSnap = await get(ref(db, 'tasks'));
+    if (taskSnap.exists()) {
+      const tasks = Object.values(taskSnap.val()).filter(t => t.studentId === studentId);
+      for (const task of tasks) await remove(ref(db, `tasks/${task.id}`));
+    }
+    hideLoading();
+    showToast('تم حذف الطالب وجميع بياناته', 'info');
+    loadAdminData();
+  } catch (e) {
+    hideLoading();
+    showToast('خطأ: ' + e.message, 'error');
+  }
+};
+
+window.adminDeleteSupervisor = async function(supId) {
+  if (!confirm('هل أنت متأكد من حذف هذا المشرف؟')) return;
+  showLoading();
+  try {
+    await remove(ref(db, `supervisors/${supId}`));
+    hideLoading();
+    showToast('تم حذف المشرف', 'info');
+    loadAdminData();
+  } catch (e) {
+    hideLoading();
+    showToast('خطأ: ' + e.message, 'error');
+  }
 };
 
 // ============================================================
@@ -1306,7 +1476,6 @@ window.verifySupervisorPassword = function() {
   } else {
     showToast('كلمة المرور غير صحيحة', 'error');
     document.getElementById('sup-pass-input').value = '';
-    document.getElementById('sup-pass-input').focus();
   }
 };
 
@@ -1326,7 +1495,6 @@ window.supervisorRegister = async function() {
   const password = document.getElementById('sup-reg-password').value.trim();
   if (!name || !phone || !password) { showToast('أدخل جميع البيانات المطلوبة', 'error'); return; }
   if (password.length < 4) { showToast('كلمة المرور يجب أن تكون 4 أحرف على الأقل', 'error'); return; }
-
   showLoading();
   try {
     const snap = await get(ref(db, 'supervisors'));
@@ -1353,7 +1521,6 @@ window.supervisorLogin = async function() {
   const phone = document.getElementById('sup-login-phone').value.trim();
   const password = document.getElementById('sup-login-password').value.trim();
   if (!phone || !password) { showToast('أدخل رقم الهاتف وكلمة المرور', 'error'); return; }
-
   showLoading();
   try {
     const snap = await get(ref(db, 'supervisors'));
@@ -1382,7 +1549,6 @@ window.studentRegister = async function() {
   const password = document.getElementById('st-reg-password').value.trim();
   if (!name || !phone || !password) { showToast('أدخل جميع البيانات المطلوبة', 'error'); return; }
   if (password.length < 4) { showToast('كلمة المرور يجب أن تكون 4 أحرف على الأقل', 'error'); return; }
-
   showLoading();
   try {
     const snap = await get(ref(db, 'students'));
@@ -1409,7 +1575,6 @@ window.studentLogin = async function() {
   const phone = document.getElementById('st-login-phone').value.trim();
   const password = document.getElementById('st-login-password').value.trim();
   if (!phone || !password) { showToast('أدخل رقم الهاتف وكلمة المرور', 'error'); return; }
-
   showLoading();
   try {
     const snap = await get(ref(db, 'students'));
@@ -1441,6 +1606,7 @@ window.loadStudentDashboard = async function() {
   document.getElementById('st-sidebar-name').textContent = u.name;
   await refreshStudentTasks();
   renderStudentProfile();
+  setupStudentChatListener();
 };
 
 window.refreshStudentTasks = async function() {
@@ -1466,8 +1632,8 @@ function renderStudentTasks(tasks) {
   const total = tasks.length;
   const prog = tasks.filter(t => t.status === 'progress').length;
   const done = tasks.filter(t => t.status === 'done').length;
-  const totalRating = tasks.reduce((a, t) => a + (parseFloat(t.points) || 0), 0);
-  const avgRating = total ? (totalRating / total).toFixed(1) : 0;
+  const ratings = tasks.filter(t => t.points !== undefined && t.points !== '').map(t => parseFloat(t.points));
+  const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 0;
 
   document.getElementById('st-total-tasks').textContent = total;
   document.getElementById('st-progress-tasks').textContent = prog;
@@ -1484,10 +1650,16 @@ function renderStudentTasks(tasks) {
     <div class="task-item" onclick="openTaskDetail('${t.id}')" style="cursor:pointer">
       <div class="task-status-dot ${statusDotClass(t.status)}"></div>
       <div class="task-content">
-        <div class="task-title">📋 واجب — ${formatDate(t.createdAt)}</div>
+        <div class="task-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <span>📋 واجب</span>
+          ${(t.sentDateHijri || t.sentDateMiladi) ? `
+          <div style="text-align:left;font-size:11px;color:var(--text3);line-height:1.5">
+            ${t.sentDateHijri ? `<div style="font-weight:600;color:var(--primary-dark)">${t.sentDateHijri}</div>` : ''}
+            ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
+          </div>` : `<span style="font-size:12px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
+        </div>
         <div class="task-meta" style="margin-top:8px">
-          <span class="task-badge ${statusBadgeClass(t.status)}">${statusLabel(t.status)}</span>
-          ${t.deadline ? `<span class="task-date">🎤 تسميع: ${formatDate(t.deadline)}</span>` : ''}
+          ${t.deadline ? `<span class="task-date">📅 موعد التسميع القادم: ${formatDate(t.deadline)}</span>` : ''}
           ${t.points !== undefined && t.points !== '' ? `<span class="task-points">⭐ تقييم: ${t.points}/10</span>` : ''}
         </div>
         ${(t.newHw || t.oldHw) ? `
@@ -1504,19 +1676,25 @@ function renderStudentTasks(tasks) {
 window.openTaskDetail = function(taskId) {
   const task = APP.allTasks.find(t => t.id === taskId);
   if (!task) return;
-
   document.getElementById('detail-body').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:16px">
-
+      ${(task.sentDateHijri || task.sentDateMiladi) ? `
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">📅</span>
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:2px">تاريخ إرسال الواجب</div>
+          ${task.sentDateHijri ? `<div style="font-size:14px;font-weight:700;color:var(--primary-dark)">${task.sentDateHijri}</div>` : ''}
+          ${task.sentDateMiladi ? `<div style="font-size:12px;color:var(--text3)">${task.sentDateMiladi}</div>` : ''}
+        </div>
+      </div>` : ''}
       ${(task.newMemorized || task.oldMemorized) ? `
       <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:16px">
         <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">📖 ما تم تسميعه</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          ${task.newMemorized ? `<div><div class="detail-label">الجديد الذي تم تسميعه</div><div class="detail-value" style="font-weight:600">${task.newMemorized}</div></div>` : ''}
-          ${task.oldMemorized ? `<div><div class="detail-label">القديم الذي تم تسميعه</div><div class="detail-value" style="font-weight:600">${task.oldMemorized}</div></div>` : ''}
+          ${task.newMemorized ? `<div><div class="detail-label">الجديد</div><div class="detail-value" style="font-weight:600">${task.newMemorized}</div></div>` : ''}
+          ${task.oldMemorized ? `<div><div class="detail-label">القديم</div><div class="detail-value" style="font-weight:600">${task.oldMemorized}</div></div>` : ''}
         </div>
       </div>` : ''}
-
       ${(task.newHw || task.oldHw) ? `
       <div style="background:rgba(26,107,69,0.06);border:1px solid rgba(26,107,69,0.15);border-radius:12px;padding:16px">
         <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:12px">📝 الواجب المطلوب</div>
@@ -1525,15 +1703,11 @@ window.openTaskDetail = function(taskId) {
           ${task.oldHw ? `<div><div class="detail-label">القديم (مراجعة)</div><div class="detail-value" style="font-weight:600">${task.oldHw}</div></div>` : ''}
         </div>
       </div>` : ''}
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="detail-row">
-          <div class="detail-label">الحالة</div>
-          <span class="task-badge ${statusBadgeClass(task.status)}">${statusLabel(task.status)}</span>
-        </div>
-        ${task.deadline ? `<div class="detail-row"><div class="detail-label">موعد التسميع</div><div class="detail-value">🎤 ${formatDate(task.deadline)}</div></div>` : ''}
-      </div>
-
+      ${task.deadline ? `
+      <div class="detail-row">
+        <div class="detail-label">📅 موعد التسميع القادم</div>
+        <div class="detail-value" style="font-size:15px;font-weight:700;color:var(--primary)">🎤 ${formatDate(task.deadline)}</div>
+      </div>` : ''}
       ${task.points !== undefined && task.points !== '' ? `
       <div class="detail-row">
         <div class="detail-label">التقييم</div>
@@ -1543,17 +1717,7 @@ window.openTaskDetail = function(taskId) {
           ${ratingBar(task.points)}
         </div>
       </div>` : ''}
-
-      ${task.note ? `
-      <div class="detail-row">
-        <div class="detail-label">ملاحظة المشرف</div>
-        <div class="note-box">${task.note}</div>
-      </div>` : ''}
-
-      <div class="detail-row">
-        <div class="detail-label">تاريخ الإضافة</div>
-        <div class="detail-value">${formatDate(task.createdAt)}</div>
-      </div>
+      ${task.note ? `<div class="detail-row"><div class="detail-label">ملاحظة المشرف</div><div class="note-box">${task.note}</div></div>` : ''}
     </div>
   `;
   openModal('modal-task-detail');
@@ -1586,6 +1750,107 @@ window.showStudentSection = function(section, el) {
   if (el) el.classList.add('active');
   document.querySelectorAll('#screen-student-dashboard .slide-section').forEach(s => s.classList.remove('active'));
   document.getElementById(`st-section-${section}`).classList.add('active');
+  if (section === 'chat') {
+    document.getElementById('st-chat-badge').style.display = 'none';
+    loadStudentChatMessages();
+  }
+};
+
+// ============================================================
+// STUDENT CHAT
+// ============================================================
+function setupStudentChatListener() {
+  // Watch for new messages from any supervisor to this student
+  const u = APP.currentUser;
+  const chatRef = ref(db, 'chats');
+  onValue(chatRef, (snap) => {
+    if (!snap.exists()) return;
+    const allChats = snap.val();
+    let hasUnread = false;
+    Object.keys(allChats).forEach(chatId => {
+      if (chatId.includes(u.id)) {
+        const msgs = Object.values(allChats[chatId].messages || {});
+        const unread = msgs.filter(m => m.senderId !== u.id && !m.readByStudent);
+        if (unread.length > 0) hasUnread = true;
+      }
+    });
+    const badge = document.getElementById('st-chat-badge');
+    badge.style.display = hasUnread ? 'inline-block' : 'none';
+  });
+}
+
+async function loadStudentChatMessages() {
+  const u = APP.currentUser;
+  // Find supervisor who has tasks for this student
+  const snap = await get(ref(db, 'tasks'));
+  let supervisorId = null;
+  if (snap.exists()) {
+    const task = Object.values(snap.val()).find(t => t.studentId === u.id && t.supervisorId);
+    if (task) supervisorId = task.supervisorId;
+  }
+
+  if (!supervisorId) {
+    document.getElementById('st-chat-no-supervisor').style.display = 'block';
+    document.getElementById('st-chat-area').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('st-chat-no-supervisor').style.display = 'none';
+  document.getElementById('st-chat-area').style.display = 'block';
+  APP.activeChatStudentId = supervisorId;
+
+  const chatId = getChatId(u.id, supervisorId);
+  const chatMessagesRef = ref(db, `chats/${chatId}/messages`);
+
+  if (APP.studentChatListener) {
+    off(ref(db, `chats/${APP._stChatId}/messages`));
+  }
+  APP._stChatId = chatId;
+
+  onValue(chatMessagesRef, (snap) => {
+    const container = document.getElementById('st-chat-messages');
+    if (!snap.exists()) {
+      container.innerHTML = `<div class="empty-state" style="padding:30px 20px"><div class="empty-state-icon">💬</div><div class="empty-state-title">لا توجد رسائل بعد</div></div>`;
+      return;
+    }
+    const msgs = Object.values(snap.val()).sort((a, b) => a.ts - b.ts);
+    container.innerHTML = msgs.map(m => {
+      const isSent = m.senderId === u.id;
+      return `<div class="chat-msg ${isSent ? 'sent' : 'received'}">
+        ${m.text}
+        <div class="chat-msg-meta">${formatTime(m.ts)}</div>
+      </div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+
+    // Mark messages as read
+    msgs.filter(m => m.senderId !== u.id && !m.readByStudent).forEach(m => {
+      update(ref(db, `chats/${chatId}/messages/${m.id}`), { readByStudent: true });
+    });
+  });
+}
+
+window.sendStudentMessage = async function() {
+  const input = document.getElementById('st-chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const u = APP.currentUser;
+
+  const snap = await get(ref(db, 'tasks'));
+  let supervisorId = null;
+  if (snap.exists()) {
+    const task = Object.values(snap.val()).find(t => t.studentId === u.id && t.supervisorId);
+    if (task) supervisorId = task.supervisorId;
+  }
+  if (!supervisorId) { showToast('لم يتم تعيين مشرف بعد', 'error'); return; }
+
+  const chatId = getChatId(u.id, supervisorId);
+  const msgId = generateId();
+  await set(ref(db, `chats/${chatId}/messages/${msgId}`), {
+    id: msgId, text, senderId: u.id, senderName: u.name,
+    senderRole: 'student', ts: Date.now(), readByStudent: true, readBySupervisor: false
+  });
+  input.value = '';
 };
 
 // ============================================================
@@ -1603,6 +1868,7 @@ window.loadSupervisorDashboard = async function() {
   document.getElementById('settings-name').value = u.name;
   document.getElementById('settings-phone').value = u.phone;
   await loadAllData();
+  setupSupChatUnreadListener();
 };
 
 window.loadAllData = async function() {
@@ -1623,6 +1889,24 @@ window.loadAllData = async function() {
     showToast('خطأ في تحميل البيانات', 'error');
   }
 };
+
+function setupSupChatUnreadListener() {
+  const u = APP.currentUser;
+  onValue(ref(db, 'chats'), (snap) => {
+    if (!snap.exists()) return;
+    const allChats = snap.val();
+    let hasUnread = false;
+    Object.keys(allChats).forEach(chatId => {
+      if (chatId.includes(u.id)) {
+        const msgs = Object.values(allChats[chatId].messages || {});
+        const unread = msgs.filter(m => m.senderId !== u.id && !m.readBySupervisor);
+        if (unread.length > 0) hasUnread = true;
+      }
+    });
+    const badge = document.getElementById('sup-chat-unread-badge');
+    badge.style.display = hasUnread ? 'inline-block' : 'none';
+  });
+}
 
 function renderSupOverview() {
   const students = APP.allStudents;
@@ -1729,33 +2013,48 @@ function renderSupStudentTasks(studentId) {
     <div class="task-item">
       <div class="task-status-dot ${statusDotClass(t.status)}"></div>
       <div class="task-content">
-        <div class="task-title">📋 واجب — ${formatDate(t.createdAt)}</div>
-
+        <div class="task-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <span>📋 واجب</span>
+          ${(t.sentDateHijri || t.sentDateMiladi) ? `
+          <div style="text-align:left;font-size:11px;color:var(--text3);line-height:1.5">
+            ${t.sentDateHijri ? `<div style="font-weight:600;color:var(--primary-dark)">${t.sentDateHijri}</div>` : ''}
+            ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
+          </div>` : `<span style="font-size:12px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
+        </div>
         ${(t.newMemorized || t.oldMemorized) ? `
         <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;margin:8px 0">
-          <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:6px">📖 تم التسميع</div>
+          <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:6px">📖 ما تم تسميعه</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
             ${t.newMemorized ? `<div><span style="color:var(--text3)">الجديد: </span><strong>${t.newMemorized}</strong></div>` : ''}
             ${t.oldMemorized ? `<div><span style="color:var(--text3)">القديم: </span><strong>${t.oldMemorized}</strong></div>` : ''}
           </div>
         </div>` : ''}
-
-        ${(t.newHw || t.oldHw) ? `
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-          ${t.newHw ? `<div style="background:rgba(26,107,69,0.06);border:1px solid var(--border);border-radius:8px;padding:8px"><div style="font-size:11px;color:var(--text3)">الجديد</div><div style="font-size:13px;font-weight:600">${t.newHw}</div></div>` : ''}
-          ${t.oldHw ? `<div style="background:rgba(36,113,163,0.06);border:1px solid var(--border);border-radius:8px;padding:8px"><div style="font-size:11px;color:var(--text3)">القديم</div><div style="font-size:13px;font-weight:600">${t.oldHw}</div></div>` : ''}
+        ${t.points !== undefined && t.points !== '' ? `
+        <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:8px 12px;margin:6px 0;display:flex;align-items:center;gap:8px">
+          <span style="font-size:13px;color:var(--text3)">التقييم:</span>
+          <span style="font-size:18px;font-weight:800;color:var(--accent)">${t.points}</span>
+          <span style="font-size:12px;color:var(--text3)">/ 10</span>
+          <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-right:4px">
+            <div style="width:${(parseFloat(t.points)/10)*100}%;height:100%;background:${parseFloat(t.points)>=8?'var(--primary)':parseFloat(t.points)>=5?'var(--orange)':'var(--red)'};border-radius:3px"></div>
+          </div>
         </div>` : ''}
-
+        ${(t.newHw || t.oldHw) ? `
+        <div style="background:rgba(26,107,69,0.04);border:1px solid rgba(26,107,69,0.15);border-radius:8px;padding:10px;margin:6px 0">
+          <div style="font-size:11px;color:var(--primary);font-weight:700;margin-bottom:6px">📝 الواجب المطلوب</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            ${t.newHw ? `<div style="background:rgba(26,107,69,0.06);border:1px solid var(--border);border-radius:6px;padding:8px"><div style="font-size:11px;color:var(--text3)">الجديد</div><div style="font-size:13px;font-weight:600">${t.newHw}</div></div>` : ''}
+            ${t.oldHw ? `<div style="background:rgba(36,113,163,0.06);border:1px solid var(--border);border-radius:6px;padding:8px"><div style="font-size:11px;color:var(--text3)">القديم</div><div style="font-size:13px;font-weight:600">${t.oldHw}</div></div>` : ''}
+          </div>
+        </div>` : ''}
         <div class="task-meta">
           <span class="task-badge ${statusBadgeClass(t.status)}">${statusLabel(t.status)}</span>
-          ${t.deadline ? `<span class="task-date">🎤 ${formatDate(t.deadline)}</span>` : ''}
-          ${t.points !== undefined && t.points !== '' ? `<span class="task-points">⭐ ${t.points}/10</span>` : ''}
+          ${t.deadline ? `<span class="task-date">📅 موعد التسميع القادم: ${formatDate(t.deadline)}</span>` : ''}
         </div>
         ${t.note ? `<div class="note-box" style="margin-top:8px">💬 ${t.note}</div>` : ''}
       </div>
       <div class="task-actions">
         <button class="btn btn-outline btn-sm" onclick="openEditTask('${t.id}')">✏️ تعديل</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')">🗑</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')">🗑 حذف</button>
       </div>
     </div>
   `).join('');
@@ -1790,8 +2089,15 @@ function renderSupAllTasks() {
       <div class="task-item">
         <div class="task-status-dot ${statusDotClass(t.status)}"></div>
         <div class="task-content">
-          <div style="font-size:12px;color:var(--text3);margin-bottom:4px">👤 ${student?.name || 'طالب محذوف'}</div>
-          <div class="task-title">📋 واجب — ${formatDate(t.createdAt)}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+            <span style="font-size:12px;color:var(--text3)">👤 ${student?.name || 'طالب محذوف'}</span>
+            ${(t.sentDateHijri || t.sentDateMiladi) ? `
+            <div style="text-align:left;font-size:11px;color:var(--text3);line-height:1.5">
+              ${t.sentDateHijri ? `<div style="font-weight:600;color:var(--primary-dark)">${t.sentDateHijri}</div>` : ''}
+              ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
+            </div>` : `<span style="font-size:11px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
+          </div>
+          <div class="task-title">📋 واجب</div>
           ${(t.newHw || t.oldHw) ? `
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;font-size:13px">
             ${t.newHw ? `<div><span style="color:var(--text3)">الجديد: </span><strong>${t.newHw}</strong></div>` : ''}
@@ -1799,7 +2105,7 @@ function renderSupAllTasks() {
           </div>` : ''}
           <div class="task-meta">
             <span class="task-badge ${statusBadgeClass(t.status)}">${statusLabel(t.status)}</span>
-            ${t.deadline ? `<span class="task-date">🎤 ${formatDate(t.deadline)}</span>` : ''}
+            ${t.deadline ? `<span class="task-date">📅 موعد التسميع القادم: ${formatDate(t.deadline)}</span>` : ''}
             ${t.points !== undefined && t.points !== '' ? `<span class="task-points">⭐ ${t.points}/10</span>` : ''}
           </div>
         </div>
@@ -1817,54 +2123,127 @@ window.showSupSection = function(section, el) {
   if (el) el.classList.add('active');
   document.querySelectorAll('#screen-supervisor-dashboard .slide-section').forEach(s => s.classList.remove('active'));
   document.getElementById(`sup-section-${section}`).classList.add('active');
-  if (section === 'admin') renderAdminTable();
+  if (section === 'chat') renderSupChatStudentsList();
 };
 
 // ============================================================
-// ADMIN TABLE
+// SUPERVISOR CHAT
 // ============================================================
-async function renderAdminTable() {
-  showLoading();
-  try {
-    const [studSnap, supSnap] = await Promise.all([
-      get(ref(db, 'students')),
-      get(ref(db, 'supervisors'))
-    ]);
-    const students = studSnap.exists() ? Object.values(studSnap.val()) : [];
-    const supervisors = supSnap.exists() ? Object.values(supSnap.val()) : [];
-
-    const tbody = document.getElementById('admin-students-tbody');
-    tbody.innerHTML = students.length ? students.map((s, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${s.name}</td>
-        <td>${s.phone}</td>
-        <td class="pass-cell">${s.password || '—'}</td>
-        <td>${formatDate(s.createdAt)}</td>
-      </tr>
-    `).join('') : `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">لا يوجد طلاب</td></tr>`;
-
-    const supTbody = document.getElementById('admin-supervisors-tbody');
-    supTbody.innerHTML = supervisors.length ? supervisors.map((s, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${s.name}</td>
-        <td>${s.phone}</td>
-        <td class="pass-cell">${s.password || '—'}</td>
-        <td>${formatDate(s.createdAt)}</td>
-      </tr>
-    `).join('') : `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">لا يوجد مشرفين</td></tr>`;
-
-    hideLoading();
-  } catch (e) {
-    hideLoading();
-    showToast('خطأ في تحميل البيانات', 'error');
+function renderSupChatStudentsList() {
+  const list = document.getElementById('sup-chat-students-list');
+  if (!APP.allStudents.length) {
+    list.innerHTML = `<div class="empty-state" style="padding:30px 10px"><div class="empty-state-icon">👥</div><div class="empty-state-title" style="font-size:14px">لا يوجد طلاب</div></div>`;
+    return;
   }
+  list.innerHTML = APP.allStudents.map(s => `
+    <div class="chat-student-item ${APP.activeChatStudentId === s.id ? 'active' : ''}" onclick="openSupChatWith('${s.id}')">
+      <div class="chat-student-item-avatar">${s.avatar ? `<img src="${s.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : '👤'}</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--text)">${s.name}</div>
+        <div style="font-size:12px;color:var(--text3)">${s.phone}</div>
+      </div>
+    </div>
+  `).join('');
 }
+
+window.openSupChatWithStudent = function() {
+  showSupSection('chat', null);
+  openSupChatWith(APP.currentStudentId);
+};
+
+window.openSupChatWith = function(studentId) {
+  APP.activeChatStudentId = studentId;
+  const student = APP.allStudents.find(s => s.id === studentId);
+  if (!student) return;
+
+  // Update list active state
+  document.querySelectorAll('.chat-student-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.chat-student-item').forEach(i => {
+    if (i.getAttribute('onclick') && i.getAttribute('onclick').includes(studentId)) i.classList.add('active');
+  });
+
+  document.getElementById('sup-chat-placeholder').style.display = 'none';
+  const area = document.getElementById('sup-chat-area');
+  area.style.display = 'block';
+
+  document.getElementById('sup-chat-student-name').textContent = student.name;
+  document.getElementById('sup-chat-student-avatar').textContent = student.avatar ? '' : '👤';
+  if (student.avatar) {
+    document.getElementById('sup-chat-student-avatar').innerHTML = `<img src="${student.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`;
+  }
+
+  const u = APP.currentUser;
+  const chatId = getChatId(u.id, studentId);
+
+  if (APP.chatListener) {
+    off(ref(db, `chats/${APP._supChatId}/messages`));
+  }
+  APP._supChatId = chatId;
+
+  onValue(ref(db, `chats/${chatId}/messages`), (snap) => {
+    const container = document.getElementById('sup-chat-messages');
+    if (!snap.exists()) {
+      container.innerHTML = `<div class="empty-state" style="padding:30px 20px"><div class="empty-state-icon">💬</div><div class="empty-state-title">لا توجد رسائل بعد</div></div>`;
+      return;
+    }
+    const msgs = Object.values(snap.val()).sort((a, b) => a.ts - b.ts);
+    container.innerHTML = msgs.map(m => {
+      const isSent = m.senderId === u.id;
+      return `<div class="chat-msg ${isSent ? 'sent' : 'received'}">
+        ${m.text}
+        <div class="chat-msg-meta">${formatTime(m.ts)}</div>
+      </div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+
+    // Mark as read by supervisor
+    msgs.filter(m => m.senderId !== u.id && !m.readBySupervisor).forEach(m => {
+      update(ref(db, `chats/${chatId}/messages/${m.id}`), { readBySupervisor: true });
+    });
+  });
+};
+
+window.sendSupervisorMessage = async function() {
+  const input = document.getElementById('sup-chat-input');
+  const text = input.value.trim();
+  if (!text || !APP.activeChatStudentId) return;
+  const u = APP.currentUser;
+  const chatId = getChatId(u.id, APP.activeChatStudentId);
+  const msgId = generateId();
+  await set(ref(db, `chats/${chatId}/messages/${msgId}`), {
+    id: msgId, text, senderId: u.id, senderName: u.name,
+    senderRole: 'supervisor', ts: Date.now(), readBySupervisor: true, readByStudent: false
+  });
+  input.value = '';
+};
 
 // ============================================================
 // TASKS CRUD
 // ============================================================
+// Arabic day/month names
+const ARABIC_DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const ARABIC_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const HIJRI_MONTHS = ['محرم','صفر','ربيع الأول','ربيع الثاني','جمادى الأولى','جمادى الثانية','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+
+function getHijriDate(date) {
+  try {
+    const hijri = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {
+      day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'
+    }).formatToParts(date);
+    return hijri.map(p => p.value).join('').replace(/\s+/g,' ').trim();
+  } catch(e) {
+    return '';
+  }
+}
+
+function getMiladiDate(date) {
+  const day = ARABIC_DAYS[date.getDay()];
+  const d = date.getDate();
+  const m = ARABIC_MONTHS[date.getMonth()];
+  const y = date.getFullYear();
+  return `${day}، ${d} ${m} ${y}م`;
+}
+
 window.openAddTaskModal = function() {
   document.getElementById('task-new-memorized').value = '';
   document.getElementById('task-old-memorized').value = '';
@@ -1873,6 +2252,14 @@ window.openAddTaskModal = function() {
   document.getElementById('task-deadline').value = getTodayDate();
   document.getElementById('task-points').value = '';
   document.getElementById('task-note').value = '';
+
+  // Show today's date in Arabic
+  const now = new Date();
+  const hijri = getHijriDate(now);
+  const miladi = getMiladiDate(now);
+  document.getElementById('task-today-hijri').textContent = hijri || miladi;
+  document.getElementById('task-today-miladi').textContent = hijri ? miladi : '';
+
   openModal('modal-add-task');
 };
 
@@ -1881,6 +2268,7 @@ window.saveTask = async function() {
   showLoading();
   try {
     const id = generateId();
+    const now = new Date();
     const task = {
       id,
       studentId: APP.currentStudentId,
@@ -1894,12 +2282,16 @@ window.saveTask = async function() {
       note: document.getElementById('task-note').value.trim(),
       createdAt: Date.now(),
       supervisorId: APP.currentUser.id,
+      sentDateHijri: document.getElementById('task-today-hijri').textContent || '',
+      sentDateMiladi: document.getElementById('task-today-miladi').textContent || '',
     };
     await set(ref(db, `tasks/${id}`), task);
     APP.allTasks.push(task);
     closeModal('modal-add-task');
     renderSupStudentTasks(APP.currentStudentId);
     openStudentProfile(APP.currentStudentId);
+    renderSupAllTasks();
+    renderSupOverview();
     hideLoading();
     showToast('تم إضافة الواجب', 'success');
   } catch (e) {
