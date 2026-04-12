@@ -1020,6 +1020,23 @@ body {
           <div id="task-today-miladi" style="font-size:12px;color:var(--text3);margin-top:1px"></div>
         </div>
       </div>
+
+      <!-- حضور / غياب -->
+      <div class="wajib-section" style="margin-bottom:14px">
+        <div class="wajib-section-title">🧑‍🏫 حضور الطالب</div>
+        <div style="display:flex;gap:10px">
+          <button type="button" id="btn-attend-present" onclick="setAttendance('present')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ✅ حضور
+          </button>
+          <button type="button" id="btn-attend-absent" onclick="setAttendance('absent')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ❌ غياب
+          </button>
+        </div>
+        <input type="hidden" id="task-attendance" value="">
+      </div>
+
       <div class="wajib-section">
         <div class="wajib-section-title">📖 ما تم تسميعه</div>
         <div class="wajib-row">
@@ -1033,6 +1050,13 @@ body {
           </div>
         </div>
       </div>
+
+      <!-- التقييم من 10 — فوق الواجب المطلوب -->
+      <div class="form-group">
+        <label class="form-label">⭐ التقييم من 10</label>
+        <input type="number" class="form-input" id="task-points" placeholder="مثال: 8" min="0" max="10">
+      </div>
+
       <div class="wajib-section">
         <div class="wajib-section-title">📝 الواجب المطلوب</div>
         <div class="wajib-row">
@@ -1049,10 +1073,6 @@ body {
       <div class="form-group">
         <label class="form-label">📅 موعد التسميع القادم</label>
         <input type="date" class="form-input" id="task-deadline">
-      </div>
-      <div class="form-group">
-        <label class="form-label">التقييم من 10</label>
-        <input type="number" class="form-input" id="task-points" placeholder="مثال: 8" min="0" max="10">
       </div>
       <div class="form-group">
         <label class="form-label">ملاحظة للطالب</label>
@@ -1076,6 +1096,23 @@ body {
     <div class="modal-body">
       <input type="hidden" id="edit-task-id">
       <input type="hidden" id="edit-task-student-id">
+
+      <!-- حضور / غياب -->
+      <div class="wajib-section" style="margin-bottom:14px">
+        <div class="wajib-section-title">🧑‍🏫 حضور الطالب</div>
+        <div style="display:flex;gap:10px">
+          <button type="button" id="edit-btn-attend-present" onclick="setEditAttendance('present')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ✅ حضور
+          </button>
+          <button type="button" id="edit-btn-attend-absent" onclick="setEditAttendance('absent')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ❌ غياب
+          </button>
+        </div>
+        <input type="hidden" id="edit-task-attendance" value="">
+      </div>
+
       <div class="wajib-section">
         <div class="wajib-section-title">📖 ما تم تسميعه</div>
         <div class="wajib-row">
@@ -1089,6 +1126,13 @@ body {
           </div>
         </div>
       </div>
+
+      <!-- التقييم فوق الواجب المطلوب -->
+      <div class="form-group">
+        <label class="form-label">⭐ التقييم من 10</label>
+        <input type="number" class="form-input" id="edit-task-points" min="0" max="10">
+      </div>
+
       <div class="wajib-section">
         <div class="wajib-section-title">📝 الواجب المطلوب</div>
         <div class="wajib-row">
@@ -1105,10 +1149,6 @@ body {
       <div class="form-group">
         <label class="form-label">📅 موعد التسميع القادم</label>
         <input type="date" class="form-input" id="edit-task-deadline">
-      </div>
-      <div class="form-group">
-        <label class="form-label">التقييم من 10</label>
-        <input type="number" class="form-input" id="edit-task-points" min="0" max="10">
       </div>
       <div class="form-group">
         <label class="form-label">ملاحظة للطالب</label>
@@ -1658,6 +1698,12 @@ function renderStudentTasks(tasks) {
             ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
           </div>` : `<span style="font-size:12px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
         </div>
+        ${t.attendance ? `
+        <div style="margin:6px 0">
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;${t.attendance==='present'?'background:rgba(26,107,69,0.12);color:var(--primary);border:1.5px solid rgba(26,107,69,0.3)':'background:rgba(192,57,43,0.1);color:var(--red);border:1.5px solid rgba(192,57,43,0.3)'}">
+            ${t.attendance==='present'?'✅ حضور':'❌ غياب'}
+          </span>
+        </div>` : ''}
         <div class="task-meta" style="margin-top:8px">
           ${t.deadline ? `<span class="task-date">📅 موعد التسميع القادم: ${formatDate(t.deadline)}</span>` : ''}
           ${t.points !== undefined && t.points !== '' ? `<span class="task-points">⭐ تقييم: ${t.points}/10</span>` : ''}
@@ -1686,6 +1732,12 @@ window.openTaskDetail = function(taskId) {
           ${task.sentDateHijri ? `<div style="font-size:14px;font-weight:700;color:var(--primary-dark)">${task.sentDateHijri}</div>` : ''}
           ${task.sentDateMiladi ? `<div style="font-size:12px;color:var(--text3)">${task.sentDateMiladi}</div>` : ''}
         </div>
+      </div>` : ''}
+      ${task.attendance ? `
+      <div>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:20px;font-size:14px;font-weight:700;${task.attendance==='present'?'background:rgba(26,107,69,0.12);color:var(--primary);border:1.5px solid rgba(26,107,69,0.3)':'background:rgba(192,57,43,0.1);color:var(--red);border:1.5px solid rgba(192,57,43,0.3)'}">
+          ${task.attendance==='present'?'✅ حضور':'❌ غياب'}
+        </span>
       </div>` : ''}
       ${(task.newMemorized || task.oldMemorized) ? `
       <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:16px">
@@ -1781,12 +1833,25 @@ function setupStudentChatListener() {
 
 async function loadStudentChatMessages() {
   const u = APP.currentUser;
-  // Find supervisor who has tasks for this student
-  const snap = await get(ref(db, 'tasks'));
-  let supervisorId = null;
-  if (snap.exists()) {
-    const task = Object.values(snap.val()).find(t => t.studentId === u.id && t.supervisorId);
-    if (task) supervisorId = task.supervisorId;
+
+  // Try tasks first to find the supervisor
+  let supervisorId = APP._studentSupervisorId || null;
+
+  if (!supervisorId) {
+    const taskSnap = await get(ref(db, 'tasks'));
+    if (taskSnap.exists()) {
+      const task = Object.values(taskSnap.val()).find(t => t.studentId === u.id && t.supervisorId);
+      if (task) supervisorId = task.supervisorId;
+    }
+  }
+
+  // If still no supervisor from tasks, pick any supervisor
+  if (!supervisorId) {
+    const supSnap = await get(ref(db, 'supervisors'));
+    if (supSnap.exists()) {
+      const sups = Object.values(supSnap.val());
+      if (sups.length > 0) supervisorId = sups[0].id;
+    }
   }
 
   if (!supervisorId) {
@@ -1795,31 +1860,29 @@ async function loadStudentChatMessages() {
     return;
   }
 
+  APP._studentSupervisorId = supervisorId;
   document.getElementById('st-chat-no-supervisor').style.display = 'none';
   document.getElementById('st-chat-area').style.display = 'block';
   APP.activeChatStudentId = supervisorId;
 
   const chatId = getChatId(u.id, supervisorId);
-  const chatMessagesRef = ref(db, `chats/${chatId}/messages`);
 
-  if (APP.studentChatListener) {
+  // Remove old listener if exists
+  if (APP._stChatId && APP._stChatId !== chatId) {
     off(ref(db, `chats/${APP._stChatId}/messages`));
   }
   APP._stChatId = chatId;
 
-  onValue(chatMessagesRef, (snap) => {
+  onValue(ref(db, `chats/${chatId}/messages`), (snap) => {
     const container = document.getElementById('st-chat-messages');
     if (!snap.exists()) {
-      container.innerHTML = `<div class="empty-state" style="padding:30px 20px"><div class="empty-state-icon">💬</div><div class="empty-state-title">لا توجد رسائل بعد</div></div>`;
+      container.innerHTML = `<div class="empty-state" style="padding:30px 20px"><div class="empty-state-icon">💬</div><div class="empty-state-title">لا توجد رسائل بعد</div><div class="empty-state-sub">ابدأ المحادثة مع مشرفك</div></div>`;
       return;
     }
     const msgs = Object.values(snap.val()).sort((a, b) => a.ts - b.ts);
     container.innerHTML = msgs.map(m => {
       const isSent = m.senderId === u.id;
-      return `<div class="chat-msg ${isSent ? 'sent' : 'received'}">
-        ${m.text}
-        <div class="chat-msg-meta">${formatTime(m.ts)}</div>
-      </div>`;
+      return `<div class="chat-msg ${isSent ? 'sent' : 'received'}">${m.text}<div class="chat-msg-meta">${formatTime(m.ts)}</div></div>`;
     }).join('');
     container.scrollTop = container.scrollHeight;
 
@@ -1836,21 +1899,68 @@ window.sendStudentMessage = async function() {
   if (!text) return;
   const u = APP.currentUser;
 
-  const snap = await get(ref(db, 'tasks'));
-  let supervisorId = null;
-  if (snap.exists()) {
-    const task = Object.values(snap.val()).find(t => t.studentId === u.id && t.supervisorId);
-    if (task) supervisorId = task.supervisorId;
+  // Try to find supervisorId from stored value first
+  let supervisorId = APP._studentSupervisorId || null;
+
+  // If not cached, look it up
+  if (!supervisorId) {
+    // Try tasks first
+    const taskSnap = await get(ref(db, 'tasks'));
+    if (taskSnap.exists()) {
+      const task = Object.values(taskSnap.val()).find(t => t.studentId === u.id && t.supervisorId);
+      if (task) supervisorId = task.supervisorId;
+    }
+    // If still no supervisor, pick any available supervisor
+    if (!supervisorId) {
+      const supSnap = await get(ref(db, 'supervisors'));
+      if (supSnap.exists()) {
+        const sups = Object.values(supSnap.val());
+        if (sups.length > 0) supervisorId = sups[0].id;
+      }
+    }
+    if (supervisorId) APP._studentSupervisorId = supervisorId;
   }
-  if (!supervisorId) { showToast('لم يتم تعيين مشرف بعد', 'error'); return; }
+
+  if (!supervisorId) {
+    showToast('لا يوجد مشرف متاح حالياً', 'error');
+    return;
+  }
 
   const chatId = getChatId(u.id, supervisorId);
   const msgId = generateId();
-  await set(ref(db, `chats/${chatId}/messages/${msgId}`), {
-    id: msgId, text, senderId: u.id, senderName: u.name,
-    senderRole: 'student', ts: Date.now(), readByStudent: true, readBySupervisor: false
-  });
-  input.value = '';
+  try {
+    await set(ref(db, `chats/${chatId}/messages/${msgId}`), {
+      id: msgId, text, senderId: u.id, senderName: u.name,
+      senderRole: 'student', ts: Date.now(), readByStudent: true, readBySupervisor: false
+    });
+    input.value = '';
+
+    // Refresh listener if needed
+    if (!APP._stChatId || APP._stChatId !== chatId) {
+      APP._stChatId = chatId;
+      APP.activeChatStudentId = supervisorId;
+      document.getElementById('st-chat-no-supervisor').style.display = 'none';
+      document.getElementById('st-chat-area').style.display = 'block';
+      onValue(ref(db, `chats/${chatId}/messages`), (snap) => {
+        const container = document.getElementById('st-chat-messages');
+        if (!snap.exists()) {
+          container.innerHTML = `<div class="empty-state" style="padding:30px 20px"><div class="empty-state-icon">💬</div><div class="empty-state-title">لا توجد رسائل بعد</div></div>`;
+          return;
+        }
+        const msgs = Object.values(snap.val()).sort((a, b) => a.ts - b.ts);
+        container.innerHTML = msgs.map(m => {
+          const isSent = m.senderId === u.id;
+          return `<div class="chat-msg ${isSent ? 'sent' : 'received'}">${m.text}<div class="chat-msg-meta">${formatTime(m.ts)}</div></div>`;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+        msgs.filter(m => m.senderId !== u.id && !m.readByStudent).forEach(m => {
+          update(ref(db, `chats/${chatId}/messages/${m.id}`), { readByStudent: true });
+        });
+      });
+    }
+  } catch(e) {
+    showToast('فشل الإرسال: ' + e.message, 'error');
+  }
 };
 
 // ============================================================
@@ -2021,6 +2131,12 @@ function renderSupStudentTasks(studentId) {
             ${t.sentDateMiladi ? `<div>${t.sentDateMiladi}</div>` : ''}
           </div>` : `<span style="font-size:12px;color:var(--text3)">${formatDate(t.createdAt)}</span>`}
         </div>
+        ${t.attendance ? `
+        <div style="margin:6px 0">
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;${t.attendance==='present'?'background:rgba(26,107,69,0.12);color:var(--primary);border:1.5px solid rgba(26,107,69,0.3)':'background:rgba(192,57,43,0.1);color:var(--red);border:1.5px solid rgba(192,57,43,0.3)'}">
+            ${t.attendance==='present'?'✅ حضور':'❌ غياب'}
+          </span>
+        </div>` : ''}
         ${(t.newMemorized || t.oldMemorized) ? `
         <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;margin:8px 0">
           <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:6px">📖 ما تم تسميعه</div>
@@ -2252,6 +2368,15 @@ window.openAddTaskModal = function() {
   document.getElementById('task-deadline').value = getTodayDate();
   document.getElementById('task-points').value = '';
   document.getElementById('task-note').value = '';
+  document.getElementById('task-attendance').value = '';
+
+  // Reset attendance buttons
+  document.getElementById('btn-attend-present').style.background = 'var(--surface)';
+  document.getElementById('btn-attend-present').style.borderColor = 'var(--border2)';
+  document.getElementById('btn-attend-present').style.color = 'var(--text2)';
+  document.getElementById('btn-attend-absent').style.background = 'var(--surface)';
+  document.getElementById('btn-attend-absent').style.borderColor = 'var(--border2)';
+  document.getElementById('btn-attend-absent').style.color = 'var(--text2)';
 
   // Show today's date in Arabic
   const now = new Date();
@@ -2263,15 +2388,57 @@ window.openAddTaskModal = function() {
   openModal('modal-add-task');
 };
 
+window.setAttendance = function(val) {
+  document.getElementById('task-attendance').value = val;
+  const pBtn = document.getElementById('btn-attend-present');
+  const aBtn = document.getElementById('btn-attend-absent');
+  if (val === 'present') {
+    pBtn.style.background = 'rgba(26,107,69,0.12)';
+    pBtn.style.borderColor = 'var(--primary)';
+    pBtn.style.color = 'var(--primary)';
+    aBtn.style.background = 'var(--surface)';
+    aBtn.style.borderColor = 'var(--border2)';
+    aBtn.style.color = 'var(--text2)';
+  } else {
+    aBtn.style.background = 'rgba(192,57,43,0.1)';
+    aBtn.style.borderColor = 'var(--red)';
+    aBtn.style.color = 'var(--red)';
+    pBtn.style.background = 'var(--surface)';
+    pBtn.style.borderColor = 'var(--border2)';
+    pBtn.style.color = 'var(--text2)';
+  }
+};
+
+window.setEditAttendance = function(val) {
+  document.getElementById('edit-task-attendance').value = val;
+  const pBtn = document.getElementById('edit-btn-attend-present');
+  const aBtn = document.getElementById('edit-btn-attend-absent');
+  if (val === 'present') {
+    pBtn.style.background = 'rgba(26,107,69,0.12)';
+    pBtn.style.borderColor = 'var(--primary)';
+    pBtn.style.color = 'var(--primary)';
+    aBtn.style.background = 'var(--surface)';
+    aBtn.style.borderColor = 'var(--border2)';
+    aBtn.style.color = 'var(--text2)';
+  } else {
+    aBtn.style.background = 'rgba(192,57,43,0.1)';
+    aBtn.style.borderColor = 'var(--red)';
+    aBtn.style.color = 'var(--red)';
+    pBtn.style.background = 'var(--surface)';
+    pBtn.style.borderColor = 'var(--border2)';
+    pBtn.style.color = 'var(--text2)';
+  }
+};
+
 window.saveTask = async function() {
   if (!APP.currentStudentId) { showToast('لم يتم تحديد الطالب', 'error'); return; }
   showLoading();
   try {
     const id = generateId();
-    const now = new Date();
     const task = {
       id,
       studentId: APP.currentStudentId,
+      attendance: document.getElementById('task-attendance').value || '',
       newMemorized: document.getElementById('task-new-memorized').value.trim(),
       oldMemorized: document.getElementById('task-old-memorized').value.trim(),
       newHw: document.getElementById('task-new-hw').value.trim(),
@@ -2312,6 +2479,16 @@ window.openEditTask = function(taskId) {
   document.getElementById('edit-task-deadline').value = task.deadline || '';
   document.getElementById('edit-task-points').value = task.points !== undefined ? task.points : '';
   document.getElementById('edit-task-note').value = task.note || '';
+  document.getElementById('edit-task-attendance').value = task.attendance || '';
+
+  // Reset then set attendance buttons
+  const pBtn = document.getElementById('edit-btn-attend-present');
+  const aBtn = document.getElementById('edit-btn-attend-absent');
+  pBtn.style.cssText = 'flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:Cairo,sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)';
+  aBtn.style.cssText = 'flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:Cairo,sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)';
+  if (task.attendance === 'present') setEditAttendance('present');
+  else if (task.attendance === 'absent') setEditAttendance('absent');
+
   openModal('modal-edit-task');
 };
 
@@ -2320,6 +2497,7 @@ window.updateTask = async function() {
   showLoading();
   try {
     const updates = {
+      attendance: document.getElementById('edit-task-attendance').value || '',
       newMemorized: document.getElementById('edit-task-new-memorized').value.trim(),
       oldMemorized: document.getElementById('edit-task-old-memorized').value.trim(),
       newHw: document.getElementById('edit-task-new-hw').value.trim(),
