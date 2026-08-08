@@ -1,357 +1,785 @@
-:root {
-  --primary: #1a6b45;
-  --primary-light: #2d8a5e;
-  --primary-dark: #0f4a2f;
-  --primary-glow: rgba(26,107,69,0.15);
-  --accent: #c9a84c;
-  --accent-light: #e4c870;
-  --bg: #f7f9f7;
-  --bg2: #eef3ee;
-  --surface: #ffffff;
-  --surface2: #f0f5f0;
-  --border: #d4e4d4;
-  --border2: #c2d8c2;
-  --text: #1a2e1a;
-  --text2: #4a6a4a;
-  --text3: #7a9a7a;
-  --red: #c0392b;
-  --orange: #d68910;
-  --blue: #2471a3;
-  --shadow: 0 2px 20px rgba(26,107,69,0.08);
-  --shadow-md: 0 4px 30px rgba(26,107,69,0.12);
-  --shadow-lg: 0 8px 50px rgba(26,107,69,0.16);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --radius-lg: 24px;
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جامع — منصة حفظ القرآن الكريم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-* { margin:0; padding:0; box-sizing:border-box; }
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div style="font-size:14px;color:var(--text3)">جاري التحميل...</div>
+</div>
 
-body {
-  font-family: 'Cairo', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  direction: rtl;
-}
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+<!-- ============================== HOME ============================== -->
+<div class="screen active" id="screen-home">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">🕌</div>
+      <div>
+        <div class="navbar-title">جامع</div>
+        <div class="navbar-subtitle">منصة حفظ القرآن الكريم</div>
+      </div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost" onclick="showScreen('screen-student-login')">دخول الطالب</button>
+      <button class="btn btn-primary" onclick="showScreen('screen-student-register')">تسجيل جديد</button>
+      <button class="btn btn-accent btn-sm" onclick="openSupervisorAuth('supervisor')">🔐 المشرف</button>
+      <button class="btn btn-outline btn-sm" onclick="openSupervisorAuth('admin')" style="border-color:var(--red);color:var(--red)">🛡 الإدارة</button>
+    </div>
+  </nav>
+  <div class="home-hero fade-in">
+    <div class="home-badge" style="gap:16px;padding:8px 22px">
+      <span>دورة أحباب الله</span>
+      <span style="width:1px;height:18px;background:rgba(26,107,69,0.25);display:inline-block"></span>
+      <span>دورة تاج الوقار</span>
+    </div>
+    <h1 class="home-title">متابعة حفظ القرآن<br><span>بطريقة ذكية ومنظمة</span></h1>
+    <p class="home-desc">منصة متكاملة تربط الطالب بمشرفه لمتابعة حفظ القرآن الكريم وإدارة المهام والمراجعات بشكل منظم واحترافي.</p>
+    <div class="home-cta">
+      <button class="btn btn-primary btn-lg" onclick="showScreen('screen-student-register')">📖 سجّل كطالب جديد</button>
+      <button class="btn btn-outline btn-lg" onclick="showScreen('screen-student-login')">🔑 لديّ حساب بالفعل</button>
+    </div>
+  </div>
+  <div class="home-features">
+    <div class="feature-card"><div class="feature-icon">📋</div><div class="feature-title">إدارة الواجبات</div><div class="feature-desc">تتبع واجبات الحفظ والمراجعة بشكل منظم مع تحديد مواعيد التسميع</div></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">إحصائيات التقدم</div><div class="feature-desc">متابعة تقدم الطلاب بلوحات إحصائية واضحة وشاملة</div></div>
+    <div class="feature-card"><div class="feature-icon">💬</div><div class="feature-title">دردشة مباشرة</div><div class="feature-desc">تواصل مباشر بين الطالب والمشرف عبر نظام الدردشة الفوري</div></div>
+    <div class="feature-card"><div class="feature-icon">⭐</div><div class="feature-title">نظام التقييم</div><div class="feature-desc">تقييم أداء الطلاب من 10 لتحفيزهم على التفوق والإتقان</div></div>
+  </div>
+  <div class="home-footer">منصة جامع © 2025 — جميع الحقوق محفوظة</div>
+</div>
 
-.screen { display:none; min-height:100vh; }
-.screen.active { display:block; }
+<!-- ============================== SUPERVISOR / ADMIN AUTH (Firebase Auth by email) ============================== -->
+<div class="screen" id="screen-supervisor-auth">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">🕌</div>
+      <div><div class="navbar-title">جامع</div><div class="navbar-subtitle">حساب المشرف</div></div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost" onclick="showScreen('screen-home')">← رجوع</button>
+    </div>
+  </nav>
+  <div class="auth-wrapper">
+    <div class="auth-card fade-in">
+      <div class="auth-header">
+        <div class="auth-icon" id="sup-auth-icon" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">👑</div>
+        <div class="auth-title" id="sup-auth-title">حساب المشرف</div>
+        <div class="auth-sub" id="sup-auth-sub">سجل دخولك أو أنشئ حساب مشرف جديد بالبريد الإلكتروني</div>
+      </div>
+      <div class="tabs" style="margin-bottom:24px">
+        <div class="tab active" onclick="switchSupTab('login',this)">تسجيل الدخول</div>
+        <div class="tab" onclick="switchSupTab('register',this)">حساب جديد</div>
+      </div>
+      <div id="sup-login" class="slide-section active">
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني (Gmail)</label>
+          <input type="email" class="form-input" id="sup-login-email" placeholder="name@gmail.com" dir="ltr" style="text-align:left">
+        </div>
+        <div class="form-group">
+          <label class="form-label">كلمة المرور</label>
+          <input type="password" class="form-input" id="sup-login-password" placeholder="كلمة المرور" onkeypress="if(event.key==='Enter')supervisorLogin()">
+        </div>
+        <button class="btn btn-accent btn-full btn-lg" onclick="supervisorLogin()">👑 دخول</button>
+      </div>
+      <div id="sup-register" class="slide-section">
+        <div class="avatar-upload">
+          <div class="avatar-preview" id="sup-avatar-preview" onclick="triggerAvatarUpload('sup-avatar-file')">
+            👑
+            <img id="sup-avatar-img" src="" alt="" style="display:none">
+          </div>
+          <input type="file" id="sup-avatar-file" accept="image/*" style="display:none" onchange="handleAvatarUpload('sup')">
+          <span style="font-size:13px;color:var(--text3)">اضغط لرفع الصورة الشخصية</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">الاسم الكامل</label>
+          <input type="text" class="form-input" id="sup-reg-name" placeholder="اسم المشرف">
+        </div>
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني (Gmail)</label>
+          <input type="email" class="form-input" id="sup-reg-email" placeholder="name@gmail.com" dir="ltr" style="text-align:left">
+        </div>
+        <div class="form-group">
+          <label class="form-label">كلمة المرور</label>
+          <input type="password" class="form-input" id="sup-reg-password" placeholder="6 أحرف على الأقل">
+        </div>
+        <div class="form-group">
+          <label class="form-label">رمز تفعيل صلاحية الإدارة (اختياري)</label>
+          <input type="text" class="form-input" id="sup-reg-admincode" placeholder="اتركه فارغاً إن كنت مشرفاً عادياً" dir="ltr" style="text-align:left">
+        </div>
+        <div class="auth-note">ℹ️ هذا الحساب (بريدك الإلكتروني) هو نفسه الذي تدخل به لاحقاً إلى لوحة المشرف، وإلى لوحة الإدارة العليا أيضاً إذا كان يملك صلاحية الإدارة.</div>
+        <button class="btn btn-accent btn-full btn-lg" onclick="supervisorRegister()">✅ إنشاء الحساب</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-/* NAVBAR */
-.navbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 15px rgba(26,107,69,0.06);
-}
-.navbar-brand { display: flex; align-items: center; gap: 12px; }
-.navbar-logo {
-  width: 42px; height: 42px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 4px 15px var(--primary-glow);
-}
-.navbar-title { font-family: 'Amiri', serif; font-size: 22px; color: var(--primary-dark); font-weight: 700; }
-.navbar-subtitle { font-size: 11px; color: var(--text3); font-weight: 400; }
-.navbar-actions { display:flex; gap:10px; align-items:center; }
+<!-- ============================== STUDENT REGISTER ============================== -->
+<div class="screen" id="screen-student-register">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">🕌</div>
+      <div><div class="navbar-title">جامع</div></div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost" onclick="showScreen('screen-home')">← رجوع</button>
+    </div>
+  </nav>
+  <div class="auth-wrapper">
+    <div class="auth-card fade-in">
+      <div class="auth-header">
+        <div class="auth-icon">📖</div>
+        <div class="auth-title">تسجيل طالب جديد</div>
+        <div class="auth-sub">أنشئ حسابك وابدأ رحلة الحفظ</div>
+      </div>
+      <div class="avatar-upload">
+        <div class="avatar-preview" id="st-avatar-preview" onclick="triggerAvatarUpload('st-avatar-file')">
+          👤
+          <img id="st-avatar-img" src="" alt="" style="display:none">
+        </div>
+        <input type="file" id="st-avatar-file" accept="image/*" style="display:none" onchange="handleStudentAvatarUpload()">
+        <span style="font-size:13px;color:var(--text3)">اضغط لرفع الصورة الشخصية (اختياري)</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل *</label>
+        <input type="text" class="form-input" id="st-reg-name" placeholder="اسمك الكامل">
+      </div>
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف *</label>
+        <input type="tel" class="form-input" id="st-reg-phone" placeholder="05xxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور *</label>
+        <input type="password" class="form-input" id="st-reg-password" placeholder="اختر كلمة مرور">
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="studentRegister()">✅ إنشاء الحساب والدخول</button>
+      <div class="form-divider">أو</div>
+      <div style="text-align:center;font-size:14px">
+        لديك حساب؟ <span class="form-link" onclick="showScreen('screen-student-login')">سجل الدخول</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-/* BUTTONS */
-.btn {
-  padding: 9px 20px;
-  border-radius: var(--radius-sm);
-  border: none;
-  cursor: pointer;
-  font-family: 'Cairo', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  white-space: nowrap;
-}
-.btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; box-shadow: 0 3px 12px var(--primary-glow); }
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(26,107,69,0.25); }
-.btn-outline { background: transparent; border: 1.5px solid var(--border2); color: var(--text2); }
-.btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
-.btn-ghost { background: transparent; color: var(--text2); padding: 9px 14px; }
-.btn-ghost:hover { background: var(--bg2); color: var(--primary); }
-.btn-accent { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: var(--primary-dark); box-shadow: 0 3px 12px rgba(201,168,76,0.25); }
-.btn-accent:hover { transform: translateY(-1px); }
-.btn-danger { background: #fdf2f2; color: var(--red); border: 1.5px solid #f5c6c6; }
-.btn-danger:hover { background: var(--red); color: white; }
-.btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 8px; }
-.btn-lg { padding: 13px 28px; font-size: 16px; border-radius: 14px; }
-.btn-full { width: 100%; justify-content: center; }
+<!-- ============================== STUDENT LOGIN ============================== -->
+<div class="screen" id="screen-student-login">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">🕌</div>
+      <div><div class="navbar-title">جامع</div></div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost" onclick="showScreen('screen-home')">← رجوع</button>
+    </div>
+  </nav>
+  <div class="auth-wrapper">
+    <div class="auth-card fade-in">
+      <div class="auth-header">
+        <div class="auth-icon">🔑</div>
+        <div class="auth-title">تسجيل الدخول</div>
+        <div class="auth-sub">أدخل رقم هاتفك وكلمة المرور</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input type="tel" class="form-input" id="st-login-phone" placeholder="05xxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <input type="password" class="form-input" id="st-login-password" placeholder="كلمة المرور" onkeypress="if(event.key==='Enter')studentLogin()">
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="studentLogin()">🚀 دخول</button>
+      <div class="form-divider">أو</div>
+      <div style="text-align:center;font-size:14px">
+        ليس لديك حساب؟ <span class="form-link" onclick="showScreen('screen-student-register')">سجل الآن</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-/* HOME */
-#screen-home { background: linear-gradient(160deg, #f0f7f0 0%, #e8f3e8 40%, #f5faf5 100%); }
-.home-hero { max-width: 900px; margin: 0 auto; padding: 80px 24px 60px; text-align: center; }
-.home-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(26,107,69,0.08); border: 1px solid rgba(26,107,69,0.2);
-  color: var(--primary); padding: 7px 18px; border-radius: 50px;
-  font-size: 13px; font-weight: 600; margin-bottom: 28px;
-}
-.home-title { font-family: 'Amiri', serif; font-size: clamp(36px, 6vw, 62px); color: var(--primary-dark); line-height: 1.3; margin-bottom: 20px; }
-.home-title span { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.home-desc { font-size: 17px; color: var(--text2); line-height: 1.8; max-width: 600px; margin: 0 auto 44px; }
-.home-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.home-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 900px; margin: 60px auto; padding: 0 24px; }
-.feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; text-align: center; box-shadow: var(--shadow); transition: all 0.3s ease; }
-.feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary); }
-.feature-icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary-glow), rgba(26,107,69,0.05)); border: 1.5px solid rgba(26,107,69,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px; }
-.feature-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-.feature-desc { font-size: 13px; color: var(--text3); line-height: 1.6; }
-.home-footer { text-align:center; padding: 30px; font-size: 13px; color: var(--text3); border-top: 1px solid var(--border); margin-top: 40px; }
+<!-- ============================== STUDENT DASHBOARD ============================== -->
+<div class="screen" id="screen-student-dashboard">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">🕌</div>
+      <div><div class="navbar-title">جامع</div></div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="logout()">🚪 خروج</button>
+    </div>
+  </nav>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="st-sidebar-avatar">👤</div>
+        <div class="sidebar-name" id="st-sidebar-name">—</div>
+        <div class="sidebar-role">طالب</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">القائمة</div>
+        <div class="nav-item active" onclick="showStudentSection('tasks',this)">
+          <span class="nav-item-icon">📋</span> واجباتي
+          <span class="nav-badge" id="st-tasks-badge">0</span>
+        </div>
+        <div class="nav-item" onclick="showStudentSection('chat',this)">
+          <span class="nav-item-icon">💬</span> الدردشة
+          <span class="nav-badge" id="st-chat-badge" style="display:none;background:var(--red)">!</span>
+        </div>
+        <div class="nav-item" onclick="showStudentSection('profile',this)">
+          <span class="nav-item-icon">👤</span> ملفي الشخصي
+        </div>
+        <div class="nav-item" onclick="logout()">
+          <span class="nav-item-icon">🚪</span> تسجيل الخروج
+        </div>
+      </nav>
+    </aside>
+    <main class="dashboard-main">
 
-/* AUTH */
-.auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: linear-gradient(160deg, #f0f7f0, #e8f3e8); }
-.auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 44px 40px; width: 100%; max-width: 460px; box-shadow: var(--shadow-lg); }
-.auth-header { text-align: center; margin-bottom: 36px; }
-.auth-icon { width: 68px; height: 68px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 18px; box-shadow: 0 6px 20px var(--primary-glow); }
-.auth-title { font-family: 'Amiri', serif; font-size: 26px; color: var(--primary-dark); margin-bottom: 6px; }
-.auth-sub { font-size: 14px; color: var(--text3); }
+      <!-- TASKS SECTION -->
+      <div class="slide-section active" id="st-section-tasks">
+        <div class="page-header">
+          <div class="page-title">واجباتي 📋</div>
+          <div class="page-sub">قائمة واجبات الحفظ والمراجعة المكلف بها</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon green">📋</div><div class="stat-value" id="st-total-tasks">0</div><div class="stat-label">إجمالي الواجبات</div></div>
+          <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-value" id="st-progress-tasks">0</div><div class="stat-label">قيد التنفيذ</div></div>
+          <div class="stat-card"><div class="stat-icon blue">✅</div><div class="stat-value" id="st-done-tasks">0</div><div class="stat-label">مكتملة</div></div>
+          <div class="stat-card"><div class="stat-icon red">⭐</div><div class="stat-value" id="st-points">0</div><div class="stat-label">متوسط التقييم</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">قائمة الواجبات</span></div>
+          <div class="card-body">
+            <div class="task-list" id="st-task-list"></div>
+          </div>
+        </div>
+      </div>
 
-/* FORM */
-.form-group { margin-bottom: 20px; }
-.form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
-.form-input, .form-select, .form-textarea {
-  width: 100%; padding: 12px 16px; border: 1.5px solid var(--border2);
-  border-radius: var(--radius-sm); font-family: 'Cairo', sans-serif; font-size: 14px;
-  color: var(--text); background: var(--surface); transition: all 0.2s; outline: none; direction: rtl;
-}
-.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); background: #fafff9; }
-.form-textarea { resize: vertical; min-height: 90px; }
-.form-select { cursor: pointer; }
-.avatar-upload { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; }
-.avatar-preview { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--border2); object-fit: cover; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--text3); cursor: pointer; overflow: hidden; transition: all 0.2s; }
-.avatar-preview:hover { border-color: var(--primary); }
-.avatar-preview img { width:100%; height:100%; object-fit:cover; }
-.form-divider { text-align: center; font-size: 13px; color: var(--text3); margin: 20px 0; position: relative; }
-.form-divider::before, .form-divider::after { content: ''; position: absolute; top: 50%; width: calc(50% - 40px); height: 1px; background: var(--border); }
-.form-divider::before { right: 0; }
-.form-divider::after { left: 0; }
-.form-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; }
-.form-link:hover { text-decoration: underline; }
+      <!-- STUDENT CHAT SECTION -->
+      <div class="slide-section" id="st-section-chat">
+        <div class="page-header">
+          <div class="page-title">الدردشة مع المشرف 💬</div>
+          <div class="page-sub">تواصل مباشر مع مشرفك</div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div id="st-chat-no-supervisor" style="display:none">
+              <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <div class="empty-state-title">لم يتم تعيين مشرف بعد</div>
+                <div class="empty-state-sub">سيتمكن من التواصل معك عند تعيين مشرف</div>
+              </div>
+            </div>
+            <div id="st-chat-area">
+              <div class="chat-container">
+                <div class="chat-messages" id="st-chat-messages">
+                  <div class="empty-state" style="padding:30px 20px">
+                    <div class="empty-state-icon">💬</div>
+                    <div class="empty-state-title">لا توجد رسائل بعد</div>
+                  </div>
+                </div>
+                <div class="chat-input-area">
+                  <input type="text" class="chat-input" id="st-chat-input" placeholder="اكتب رسالتك للمشرف..." onkeypress="if(event.key==='Enter')sendStudentMessage()">
+                  <button class="chat-send-btn" onclick="sendStudentMessage()">إرسال ✉️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-/* DASHBOARD */
-.dashboard-layout { display: flex; min-height: calc(100vh - 68px); }
-.sidebar { width: 260px; background: var(--surface); border-left: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; position: sticky; top: 68px; height: calc(100vh - 68px); overflow-y: auto; }
-.sidebar-user { padding: 16px 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; text-align: center; }
-.sidebar-avatar { width: 64px; height: 64px; border-radius: 50%; border: 3px solid var(--primary-glow); object-fit: cover; margin: 0 auto 10px; display: block; background: var(--bg2); font-size: 28px; line-height: 58px; text-align: center; overflow: hidden; }
-.sidebar-avatar img { width:100%; height:100%; object-fit:cover; }
-.sidebar-name { font-size: 15px; font-weight: 700; color: var(--text); }
-.sidebar-role { font-size: 12px; color: var(--primary); background: var(--primary-glow); border: 1px solid rgba(26,107,69,0.2); padding: 2px 10px; border-radius: 50px; display: inline-block; margin-top: 5px; }
-.sidebar-nav { padding: 0 12px; }
-.nav-section-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; padding: 14px 8px 6px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text2); transition: all 0.2s; margin-bottom: 3px; }
-.nav-item:hover { background: var(--bg2); color: var(--primary); }
-.nav-item.active { background: var(--primary-glow); color: var(--primary); font-weight: 700; border: 1px solid rgba(26,107,69,0.15); }
-.nav-item-icon { font-size: 18px; width: 24px; text-align: center; }
-.nav-badge { margin-right: auto; background: var(--primary); color: white; font-size: 11px; padding: 1px 7px; border-radius: 20px; min-width: 20px; text-align: center; }
+      <!-- PROFILE SECTION -->
+      <div class="slide-section" id="st-section-profile">
+        <div class="page-header"><div class="page-title">ملفي الشخصي 👤</div></div>
+        <div class="profile-header" id="st-profile-card"></div>
+        <div class="card" id="st-notes-card" style="display:none">
+          <div class="card-header"><span class="card-title">💬 ملاحظات المشرف</span></div>
+          <div class="card-body" id="st-supervisor-notes"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
 
-.dashboard-main { flex: 1; padding: 28px 32px; overflow-y: auto; }
-.page-header { margin-bottom: 28px; }
-.page-title { font-family: 'Amiri', serif; font-size: 26px; color: var(--primary-dark); margin-bottom: 4px; }
-.page-sub { font-size: 14px; color: var(--text3); }
+<!-- ============================== SUPERVISOR DASHBOARD (includes Admin sections when isAdmin) ============================== -->
+<div class="screen" id="screen-supervisor-dashboard">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">👑</div>
+      <div>
+        <div class="navbar-title">جامع — المشرف</div>
+        <div class="navbar-subtitle">لوحة إدارة الطلاب</div>
+      </div>
+    </div>
+    <div class="navbar-actions">
+      <span id="sup-nav-name" style="font-size:14px;font-weight:600;color:var(--text2)"></span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">🚪 خروج</button>
+    </div>
+  </nav>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sup-sidebar-avatar">👑</div>
+        <div class="sidebar-name" id="sup-sidebar-name">المشرف</div>
+        <div class="sidebar-role" id="sup-sidebar-role" style="background:rgba(201,168,76,0.15);color:var(--accent);border-color:rgba(201,168,76,0.3)">مشرف</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">الإدارة</div>
+        <div class="nav-item active" onclick="showSupSection('overview',this)">
+          <span class="nav-item-icon">📊</span> نظرة عامة
+        </div>
+        <div class="nav-item" onclick="showSupSection('students',this)">
+          <span class="nav-item-icon">👥</span> الطلاب
+          <span class="nav-badge" id="sup-students-badge">0</span>
+        </div>
+        <div class="nav-item" onclick="showSupSection('tasks',this)">
+          <span class="nav-item-icon">📋</span> جميع الواجبات
+        </div>
+        <div class="nav-item" onclick="showSupSection('chat',this)">
+          <span class="nav-item-icon">💬</span> الدردشة
+          <span class="nav-badge" id="sup-chat-unread-badge" style="display:none;background:var(--red)">!</span>
+        </div>
+        <div class="nav-item" onclick="showSupSection('settings',this)">
+          <span class="nav-item-icon">⚙️</span> الإعدادات
+        </div>
 
-/* STATS */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; box-shadow: var(--shadow); transition: all 0.2s; position: relative; overflow: hidden; }
-.stat-card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--primary), var(--primary-light)); border-radius: 0 var(--radius) var(--radius) 0; }
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 12px; }
-.stat-icon.green { background: rgba(26,107,69,0.1); }
-.stat-icon.orange { background: rgba(214,137,16,0.1); }
-.stat-icon.blue { background: rgba(36,113,163,0.1); }
-.stat-icon.red { background: rgba(192,57,43,0.1); }
-.stat-value { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 4px; }
-.stat-label { font-size: 13px; color: var(--text3); font-weight: 500; }
+        <!-- Admin-only section, shown only when this account has isAdmin = true -->
+        <div class="nav-section-title" id="sup-admin-section-title" style="display:none;color:var(--red)">الإدارة العليا 🛡</div>
+        <div class="nav-item" id="sup-nav-admin-students" style="display:none" onclick="showSupSection('admin-students',this)">
+          <span class="nav-item-icon">👥</span> حسابات الطلاب
+        </div>
+        <div class="nav-item" id="sup-nav-admin-supervisors" style="display:none" onclick="showSupSection('admin-supervisors',this)">
+          <span class="nav-item-icon">👑</span> حسابات المشرفين
+        </div>
 
-/* CARDS */
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-.card-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); }
-.card-title { font-size: 16px; font-weight: 700; color: var(--text); }
-.card-body { padding: 22px; }
+        <div class="nav-item" onclick="logout()">
+          <span class="nav-item-icon">🚪</span> تسجيل الخروج
+        </div>
+      </nav>
+    </aside>
+    <main class="dashboard-main">
 
-/* STUDENTS */
-.student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.student-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); transition: all 0.2s; cursor: pointer; }
-.student-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
-.student-card-avatar { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--border); margin-bottom: 12px; background: var(--bg2); font-size: 26px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.student-card-avatar img { width:100%; height:100%; object-fit:cover; }
-.student-card-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.student-card-phone { font-size: 13px; color: var(--text3); margin-bottom: 12px; }
-.student-card-stats { display:flex; gap:10px; }
-.student-stat { flex: 1; text-align: center; background: var(--bg2); border-radius: 8px; padding: 8px 4px; }
-.student-stat-val { font-size: 18px; font-weight: 800; color: var(--primary); }
-.student-stat-lbl { font-size: 11px; color: var(--text3); }
+      <!-- OVERVIEW -->
+      <div class="slide-section active" id="sup-section-overview">
+        <div class="page-header">
+          <div class="page-title">نظرة عامة 📊</div>
+          <div class="page-sub" id="sup-overview-greeting">أهلاً بك في لوحة المشرف</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon green">👥</div><div class="stat-value" id="sup-stat-students">0</div><div class="stat-label">إجمالي الطلاب</div></div>
+          <div class="stat-card"><div class="stat-icon blue">📋</div><div class="stat-value" id="sup-stat-tasks">0</div><div class="stat-label">إجمالي الواجبات</div></div>
+          <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-value" id="sup-stat-done">0</div><div class="stat-label">واجبات مكتملة</div></div>
+          <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-value" id="sup-stat-progress">0</div><div class="stat-label">قيد التنفيذ</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">أحدث الطلاب</span>
+            <button class="btn btn-outline btn-sm" onclick="showSupSection('students',null)">عرض الكل</button>
+          </div>
+          <div class="card-body">
+            <div class="student-grid" id="sup-recent-students"></div>
+          </div>
+        </div>
+      </div>
 
-/* TASKS */
-.task-list { display:flex; flex-direction:column; gap:12px; }
-.task-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); transition: all 0.2s; display: flex; align-items: flex-start; gap: 14px; }
-.task-item:hover { box-shadow: var(--shadow-md); }
-.task-status-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-.status-new { background: var(--blue); }
-.status-progress { background: var(--orange); }
-.status-done { background: var(--primary); }
-.status-late { background: var(--red); }
-.task-content { flex: 1; }
-.task-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
-.task-desc { font-size: 13px; color: var(--text3); margin-bottom: 10px; line-height: 1.6; }
-.task-meta { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-.task-badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; }
-.badge-new { background: rgba(36,113,163,0.1); color: var(--blue); }
-.badge-progress { background: rgba(214,137,16,0.1); color: var(--orange); }
-.badge-done { background: rgba(26,107,69,0.1); color: var(--primary); }
-.badge-late { background: rgba(192,57,43,0.1); color: var(--red); }
-.task-date { font-size: 12px; color: var(--text3); display:flex; align-items:center; gap:4px; }
-.task-points { font-size: 13px; font-weight: 700; color: var(--accent); background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25); padding: 3px 10px; border-radius: 20px; }
-.task-actions { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+      <!-- STUDENTS -->
+      <div class="slide-section" id="sup-section-students">
+        <div class="page-header">
+          <div class="page-title">الطلاب 👥</div>
+          <div class="page-sub">إدارة ومتابعة جميع الطلاب</div>
+        </div>
+        <div class="search-bar" style="margin-bottom:20px">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="student-search" placeholder="ابحث عن طالب بالاسم أو رقم الهاتف..." oninput="filterStudents()">
+        </div>
+        <div class="student-grid" id="sup-students-grid"></div>
+      </div>
 
-/* WAJIB SECTIONS */
-.wajib-section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 14px; }
-.wajib-section-title { font-size: 12px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-.wajib-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.wajib-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
-.wajib-field .form-input { padding: 9px 12px; font-size: 13px; }
+      <!-- STUDENT PROFILE -->
+      <div class="slide-section" id="sup-section-student-profile">
+        <div class="page-header" style="display:flex;align-items:center;gap:12px">
+          <button class="btn btn-ghost btn-sm" onclick="showSupSection('students',null)">← رجوع</button>
+          <div><div class="page-title" id="sup-profile-title">ملف الطالب</div></div>
+        </div>
+        <div class="profile-header" id="sup-profile-header"></div>
+        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="openAddTaskModal()">➕ إضافة واجب</button>
+          <button class="btn btn-outline" onclick="openAddNoteModal()">💬 إضافة ملاحظة</button>
+          <button class="btn btn-outline" onclick="openSupChatWithStudent()">✉️ مراسلة الطالب</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">الواجبات المكلف بها</span></div>
+          <div class="card-body">
+            <div class="task-list" id="sup-student-tasks"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><span class="card-title">💬 الملاحظات</span></div>
+          <div class="card-body" id="sup-student-notes"></div>
+        </div>
+      </div>
 
-/* SEARCH */
-.search-bar { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1.5px solid var(--border2); border-radius: var(--radius-sm); padding: 0 14px; transition: all 0.2s; }
-.search-bar:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-.search-bar input { border: none; outline: none; background: transparent; font-family: 'Cairo', sans-serif; font-size: 14px; color: var(--text); flex: 1; padding: 12px 0; direction: rtl; }
-.search-icon { color: var(--text3); font-size: 16px; }
+      <!-- ALL TASKS -->
+      <div class="slide-section" id="sup-section-tasks">
+        <div class="page-header">
+          <div class="page-title">جميع الواجبات 📋</div>
+          <div class="page-sub">جميع الواجبات التي تم إرسالها للطلاب</div>
+        </div>
+        <div class="task-list" id="sup-all-tasks"></div>
+      </div>
 
-/* MODAL */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: var(--radius-lg); width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: modalIn 0.25s ease; }
-@keyframes modalIn { from { transform: translateY(20px) scale(0.97); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-.modal-header { padding: 22px 24px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.modal-title { font-size: 17px; font-weight: 700; color: var(--text); }
-.modal-close { width: 32px; height: 32px; border: none; background: var(--bg2); border-radius: 8px; cursor: pointer; font-size: 18px; color: var(--text3); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.modal-close:hover { background: var(--border); color: var(--text); }
-.modal-body { padding: 24px; }
-.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+      <!-- SUPERVISOR CHAT -->
+      <div class="slide-section" id="sup-section-chat">
+        <div class="page-header">
+          <div class="page-title">الدردشة مع الطلاب 💬</div>
+          <div class="page-sub">تواصل مباشر مع طلابك</div>
+        </div>
+        <div style="display:flex;gap:20px;min-height:500px">
+          <div style="width:260px;flex-shrink:0">
+            <div style="font-size:13px;font-weight:700;color:var(--text3);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">قائمة الطلاب</div>
+            <div id="sup-chat-students-list"></div>
+          </div>
+          <div style="flex:1">
+            <div id="sup-chat-placeholder" class="empty-state">
+              <div class="empty-state-icon">💬</div>
+              <div class="empty-state-title">اختر طالباً للمحادثة</div>
+              <div class="empty-state-sub">اختر طالباً من القائمة على اليسار لبدء المحادثة</div>
+            </div>
+            <div id="sup-chat-area" style="display:none">
+              <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px">
+                <span id="sup-chat-student-avatar" style="font-size:22px">👤</span>
+                <span id="sup-chat-student-name">—</span>
+              </div>
+              <div class="chat-container">
+                <div class="chat-messages" id="sup-chat-messages"></div>
+                <div class="chat-input-area">
+                  <input type="text" class="chat-input" id="sup-chat-input" placeholder="اكتب رسالتك للطالب..." onkeypress="if(event.key==='Enter')sendSupervisorMessage()">
+                  <button class="chat-send-btn" onclick="sendSupervisorMessage()">إرسال ✉️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-/* TOAST */
-.toast-container { position: fixed; bottom: 24px; left: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-.toast { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 18px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 12px; min-width: 280px; animation: toastIn 0.3s ease; font-size: 14px; font-weight: 500; }
-@keyframes toastIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-.toast.success { border-right: 4px solid var(--primary); }
-.toast.error { border-right: 4px solid var(--red); }
-.toast.info { border-right: 4px solid var(--blue); }
-.toast-icon { font-size: 20px; }
+      <!-- SETTINGS -->
+      <div class="slide-section" id="sup-section-settings">
+        <div class="page-header"><div class="page-title">الإعدادات ⚙️</div></div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">إعدادات المشرف</span></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">الاسم الكامل</label>
+              <input type="text" class="form-input" id="settings-name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">البريد الإلكتروني</label>
+              <input type="email" class="form-input" id="settings-email" readonly style="opacity:0.7" dir="ltr">
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ التغييرات</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><span class="card-title">تغيير كلمة المرور</span></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">كلمة المرور الجديدة</label>
+              <input type="password" class="form-input" id="settings-new-password" placeholder="6 أحرف على الأقل">
+            </div>
+            <div class="auth-note">قد يطلب منك Firebase تسجيل الدخول من جديد إذا كانت جلستك قديمة، لأسباب أمنية.</div>
+            <button class="btn btn-outline" onclick="changeSupervisorPassword()">🔑 تحديث كلمة المرور</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px" id="settings-system-card">
+          <div class="card-header"><span class="card-title">معلومات النظام</span></div>
+          <div class="card-body">
+            <p style="font-size:14px;color:var(--text2);line-height:1.8">
+              <strong>منصة جامع</strong> لمتابعة حفظ القرآن الكريم<br>
+              إصدار 4.0 — Firebase Authentication + Realtime Database
+            </p>
+          </div>
+        </div>
+      </div>
 
-/* LOADING */
-.loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px); z-index: 9998; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
-.loading-overlay.show { display: flex; }
-.spinner { width: 44px; height: 44px; border: 3px solid var(--border2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+      <!-- ADMIN: STUDENT ACCOUNTS (visible only if isAdmin) -->
+      <div class="slide-section" id="sup-section-admin-students">
+        <div class="page-header">
+          <div class="page-title">حسابات الطلاب 👥</div>
+          <div class="page-sub">عرض وتعديل وحذف حسابات الطلاب (صلاحية إدارة عليا)</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">قائمة الطلاب</span><span id="admin-students-count" style="font-size:13px;color:var(--text3)"></span></div>
+          <div class="card-body" style="overflow-x:auto">
+            <table class="admin-table">
+              <thead><tr><th>#</th><th>الاسم</th><th>رقم الهاتف</th><th>كلمة المرور</th><th>تاريخ التسجيل</th><th>الإجراءات</th></tr></thead>
+              <tbody id="admin-full-students-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-/* TABS */
-.tabs { display:flex; gap:4px; background: var(--bg2); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 20px; }
-.tab { flex: 1; text-align: center; padding: 9px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text3); transition: all 0.2s; }
-.tab.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
-.tab:hover:not(.active) { color: var(--text2); }
+      <!-- ADMIN: SUPERVISOR ACCOUNTS (visible only if isAdmin) -->
+      <div class="slide-section" id="sup-section-admin-supervisors">
+        <div class="page-header">
+          <div class="page-title">حسابات المشرفين 👑</div>
+          <div class="page-sub">عرض وتعديل صلاحيات وحذف حسابات المشرفين (صلاحية إدارة عليا)</div>
+        </div>
+        <div class="auth-note">ℹ️ حسابات المشرفين مربوطة بـ Firebase Authentication، لذا لا يمكن للإدارة تغيير البريد أو كلمة مرور مشرف آخر مباشرة — فقط الاسم وصلاحية الإدارة. تغيير كلمة المرور يتم من قِبل المشرف نفسه من "الإعدادات".</div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">قائمة المشرفين</span><span id="admin-supervisors-count" style="font-size:13px;color:var(--text3)"></span></div>
+          <div class="card-body" style="overflow-x:auto">
+            <table class="admin-table">
+              <thead><tr><th>#</th><th>الاسم</th><th>البريد الإلكتروني</th><th>الصلاحية</th><th>تاريخ التسجيل</th><th>الإجراءات</th></tr></thead>
+              <tbody id="admin-full-supervisors-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-/* PROGRESS */
-.progress-bar-wrap { height: 8px; background: var(--bg2); border-radius: 4px; overflow: hidden; margin-top: 6px; }
-.progress-bar-fill { height: 100%; background: linear-gradient(to left, var(--primary), var(--primary-light)); border-radius: 4px; transition: width 0.5s ease; }
+    </main>
+  </div>
+</div>
 
-/* EMPTY STATE */
-.empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
-.empty-state-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.5; }
-.empty-state-title { font-size: 17px; font-weight: 700; color: var(--text2); margin-bottom: 8px; }
-.empty-state-sub { font-size: 14px; line-height: 1.6; }
+<!-- ============================== MODALS ============================== -->
 
-/* NOTE BOX */
-.note-box { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+<!-- Edit Account Modal (Admin) -->
+<div class="modal-overlay" id="modal-admin-edit">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="admin-edit-modal-title">✏️ تعديل الحساب</span>
+      <button class="modal-close" onclick="closeModal('modal-admin-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="admin-edit-id">
+      <input type="hidden" id="admin-edit-type">
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل</label>
+        <input type="text" class="form-input" id="admin-edit-name" placeholder="الاسم الكامل">
+      </div>
+      <div class="form-group" id="admin-edit-phone-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input type="tel" class="form-input" id="admin-edit-phone" placeholder="رقم الهاتف">
+      </div>
+      <div class="form-group" id="admin-edit-password-group">
+        <label class="form-label">كلمة المرور الجديدة</label>
+        <input type="text" class="form-input" id="admin-edit-password" placeholder="اتركه فارغاً للإبقاء على الحالية">
+      </div>
+      <div class="form-group" id="admin-edit-isadmin-group" style="display:none">
+        <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="admin-edit-isadmin" style="width:18px;height:18px">
+          منح صلاحيات الإدارة العليا لهذا الحساب
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-admin-edit')">إلغاء</button>
+      <button class="btn btn-primary" onclick="adminSaveEdit()">💾 حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
 
-/* PROFILE */
-.profile-header { display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 22px; box-shadow: var(--shadow); }
-.profile-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--border); background: var(--bg2); font-size: 36px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
-.profile-avatar img { width:100%; height:100%; object-fit:cover; }
-.profile-name { font-size: 22px; font-weight: 800; color: var(--text); }
-.profile-phone { font-size: 14px; color: var(--text3); margin-top: 4px; }
-.profile-badges { display:flex; gap:8px; margin-top: 10px; flex-wrap:wrap; }
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="modal-add-task">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">➕ إضافة واجب جديد</span>
+      <button class="modal-close" onclick="closeModal('modal-add-task')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- تاريخ اليوم -->
+      <div id="task-today-date-box" style="background:linear-gradient(135deg,var(--primary-glow),rgba(26,107,69,0.05));border:1.5px solid rgba(26,107,69,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:28px">📅</div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">تاريخ اليوم</div>
+          <div id="task-today-hijri" style="font-size:15px;font-weight:800;color:var(--primary-dark)"></div>
+          <div id="task-today-miladi" style="font-size:12px;color:var(--text3);margin-top:1px"></div>
+        </div>
+      </div>
 
-/* DETAIL */
-.detail-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
-.detail-label { font-size: 12px; color: var(--text3); font-weight: 600; }
-.detail-value { font-size: 14px; color: var(--text); line-height: 1.7; }
+      <!-- حضور / غياب -->
+      <div class="wajib-section" style="margin-bottom:14px">
+        <div class="wajib-section-title">🧑‍🏫 حضور الطالب</div>
+        <div style="display:flex;gap:10px">
+          <button type="button" id="btn-attend-present" onclick="setAttendance('present')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ✅ حضور
+          </button>
+          <button type="button" id="btn-attend-absent" onclick="setAttendance('absent')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ❌ غياب
+          </button>
+        </div>
+        <input type="hidden" id="task-attendance" value="">
+      </div>
 
-/* ADMIN TABLE */
-.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.admin-table th { background: var(--surface2); padding: 12px 16px; text-align: right; font-weight: 700; color: var(--text2); border-bottom: 2px solid var(--border); }
-.admin-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
-.admin-table tr:hover td { background: var(--bg2); }
-.admin-table .pass-cell { font-family: monospace; letter-spacing: 2px; color: var(--primary); }
+      <div class="wajib-section">
+        <div class="wajib-section-title">📖 ما تم تسميعه</div>
+        <div class="wajib-row">
+          <div class="wajib-field">
+            <label>الجديد الذي تم تسميعه</label>
+            <input type="text" class="form-input" id="task-new-memorized" placeholder="مثال: سورة الكهف 1-10">
+          </div>
+          <div class="wajib-field">
+            <label>القديم الذي تم تسميعه</label>
+            <input type="text" class="form-input" id="task-old-memorized" placeholder="مثال: سورة البقرة 1-20">
+          </div>
+        </div>
+      </div>
 
-/* CHAT */
-.chat-container { display: flex; flex-direction: column; height: calc(100vh - 280px); min-height: 400px; }
-.chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 12px; }
-.chat-msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.6; position: relative; }
-.chat-msg.sent { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; align-self: flex-end; border-bottom-left-radius: 4px; }
-.chat-msg.received { background: var(--surface); border: 1px solid var(--border); color: var(--text); align-self: flex-start; border-bottom-right-radius: 4px; }
-.chat-msg-meta { font-size: 11px; opacity: 0.7; margin-top: 4px; }
-.chat-msg.sent .chat-msg-meta { text-align: left; }
-.chat-msg.received .chat-msg-meta { text-align: right; }
-.chat-input-area { display: flex; gap: 8px; align-items: center; }
-.chat-input { flex: 1; padding: 12px 16px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); font-family: 'Cairo', sans-serif; font-size: 14px; outline: none; direction: rtl; background: var(--surface); }
-.chat-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-.chat-send-btn { padding: 12px 20px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 600; font-size: 14px; }
-.chat-send-btn:hover { opacity: 0.9; }
-.chat-student-selector { margin-bottom: 16px; }
+      <!-- التقييم من 10 — فوق الواجب المطلوب -->
+      <div class="form-group">
+        <label class="form-label">⭐ التقييم من 10</label>
+        <input type="number" class="form-input" id="task-points" placeholder="مثال: 8" min="0" max="10">
+      </div>
 
-/* STUDENT CHAT ITEM */
-.chat-student-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border); background: var(--surface); margin-bottom: 8px; transition: all 0.2s; }
-.chat-student-item:hover { border-color: var(--primary); background: var(--primary-glow); }
-.chat-student-item.active { border-color: var(--primary); background: var(--primary-glow); }
-.chat-student-item-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden; flex-shrink: 0; }
-.chat-student-item-avatar img { width:100%; height:100%; object-fit:cover; }
-.chat-unread-badge { background: var(--red); color: white; font-size: 11px; padding: 2px 7px; border-radius: 20px; margin-right: auto; }
+      <div class="wajib-section">
+        <div class="wajib-section-title">📝 الواجب المطلوب</div>
+        <div class="wajib-row">
+          <div class="wajib-field">
+            <label>الجديد (حفظ جديد)</label>
+            <input type="text" class="form-input" id="task-new-hw" placeholder="مثال: سورة الكهف 11-20">
+          </div>
+          <div class="wajib-field">
+            <label>القديم (مراجعة)</label>
+            <input type="text" class="form-input" id="task-old-hw" placeholder="مثال: سورة البقرة 21-40">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📅 موعد التسميع القادم</label>
+        <input type="date" class="form-input" id="task-deadline">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ملاحظة للطالب</label>
+        <textarea class="form-textarea" id="task-note" placeholder="ملاحظة للطالب..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-task')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveTask()">✅ حفظ الواجب</button>
+    </div>
+  </div>
+</div>
 
-/* ANIMATIONS */
-.fade-in { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-.slide-section { display:none; }
-.slide-section.active { display:block; animation: fadeIn 0.25s ease; }
+<!-- Edit Task Modal -->
+<div class="modal-overlay" id="modal-edit-task">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">✏️ تعديل الواجب</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-task')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-task-id">
+      <input type="hidden" id="edit-task-student-id">
 
-/* RATING */
-.rating-display { display: flex; align-items: center; gap: 6px; }
-.rating-stars { display: flex; gap: 2px; direction: ltr; }
-.rating-star { font-size: 16px; }
-.rating-num { font-size: 14px; font-weight: 700; color: var(--accent); }
+      <!-- حضور / غياب -->
+      <div class="wajib-section" style="margin-bottom:14px">
+        <div class="wajib-section-title">🧑‍🏫 حضور الطالب</div>
+        <div style="display:flex;gap:10px">
+          <button type="button" id="edit-btn-attend-present" onclick="setEditAttendance('present')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ✅ حضور
+          </button>
+          <button type="button" id="edit-btn-attend-absent" onclick="setEditAttendance('absent')"
+            style="flex:1;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--surface);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text2)">
+            ❌ غياب
+          </button>
+        </div>
+        <input type="hidden" id="edit-task-attendance" value="">
+      </div>
 
-/* AUTH NOTE (admin activation code, password-change hints, etc.) */
-.auth-note { background: rgba(36,113,163,0.06); border: 1px solid rgba(36,113,163,0.2); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+      <div class="wajib-section">
+        <div class="wajib-section-title">📖 ما تم تسميعه</div>
+        <div class="wajib-row">
+          <div class="wajib-field">
+            <label>الجديد الذي تم تسميعه</label>
+            <input type="text" class="form-input" id="edit-task-new-memorized">
+          </div>
+          <div class="wajib-field">
+            <label>القديم الذي تم تسميعه</label>
+            <input type="text" class="form-input" id="edit-task-old-memorized">
+          </div>
+        </div>
+      </div>
 
-@media (max-width: 768px) {
-  .dashboard-layout { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; position: relative; top: 0; }
-  .dashboard-main { padding: 20px 16px; }
-  .home-hero { padding: 50px 16px 40px; }
-  .auth-card { padding: 32px 24px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .student-grid { grid-template-columns: 1fr; }
-  .profile-header { flex-direction: column; text-align: center; }
-  .profile-badges { justify-content: center; }
-  .wajib-row { grid-template-columns: 1fr; }
-  .chat-container { height: 60vh; }
-}
+      <!-- التقييم فوق الواجب المطلوب -->
+      <div class="form-group">
+        <label class="form-label">⭐ التقييم من 10</label>
+        <input type="number" class="form-input" id="edit-task-points" min="0" max="10">
+      </div>
+
+      <div class="wajib-section">
+        <div class="wajib-section-title">📝 الواجب المطلوب</div>
+        <div class="wajib-row">
+          <div class="wajib-field">
+            <label>الجديد (حفظ جديد)</label>
+            <input type="text" class="form-input" id="edit-task-new-hw">
+          </div>
+          <div class="wajib-field">
+            <label>القديم (مراجعة)</label>
+            <input type="text" class="form-input" id="edit-task-old-hw">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📅 موعد التسميع القادم</label>
+        <input type="date" class="form-input" id="edit-task-deadline">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ملاحظة للطالب</label>
+        <textarea class="form-textarea" id="edit-task-note"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit-task')">إلغاء</button>
+      <button class="btn btn-primary" onclick="updateTask()">💾 تحديث الواجب</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Note Modal -->
+<div class="modal-overlay" id="modal-add-note">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">💬 إضافة ملاحظة</span>
+      <button class="modal-close" onclick="closeModal('modal-add-note')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">الملاحظة</label>
+        <textarea class="form-textarea" id="note-text" rows="4" placeholder="اكتب ملاحظتك هنا..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-note')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveNote()">✅ حفظ الملاحظة</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task Detail Modal (Student) -->
+<div class="modal-overlay" id="modal-task-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">📋 تفاصيل الواجب</span>
+      <button class="modal-close" onclick="closeModal('modal-task-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-task-detail')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- App Logic -->
+<script type="module" src="app.js"></script>
+</body>
+</html>
